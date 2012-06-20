@@ -12,6 +12,7 @@ from .result import *
 A = Letter
 L = Literal
 W = Word
+S = Whitespace
 R = Regex
 
 # hide some Matchers

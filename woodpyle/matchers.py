@@ -2,6 +2,7 @@ import re
 
 from .exceptions import ParseException
 from .result import Result, ResultList
+from .buffer import Buffer
 
 
 def to_matcher(obj):
@@ -20,7 +21,7 @@ class Matcher(object):
     classes.
     """
     def __init__(self, *args, **kwargs):
-        self.is_boundary = kwargs.pop('is_boundary', False)
+        self.suppress = kwargs.pop('suppress', False)
         if kwargs:
             raise TypeError('Unknown options: {type.__name__}({keys!r})'.format(
                 type=type(self),
@@ -45,6 +46,12 @@ class Matcher(object):
 
     def __radd__(self, other):
         return to_matcher(other) + self
+
+    def parse_string(self, string):
+        buffer = Buffer(string)
+        return self.consume(buffer)
+
+    __call__ = parse_string
 
     def rollback(self, buffer, consumed, rollbacks, result):
         raise
@@ -168,7 +175,7 @@ class Whitespace(Word):
     Matches whitespace.  Whitespace is a boundary, and defaults to " \t"
     """
     def __init__(self, consumable=" \t", **kwargs):
-        kwargs.setdefault('is_boundary', True)
+        kwargs.setdefault('suppress', True)
         super(Whitespace, self).__init__(consumable, **kwargs)
 
 
@@ -215,28 +222,25 @@ class AutoSequence(Matcher):
     When Matcher objects are added, they automatically create an AutoSequence,
     which will add in future Matcher objects as well.
     """
-    default_whitespace = Whitespace()
-
     def __init__(self, *matchers, **kwargs):
         """
-        A whitespace object can be provided in kwargs, which will override or
-        disable (if None) the default Whitespace matcher.
+        kwargs can include 'sep', which is a matcher to match in between every item.
         """
-        self.whitespace = kwargs.pop('whitespace', AutoSequence.default_whitespace)
-        if isinstance(self.whitespace, type):
-            self.whitespace = self.whitespace()
+        self.separated_by = kwargs.pop('sep', None)
+        if isinstance(self.separated_by, type):
+            self.separated_by = self.separated_by()
         self.matchers = matchers
         super(AutoSequence, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
         return isinstance(other, AutoSequence) and self.matchers == other.matchers and \
-            self.whitespace == other.whitespace
+            self.separated_by == other.separated_by
 
     def __repr__(self):
         matchers = ', '.join(repr(m) for m in self.matchers)
         ret = '{type.__name__}({matchers}'
-        if self.whitespace != AutoSequence.default_whitespace:
-            ret += ', whitespace={self.whitespace!r}'
+        if self.separated_by is not None:
+            ret += ', sep={self.separated_by!r}'
         ret += ')'
         return ret.format(matchers=matchers, self=self, type=type(self))
 
@@ -258,10 +262,15 @@ class AutoSequence(Matcher):
             matcher = self.matchers[matcher_i]
 
             try:
-                if consumed and self.whitespace:
-                    self.whitespace.consume(buffer)
-                    rollbacks.append(self.whitespace)
-                consumed.append(matcher.consume(buffer))
+                if consumed and self.separated_by:
+                    token_consumed = self.separated_by.consume(buffer)
+                    if not self.separated_by.suppress:
+                        consumed.append(token_consumed)
+                    rollbacks.append(self.separated_by)
+
+                token_consumed = matcher.consume(buffer)
+                if not matcher.suppress:
+                    consumed.append(token_consumed)
                 rollbacks.append(matcher)
             except ParseException:
                 if rollbacks:
@@ -318,6 +327,7 @@ class NMatches(Matcher):
         buffer.mark()
         consumed = ResultList()
         try:
+            print 'in NMatches'
             while True:
                 matched = self.matcher.consume(buffer)
                 print self.matcher, repr(matched)
@@ -337,7 +347,8 @@ class NMatches(Matcher):
         return consumed
 
     def rollback(self, buffer, consumed, rollbacks, result):
-        if self.min is not None and len(result) > self.min:
+        min = 0 if self.min is None else self.min
+        if len(result) > min:
             result.pop()
             consumed.append(result)
             rollbacks.append(rollbacks)

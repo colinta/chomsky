@@ -27,31 +27,31 @@ def test_two_zeroormore():
 
 
 class TestZeroOrMoreWithWordsGrammar(Grammar):
-    grammar = Literal('pre') + ZeroOrMore(Literal('nada')) + Literal('post')
+    grammar = Literal('pre-') + ZeroOrMore(Literal('nada')) + Literal('-post')
 
 
 def test_zero_zeroormore_with_words():
-    parsed = TestZeroOrMoreWithWordsGrammar('pre post')
+    parsed = TestZeroOrMoreWithWordsGrammar('pre--post')
     assert isinstance(parsed, TestZeroOrMoreWithWordsGrammar)
     assert isinstance(parsed.parsed, ResultList)
-    assert parsed[0] == 'pre'
-    assert parsed[2] == 'post'
+    assert parsed[0] == 'pre-'
+    assert parsed[2] == '-post'
     assert parsed[1] == []
 
 
-def test_oneo_zeroormore_with_words():
-    parsed = TestZeroOrMoreWithWordsGrammar('pre nada post')
+def test_one_zeroormore_with_words():
+    parsed = TestZeroOrMoreWithWordsGrammar('pre-nada-post')
     assert isinstance(parsed, TestZeroOrMoreWithWordsGrammar)
     assert isinstance(parsed.parsed, ResultList)
-    assert parsed[0] == 'pre'
-    assert parsed[2] == 'post'
+    assert parsed[0] == 'pre-'
+    assert parsed[2] == '-post'
     assert parsed[1] == ['nada']
 
 
 def test_two_zeroormore_with_words():
-    parsed = TestZeroOrMoreWithWordsGrammar('pre nada nada post')
+    parsed = TestZeroOrMoreWithWordsGrammar('pre-nadanada-post')
     assert isinstance(parsed, TestZeroOrMoreWithWordsGrammar)
     assert isinstance(parsed.parsed, ResultList)
-    assert parsed[0] == 'pre'
-    assert parsed[2] == 'post'
+    assert parsed[0] == 'pre-'
+    assert parsed[2] == '-post'
     assert parsed[1] == ['nada', 'nada']
