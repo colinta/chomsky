@@ -51,7 +51,8 @@ USAGE
 **location*::*
 
     NextIs, PreviousWas, NextIsNot, PreviousWasNot
-    WordStart, WordEnd, LineStart, LineEnd, StringStart, StringEnd
+    WordStart, WordEnd, LineStart, LineEnd,
+    StringStart, StringEnd
 
 
 ::

@@ -327,10 +327,8 @@ class NMatches(Matcher):
         buffer.mark()
         consumed = ResultList()
         try:
-            print 'in NMatches'
             while True:
                 matched = self.matcher.consume(buffer)
-                print self.matcher, repr(matched)
                 consumed.append(matched)
                 if self.max is not None and len(consumed) == self.max:
                     break
@@ -375,3 +373,25 @@ class OneOrMore(NMatches):
         kwargs['min'] = 1
         kwargs['max'] = None
         super(OneOrMore, self).__init__(matcher, **kwargs)
+
+
+class StringStart(Matcher):
+    def __init__(self, **kwargs):
+        kwargs.setdefault('suppress', True)
+        super(StringStart, self).__init__(**kwargs)
+
+    def consume(self, buffer):
+        if buffer.position != 0:
+            raise ParseException('Expected buffer to be at StringStart(0), not {0}'.format(buffer.position), buffer)
+        return None
+
+
+class StringEnd(Matcher):
+    def __init__(self, **kwargs):
+        kwargs.setdefault('suppress', True)
+        super(StringEnd, self).__init__(**kwargs)
+
+    def consume(self, buffer):
+        if buffer.position != len(buffer):
+            raise ParseException('Expected buffer to be at StringEnd({0}), not {1}'.format(len(buffer), buffer.position), buffer)
+        return None

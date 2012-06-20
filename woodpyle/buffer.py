@@ -39,6 +39,9 @@ class Buffer(object):
     def position(self):
         return self.__position
 
+    def __len__(self):
+        return len(self.__buffer)
+
     def __getitem__(self, key):
         if isinstance(key, int):
             if self.__position >= len(self.__buffer):
