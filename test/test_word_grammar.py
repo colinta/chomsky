@@ -14,7 +14,6 @@ def test_word_grammar():
     parse = 'a ae aei aeio aeiou'.split(' ')
     for TestGrammarClass in [TestGrammar, TestGrammarShort]:
         for p in parse:
-            print TestGrammarClass.grammar
             parsed = TestGrammarClass(p)
             assert isinstance(parsed, TestGrammarClass)
             assert isinstance(parsed.parsed, ResultList)

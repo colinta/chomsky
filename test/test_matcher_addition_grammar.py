@@ -27,13 +27,10 @@ def test_grammar_two():
     for TestGrammarClass in [TestGrammarTwo, TestGrammarTwoShort]:
         for p in parse:
             parsed = TestGrammarClass(p)
-            print repr(p)
-            print repr(parsed)
             assert isinstance(parsed, TestGrammarClass)
             assert isinstance(parsed.parsed, ResultList)
             assert parsed[0] == p.split(' ')[0]
-            assert parsed[1] == ' '
-            assert parsed[2] == p.split(' ')[1]
+            assert parsed[1] == p.split(' ')[1]
 
 
 def test_grammar_two_fail():
@@ -49,15 +46,11 @@ def test_grammar_three():
     for TestGrammarClass in [TestGrammarThree, TestGrammarThreeShort]:
         for p in parse:
             parsed = TestGrammarClass(p)
-            print repr(p)
-            print repr(parsed)
             assert isinstance(parsed, TestGrammarClass)
             assert isinstance(parsed.parsed, ResultList)
             assert parsed[0] == p.split(' ')[0]
-            assert parsed[1] == ' '
-            assert parsed[2] == p.split(' ')[1]
-            assert parsed[3] == ' '
-            assert parsed[4] == p.split(' ')[2]
+            assert parsed[1] == p.split(' ')[1]
+            assert parsed[2] == p.split(' ')[2]
 
 
 def test_grammar_three_fail():

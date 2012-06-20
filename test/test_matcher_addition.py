@@ -1,4 +1,5 @@
 from woodpyle import *
+from woodpyle.matchers import AutoSequence
 
 
 def test_two_additions():

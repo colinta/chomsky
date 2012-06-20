@@ -29,7 +29,6 @@ class Grammar(object):
     __metaclass__ = GrammarMeta
 
     def __init__(self, parseme):
-        print type(self), self.grammar, type(self).grammar
         self.buffer = Buffer(parseme)
         self.parsed = self.grammar.consume(self.buffer)
 

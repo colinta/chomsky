@@ -12,4 +12,7 @@ from .result import *
 A = Letter
 L = Literal
 W = Word
-# R = Regex
+R = Regex
+
+# hide some Matchers
+del AutoSequence

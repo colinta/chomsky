@@ -3,12 +3,15 @@ from .exceptions import ParseException
 
 class Buffer(object):
     def __init__(self, buffer):
-        self.buffer = buffer
+        self.__buffer = buffer
         self.__position = 0
         self.__marks = []
 
     def advance(self, amt):
         self.__position += amt
+
+    def rest(self):
+        return self.__buffer[self.__position:]
 
     def mark(self):
         """
@@ -38,8 +41,11 @@ class Buffer(object):
 
     def __getitem__(self, key):
         if isinstance(key, int):
-            if self.__position >= len(self.buffer):
+            if self.__position >= len(self.__buffer):
                 raise ParseException(
                     'Unexpected StringEnd at {self.position}'.format(self=self),
                     buffer)
-            return self.buffer[self.position + key]
+            return self.__buffer[self.position + key]
+
+    def __repr__(self):
+        return 'Buffer({0!r}, {1!r})'.format(self.__buffer[:self.__position], self.__buffer[self.__position:])
