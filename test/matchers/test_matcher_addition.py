@@ -1,5 +1,5 @@
-from woodpyle import *
-from woodpyle.matchers import AutoSequence
+from chomsky import *
+from chomsky.matchers import AutoSequence
 
 
 def test_two_additions():

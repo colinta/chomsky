@@ -1,4 +1,4 @@
-from woodpyle import *
+from chomsky import *
 
 
 zero_matcher = ZeroOrMore(Literal('zero'))

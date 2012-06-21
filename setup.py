@@ -8,16 +8,16 @@ def read(fname):
 
 
 setup(
-        name="woodpyle",
+        name="chomsky",
         version="v0.0.0",
         author="Colin Thomas-Arnold",
         author_email="colinta@gmail",
-        url="https://github.com/colinta/woodpyle",
+        url="https://github.com/colinta/chomsky",
         install_requires=[],
 
         # entry_points={
         #     'console_scripts': [
-        #         'ply = woodpyle.__main__:run'
+        #         'ply = chomsky.__main__:run'
         #     ]
         # },
 
@@ -25,7 +25,7 @@ setup(
         long_description=read("README.rst"),
 
         packages=find_packages(),
-        keywords="woodpyle template language",
+        keywords="chomsky template language",
         platforms="any",
         license="BSD",
         classifiers=[

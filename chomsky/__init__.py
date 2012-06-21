@@ -1,5 +1,5 @@
 """
-Welcome.  Welcome to woodpyle.
+Welcome.  Welcome to chomsky.
 """
 from .buffer import *
 from .exceptions import *

@@ -1,5 +1,5 @@
 from pytest import raises
-from woodpyle import *
+from chomsky import *
 
 
 def test_whitespace_grammar():

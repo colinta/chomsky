@@ -1,13 +1,13 @@
-========
-woodpyle
-========
+=======
+chomsky
+=======
 
 I needed a language grammar parser for the plywood_ project, and modgrammar_
 looked like it would be perfect, except I couldn't get the simplest of grammars
 to work.  pyparsing_ is excellent, but doesn't give me objects back, only lists
 and strings - I need more than that.  I would recommend pyparsing_ for *your*
 project.  Unless you really want objects, or if you are doing a language
-(woodpyle_ has lots of built-in stuff for making programming language grammars).
+(chomsky_ has lots of built-in stuff for making programming language grammars).
 
 Besides, I like writing parsers, and I know how I want this one to work, so
 screw it, I'll do it myself!
@@ -17,7 +17,7 @@ INSTALLATION
 ------------
 
 ::
-    $ pip install woodpyle
+    $ pip install chomsky
 
 -----
 USAGE
@@ -162,7 +162,7 @@ Sequence
 
 
 ::
-    from woodpyle import *
+    from chomsky import *
 
 
 ----
@@ -185,7 +185,7 @@ All rights reserved.
 
 See LICENSE_ for more details (it's a simplified BSD license).
 
-.. _LICENSE:      https://github.com/colinta/woodpyle/blob/master/LICENSE
+.. _LICENSE:      https://github.com/colinta/chomsky/blob/master/LICENSE
 .. _modgrammar:   http://pypi.python.org/pypi/modgrammar
 .. _pyparsing:    http://pyparsing.wikispaces.com/
 .. _plywood:      http://github.com/colinta/plywood

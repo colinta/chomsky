@@ -1,5 +1,5 @@
 import string
-from woodpyle import *
+from chomsky import *
 
 
 class Variable(Grammar):
