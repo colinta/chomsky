@@ -17,8 +17,7 @@ def to_matcher(obj):
 
 class Matcher(object):
     """
-    Base class for Matcher objects, mostly to distinguish them from `Grammar`
-    classes.
+    Base class for Matcher objects, mostly to distinguish them from `Grammar` classes.
     """
     def __init__(self, *args, **kwargs):
         self.suppress = kwargs.pop('suppress', False)
@@ -27,6 +26,12 @@ class Matcher(object):
                 type=type(self),
                 keys=kwargs.keys()
                 ))
+
+    def __eq__(self, other):
+        return isinstance(other, Matcher) and self.suppress == other.suppress
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __repr__(self):
         raise TypeError()
@@ -66,7 +71,8 @@ class Letter(Matcher):
         super(Letter, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
-        return isinstance(other, Letter) and self.consumable == other.consumable
+        return isinstance(other, Letter) and self.consumable == other.consumable \
+            and super(Letter, self).__eq__(other)
 
     def __repr__(self):
         return '{type.__name__}({self.consumable!r})'.format(self=self, type=type(self))
@@ -89,30 +95,29 @@ class Literal(Matcher):
     """
     def __init__(self, literal, **kwargs):
         self.literal = literal
-        self.letters = map(Letter, literal)
         super(Literal, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
-        return isinstance(other, Literal) and self.literal == other.literal
+        return isinstance(other, Literal) and self.literal == other.literal \
+            and super(Literal, self).__eq__(other)
 
     def __repr__(self):
         return '{type.__name__}({self.literal!r})'.format(self=self, type=type(self))
 
     def consume(self, buffer):
         buffer.mark()
-        try:
-            consumed = ''
-            for letter in self.letters:
-                consumed += letter.consume(buffer)
-            buffer.forget_mark()
-            return Result(consumed)
-        except ParseException:
-            buffer.restore_mark()
-            raise ParseException(
-                'Expected {self!r} at {buffer.position}'.format(
-                    self=self,
-                    buffer=buffer),
-                buffer)
+        for c in self.literal:
+            if buffer[0] == c:
+                buffer.advance(1)
+            else:
+                buffer.restore_mark()
+                raise ParseException(
+                    'Expected {self!r} at {buffer.position}'.format(
+                        self=self,
+                        buffer=buffer),
+                    buffer)
+        buffer.forget_mark()
+        return Result(self.literal)
 
 
 class Word(Matcher):
@@ -133,7 +138,11 @@ class Word(Matcher):
         super(Word, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
-        return isinstance(other, Word) and self.consumable == other.consumable
+        return isinstance(other, Word) and self.consumable == other.consumable \
+            and self.letter == other.letter \
+            and self.min == other.min \
+            and self.max == other.max \
+            and super(Word, self).__eq__(other)
 
     def __repr__(self):
         ret = '{type.__name__}({self.consumable!r}'
@@ -194,11 +203,13 @@ class Regex(Matcher):
         super(Regex, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
-        return isinstance(other, Word) and self.regex == other.regex
+        return isinstance(other, Regex) and self.regex.pattern == other.regex.pattern \
+            and self.group == other.group \
+            and self.advance == other.advance \
+            and super(Regex, self).__eq__(other)
 
     def __repr__(self):
-        ret = '{type.__name__}({self.regex!r})'
-        return ret.format(self=self, type=type(self))
+        return '{type.__name__}({self.regex!r})'.format(self=self, type=type(self))
 
     def consume(self, buffer):
         buffer.mark()
@@ -234,7 +245,8 @@ class AutoSequence(Matcher):
 
     def __eq__(self, other):
         return isinstance(other, AutoSequence) and self.matchers == other.matchers and \
-            self.separated_by == other.separated_by
+            self.separated_by == other.separated_by \
+            and super(AutoSequence, self).__eq__(other)
 
     def __repr__(self):
         matchers = ', '.join(repr(m) for m in self.matchers)
@@ -317,11 +329,11 @@ class NMatches(Matcher):
         super(NMatches, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
-        return isinstance(other, ZeroOrMore) and self.matcher == other.matcher
+        return isinstance(other, NMatches) and self.matcher == other.matcher \
+            and super(NMatches, self).__eq__(other)
 
     def __repr__(self):
-        ret = '{type.__name__}({self.matcher!s})'
-        return ret.format(self=self, type=type(self))
+        return '{type.__name__}({self.matcher!s})'.format(self=self, type=type(self))
 
     def consume(self, buffer):
         buffer.mark()
@@ -373,6 +385,51 @@ class OneOrMore(NMatches):
         kwargs['min'] = 1
         kwargs['max'] = None
         super(OneOrMore, self).__init__(matcher, **kwargs)
+
+
+class Any(Matcher):
+    def __init__(self, *matchers, **kwargs):
+        if len(matchers) == 1 and isinstance(matchers[0], AutoSequence):
+            matchers = matchers[0].matchers
+        self.matchers = matchers
+        super(Matcher, self).__init__(self, **kwargs)
+
+    def __eq__(self, other):
+        return isinstance(other, Any) and self.matchers == other.matchers \
+            and super(Any, self).__eq__(other)
+
+    def __repr__(self):
+        return '{type.__name__}({self.matcher!s})'.format(self=self, type=type(self))
+
+    def consume(self, buffer):
+        buffer.mark()
+        consumed = ResultList()
+        try:
+            while True:
+                matched = self.matcher.consume(buffer)
+                consumed.append(matched)
+                if self.max is not None and len(consumed) == self.max:
+                    break
+        except ParseException:
+            pass
+        if self.min is not None and len(consumed) < self.min:
+            buffer.restore_mark()
+            raise ParseException(
+                'Expected {self!r} at {buffer.position}'.format(
+                    self=self,
+                    buffer=buffer),
+                buffer)
+        buffer.forget_mark()
+        return consumed
+
+    def rollback(self, buffer, consumed, rollbacks, result):
+        min = 0 if self.min is None else self.min
+        if len(result) > min:
+            result.pop()
+            consumed.append(result)
+            rollbacks.append(rollbacks)
+            return
+        raise
 
 
 class StringStart(Matcher):

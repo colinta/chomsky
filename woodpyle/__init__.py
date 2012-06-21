@@ -15,5 +15,6 @@ W = Word
 S = Whitespace
 R = Regex
 
+
 # hide some Matchers
 del AutoSequence
