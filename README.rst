@@ -17,6 +17,7 @@ INSTALLATION
 ------------
 
 ::
+
     $ pip install chomsky
 
 -----
@@ -43,6 +44,7 @@ Matches a single letter from a string of accepted letters.  There are lots of
 built-in strings in the `string module`_.
 
 ::
+
     test/matchers/test_letter_matcher.py
 
     matcher = Letter('abcde')
@@ -65,6 +67,7 @@ You can also set ``min`` and ``max`` options.  ``min`` will raise a
 ``max`` will stop matching once ``max`` characters are matched.
 
 ::
+
     test/matchers/test_word_matcher.py
     matcher = Word('abcde')
     matcher('a') => 'a'
@@ -86,6 +89,7 @@ Literal
 Matches a literal string.
 
 ::
+
     test/matchers/test_literal_matcher.py
     matcher = Literal('abcde')
     matcher('a') => 'a'
@@ -97,6 +101,7 @@ Whitespace
 ~~~~~~~~~~
 
 ::
+
     test/matchers/test_whitespace_matcher.py
     matcher = Whitespace()  # default is " \t"
     matcher("    ") => "    "
@@ -116,6 +121,7 @@ This is a quick way to build a matching system that can parse consistently
 formatted data, for example.
 
 ::
+
     test/matchers/test_regex_matcher.py
     matcher = Regex("([a-zA-Z_][0-9])")
     matcher('a1') => 'a1'
@@ -133,6 +139,7 @@ Sequence
 ~~~~~~~~
 
 ::
+
     test/matchers/test_sequence_matcher.py
 
 
@@ -162,6 +169,7 @@ Sequence
 
 
 ::
+
     from chomsky import *
 
 
@@ -170,6 +178,7 @@ TEST
 ----
 
 ::
+
     $ pip install pytest
     $ py.test
 
