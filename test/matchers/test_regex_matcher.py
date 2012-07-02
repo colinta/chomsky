@@ -37,19 +37,13 @@ def test_regex_matcher_options():
 def test_regex_matcher_more_options():
     matcher = Sequence(Regex(r'([0-9])([0-9]+)', group=2, advance=1) * 3)
     parsed = matcher('1234')
-    assert isinstance(parsed, ResultList)
-    assert parsed[0] == '234'
-    assert parsed[1] == '34'
-    assert parsed[2] == '4'
+    assert parsed == ['234', '34', '4']
 
 
 def test_regex_matcher_even_more_options():
     matcher = Sequence(Regex(r'([0-9])([0-9])([0-9])', group=(1, 3)) * 3, sep=Whitespace)
     parsed = matcher('123 456 789')
-    assert isinstance(parsed, ResultList)
-    assert parsed[0] == ['1', '3']
-    assert parsed[1] == ['4', '6']
-    assert parsed[2] == ['7', '9']
+    assert parsed == [['1', '3'], ['4', '6'], ['7', '9']]
 
 
 def test_regex_matcher_fail():

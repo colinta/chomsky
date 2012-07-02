@@ -6,6 +6,9 @@ from .buffer import Buffer
 
 
 def to_matcher(obj):
+    if isinstance(obj, Matcher):
+        return obj
+
     if isinstance(obj, str):
         return Literal(obj)
 
@@ -286,7 +289,7 @@ class AutoSequence(Matcher):
         self.separated_by = kwargs.pop('sep', None)
         if isinstance(self.separated_by, type):
             self.separated_by = self.separated_by()
-        self.matchers = matchers
+        self.matchers = [to_matcher(m) for m in matchers]
         super(AutoSequence, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
@@ -378,7 +381,7 @@ class NMatches(Matcher):
     default_max = None
 
     def __init__(self, matcher, **kwargs):
-        self.matcher = matcher
+        self.matcher = to_matcher(matcher)
         self.min = kwargs.pop('min')
         self.max = kwargs.pop('max')
         super(NMatches, self).__init__(self, **kwargs)

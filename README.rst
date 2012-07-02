@@ -147,28 +147,78 @@ in the ``Regex`` example).
 
     test/matchers/test_sequence_matcher.py
     matcher = Sequence(Literal('Hello '), Literal('World'), Letter('!.'))
-    matcher('Hello World!') => 'Hello World!'
-    matcher('Hello World.') => 'Hello World.'
+    matcher('Hello World!') => ['Hello ', 'World', '!']
+    matcher('Hello World.') => ['Hello ', 'World', '.']
     matcher('Hello, World.') => ParseException
 
-    test/matchers/test_sequence_matcher.py
-    matcher = Sequence(Literal('Hello '), Literal('World'), Letter('!.'))
-    matcher('Hello World!') => 'Hello World!'
-    matcher('Hello World.') => 'Hello World.'
+The automatic ``Sequence`` type is created whenever you use addition or
+multiplication to repeat a series of ``Matcher``s.
+
+**Addition**::
+
+    test/matchers/test_matcher_addition.py
+    matcher = Literal('Hello ') + Literal('World') + Letter('!.')
+    matcher('Hello World!') => ['Hello ', 'World', '!']
+    matcher('Hello World.') => ['Hello ', 'World', '.']
     matcher('Hello, World.') => ParseException
 
-**arithmetic**::
+**Multiplication**::
 
-    Matcher + Matcher + Matcher  # tested
-    Matcher * 3                  # tested
+    test/matcher/test_matcher_multiplication.py
+    import string
+    matcher = (Word(string.letters) + Literal(' ')) * 3
+    matcher('why hello there ') => [['why', ' '], ['hello', ' '], ['there', ' ']]
+    matcher('not enough spaces') => ParseException
 
-**repetition**::
+NMatches
+~~~~~~~~
 
-    NMatches    # tested
-    ZeroOrMore  # tested
-    OneOrMore   # tested
-    Optional    # tested
-    Any         # tested
+``NMatches`` is not an intuitively named class, but its child classes are, and
+you'll probably use them a lot.
+
+``ZeroOrMore``::
+
+    test/matcher/test_zero_or_more_matcher.py
+    matcher = ZeroOrMore(Literal('hi'))
+    matcher('') => []
+    matcher('hi') => ['hi']
+    matcher('hihi') => ['hi', 'hi']
+
+``OneOrMore``::
+
+    test/matcher/test_one_or_more_matcher.py
+    matcher = OneOrMore(Literal('hi'))
+    matcher('hi') => ['hi']
+    matcher('hihi') => ['hi', 'hi']
+    matcher('') => ParseException
+
+``Optional``::
+
+    test/matcher/test_optional_matcher.py
+    matcher = Literal('Hello') + Optional(Literal(',')) + Literal(' ') + Literal('World')
+    matcher('Hello World') => ['Hello', [], ' ', 'World']
+    matcher('Hello, World') => ['Hello', [','], ' ', 'World']
+    matcher('Hello, Bozo') => ParseException
+
+``NMatches``::
+
+    test/matcher/test_nmatcher.py
+    matcher = NMatches(Literal('hi'), min=2, max=3)
+    matcher('hi') => ParseException
+    matcher('hihi') => ['hi', 'hi']
+    matcher('hihihi') => ['hi', 'hi', 'hi']
+    matcher('hihihihi') => ['hi', 'hi', 'hi']  # only 3 matches
+
+Any
+~~~
+
+Given a list of Matchers, any of them can match (tested in order left-to-right).
+The first to match is returned.
+
+::
+
+    test/matcher/test_any_matcher.py
+    matcher = Any(Literal('Joey'), Literal('Bob'), Literal('Bill'))
 
     NextIs, NextIsNot
 

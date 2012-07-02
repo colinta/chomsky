@@ -1,5 +1,4 @@
 from chomsky import *
-from chomsky.matchers import AutoSequence
 
 
 def test_letter_eq():
