@@ -222,6 +222,28 @@ The first to match is returned.
     matcher('Bob') => 'Bob'
     matcher('Jane') => ParseException
 
+Look-ahead and Behind
+~~~~~~~~~~~~~~~~~~~~~
+
+Looking-ahead is simple and low-cost.  The ``NextIs`` matcher makes sure that
+the ``Matcher`` *would* pass, but then rolls back the cursor and does not return
+a Result.  If the ``Matcher`` fails, an exception is raised.
+
+Looking behind is much more expensive, because the number of characters to look
+at is not known before hand.  A "best guess" can be made by ``PrevIs`` by using
+```minimum_length``` and ```maximum_length``` methods that the ``Matcher``
+classes all implement (the base class returns ``0`` and ``float('inf')``).  A
+``Literal``, for example, has a definite length that must be present - no more,
+and no less characters.  The other classes also provide this min/max length
+calculation. But this provides only a modest performance increase.
+
+The ``Prev`` matcher does not require that the previous token be an instance of
+the specified matcher, only that the buffer previous to the current location
+match.  The buffer is rolled back until a match is found, or until the beginning
+of the buffer is reached.
+
+    NextIs, NextIsNot
+
 **language building blocks**::
 
     QuotedString, Number, Integer, Float, Hexadecimal, Octal, Binary

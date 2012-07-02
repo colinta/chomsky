@@ -5,6 +5,9 @@ from .result import Result, ResultList
 from .buffer import Buffer
 
 
+Infinity = float('inf')
+
+
 def to_matcher(obj):
     if isinstance(obj, Matcher):
         return obj
@@ -64,6 +67,12 @@ class Matcher(object):
     def rollback(self, buffer, consumed, result):
         raise
 
+    def minimum_length(self):
+        return 0
+
+    def maximum_length(self):
+        return Infinity
+
 
 class Letter(Matcher):
     """
@@ -93,6 +102,12 @@ class Letter(Matcher):
                 self=self,
                 buffer=buffer),
             buffer)
+
+    def minimum_length(self):
+        return 1
+
+    def maximum_length(self):
+        return 1
 
 
 class Literal(Matcher):
@@ -127,6 +142,12 @@ class Literal(Matcher):
                     buffer)
         buffer.forget_mark()
         return Result(self.literal)
+
+    def minimum_length(self):
+        return len(self.literal)
+
+    def maximum_length(self):
+        return len(self.literal)
 
 
 class Word(Matcher):
@@ -188,6 +209,12 @@ class Word(Matcher):
                 buffer)
         buffer.forget_mark()
         return Result(consumed)
+
+    def minimum_length(self):
+        return self.min
+
+    def maximum_length(self):
+        return self.max if self.max is not None else Infinity
 
 
 class Whitespace(Word):
@@ -327,24 +354,31 @@ class AutoSequence(Matcher):
             try:
                 if consumed and self.separated_by:
                     token_consumed = self.separated_by.consume(buffer)
-                    if not self.separated_by.suppress:
+                    if not self.separated_by.suppress and token_consumed is not None:
                         consumed.append(token_consumed)
-                    rollbacks.append(self.separated_by)
+                    rollbacks.append((self.separated_by, token_consumed))
 
                 token_consumed = matcher.consume(buffer)
-                if not matcher.suppress:
+                if not matcher.suppress and token_consumed is not None:
                     consumed.append(token_consumed)
-                rollbacks.append(matcher)
+                rollbacks.append((matcher, token_consumed))
             except ParseException:
                 if rollbacks:
-                    rollback_matcher = rollbacks.pop()
-                    result = consumed.pop()
+                    rollback_matcher, result = rollbacks.pop()
                     rollback_matcher.rollback(buffer, consumed, result)
                 else:
                     raise
             else:
                 matcher_i += 1
         return consumed
+
+    def minimum_length(self):
+        return sum(m.minimum_length() for m in self.matchers)
+
+    def maximum_length(self):
+        if any(m.maximum_length() == Infinity for m in self.matchers):
+            return Infinity
+        return sum(m.maximum_length() for m in self.matchers)
 
 
 class Sequence(AutoSequence):
@@ -402,10 +436,13 @@ class NMatches(Matcher):
         buffer.mark()
         consumed = ResultList()
         try:
+            matched_count = 0
             while True:
                 matched = self.matcher.consume(buffer)
-                consumed.append(matched)
-                if self.max is not None and len(consumed) == self.max:
+                if matched is not None:
+                    consumed.append(matched)
+                matched_count += 1
+                if self.max is not None and matched_count == self.max:
                     break
         except ParseException:
             pass
@@ -426,6 +463,16 @@ class NMatches(Matcher):
             consumed.append(result)
             return
         raise
+
+    def minimum_length(self):
+        if self.min:
+            return self.matcher.minimum_length() * self.min
+        return 0
+
+    def maximum_length(self):
+        if self.max is None or self.matcher.maximum_length() == Infinity:
+            return Infinity
+        return self.matcher.maximum_length() * self.max
 
 
 class ZeroOrMore(NMatches):
@@ -497,6 +544,12 @@ class Any(Matcher):
                 buffer=buffer),
             buffer)
 
+    def minimum_length(self):
+        return min(m.minimum_length() for m in self.matchers)
+
+    def maximum_length(self):
+        return max(m.maximum_length() for m in self.matchers)
+
 
 class StringStart(Matcher):
     def __init__(self, **kwargs):
@@ -514,6 +567,12 @@ class StringStart(Matcher):
             raise ParseException('Expected buffer to be at StringStart(0), not {0}'.format(buffer.position), buffer)
         return None
 
+    def minimum_length(self):
+        return 0
+
+    def maximum_length(self):
+        return 0
+
 
 class StringEnd(Matcher):
     def __init__(self, **kwargs):
@@ -530,3 +589,33 @@ class StringEnd(Matcher):
         if buffer.position != len(buffer):
             raise ParseException('Expected buffer to be at StringEnd({0}), not {1}'.format(len(buffer), buffer.position), buffer)
         return None
+
+    def minimum_length(self):
+        return 0
+
+    def maximum_length(self):
+        return 0
+
+
+class NextIs(Matcher):
+    def __init__(self, matcher, **kwargs):
+        self.matcher = matcher
+        super(NextIs, self).__init__(**kwargs)
+
+    def __repr__(self, args_only=False):
+        args = '{self.matcher!r}'.format(self=self) + super(NextIs, self).__repr__(args_only=True)
+        if args_only:
+            return args
+        return '{type.__name__}({args})'.format(args=args, type=type(self))
+
+    def consume(self, buffer):
+        buffer.mark()
+        self.matcher.consume(buffer)
+        buffer.restore_mark()
+        return None
+
+    def minimum_length(self):
+        return 0
+
+    def maximum_length(self):
+        return 0
