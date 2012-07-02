@@ -13,7 +13,7 @@ def to_matcher(obj):
         return Literal(obj)
 
     if isinstance(obj, list) or isinstance(obj, tuple):
-        return Sequence(obj)
+        return Sequence(*obj)
 
     raise TypeError('Unknown type {obj!r}'.format(obj=obj))
 

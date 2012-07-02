@@ -18,3 +18,4 @@ R = Regex
 
 # hide some Matchers
 del AutoSequence
+del to_matcher
