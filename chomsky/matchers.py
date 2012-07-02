@@ -599,7 +599,7 @@ class StringEnd(Matcher):
 
 class NextIs(Matcher):
     def __init__(self, matcher, **kwargs):
-        self.matcher = matcher
+        self.matcher = to_matcher(matcher)
         super(NextIs, self).__init__(**kwargs)
 
     def __repr__(self, args_only=False):
@@ -615,7 +615,19 @@ class NextIs(Matcher):
         return None
 
     def minimum_length(self):
-        return 0
+        return self.matcher.minimum_length()
 
     def maximum_length(self):
-        return 0
+        return self.matcher.maximum_length()
+
+
+class NextIsNot(NextIs):
+    def consume(self, buffer):
+        buffer.mark()
+        try:
+            super(NextIsNot, self).consume(buffer)
+        except ParseException:
+            buffer.restore_mark()
+            return None
+        buffer.restore_mark()
+        raise ParseException('Did not expect buffer to be {self.matcher!r}, at {buffer.position}'.format(self=self, buffer=buffer), buffer)
