@@ -16,6 +16,20 @@ def test_two_additions():
     matcher = Word('aeiou') + Word('bcdef')
     test_matcher = AutoSequence(Word('aeiou'), Word('bcdef'))
     assert matcher == test_matcher
+    assert matcher('uoiaeaiuiobcdef') == ['uoiaeaiuio', 'bcdef']
+
+
+def test_two_additions_shorthand():
+    matcher = Word('aeiou') + 'bcdef'
+    test_matcher = AutoSequence(Word('aeiou'), Literal('bcdef'))
+    assert matcher == test_matcher
+    assert matcher('aeioubcdef') == ['aeiou', 'bcdef']
+
+
+def test_two_additions_reverse_shorthand():
+    matcher = 'aeiou' + Word('bcdef')
+    test_matcher = AutoSequence(Literal('aeiou'), Word('bcdef'))
+    assert matcher == test_matcher
     assert matcher('aeioubcdef') == ['aeiou', 'bcdef']
 
 

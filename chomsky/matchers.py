@@ -44,11 +44,7 @@ class Matcher(object):
         raise TypeError()
 
     def __add__(self, other):
-        if isinstance(other, str):
-            return self + Literal(str)
-        elif not isinstance(other, Matcher):
-            raise TypeError
-        return AutoSequence(self, other)
+        return AutoSequence(self, to_matcher(other))
 
     def __mul__(self, other):
         if isinstance(other, int):

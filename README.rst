@@ -219,8 +219,8 @@ The first to match is returned.
 
     test/matcher/test_any_matcher.py
     matcher = Any(Literal('Joey'), Literal('Bob'), Literal('Bill'))
-
-    NextIs, NextIsNot
+    matcher('Bob') => 'Bob'
+    matcher('Jane') => ParseException
 
 **language building blocks**::
 

@@ -18,6 +18,12 @@ def test_two_sequences():
     assert parsed == ['aeiou', 'fgbcd']
 
 
+def test_two_sequence_shorthand():
+    matcher = Sequence('word1', 'word1')
+    parsed = matcher('word1word1')
+    assert parsed == ['word1', 'word1']
+
+
 def test_sequence_addition():
     matcher = Sequence(Word('abcde')) + Sequence(Word('aeiou'))
     test_matcher = Sequence(Word('abcde')) + Sequence(Word('aeiou'))
