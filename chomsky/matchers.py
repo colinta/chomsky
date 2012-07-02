@@ -467,16 +467,15 @@ class Any(Matcher):
     Accepts a list of Matcher objects and consumes the first that passes.
     """
     def __init__(self, *matchers, **kwargs):
-        self.matchers = matchers
-        super(Matcher, self).__init__(self, **kwargs)
+        self.matchers = [to_matcher(m) for m in matchers]
+        super(Any, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
         return isinstance(other, Any) and self.matchers == other.matchers \
             and super(Any, self).__eq__(other)
 
     def __repr__(self, args_only=False):
-        matchers = ', '.join(repr(m) for m in self.matchers)
-        args = '{matchers}'.format(self=self, matchers=matchers) + super(Any, self).__repr__(args_only=True)
+        args = ', '.join(repr(m) for m in self.matchers) + super(Any, self).__repr__(args_only=True)
         if args_only:
             return args
         return '{type.__name__}({args})'.format(args=args, type=type(self))
@@ -494,6 +493,13 @@ class Any(Matcher):
                 return token_consumed
             except ParseException:
                 matcher_i += 1
+
+        buffer.restore_mark()
+        raise ParseException(
+            'Expected {self!r} at {buffer.position}'.format(
+                self=self,
+                buffer=buffer),
+            buffer)
 
 
 class StringStart(Matcher):
