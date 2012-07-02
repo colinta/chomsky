@@ -242,7 +242,23 @@ the specified matcher, only that the buffer previous to the current location
 match.  The buffer is rolled back until a match is found, or until the beginning
 of the buffer is reached.
 
-    NextIs, NextIsNot
+``NextIs``::
+
+    test/matcher/test_nextis_matcher.py
+    matcher = '-' + NextIs(Word('123456789')) + Word('1234567890')
+    matcher('1') => [[], '1']
+    matcher('-1') => [['-'], '1']
+    matcher('-123') => [['-'], '123']
+    matcher('-0') => ParseException
+
+``NextIsNot``::
+
+    test/matcher/test_nextis_matcher.py
+    matcher = '-' + NextIsNot('0') + Word('1234567890')
+    matcher('1') => [[], '1']
+    matcher('-1') => [['-'], '1']
+    matcher('-123') => [['-'], '123']
+    matcher('-0') => ParseException
 
 **language building blocks**::
 
