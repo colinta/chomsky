@@ -4,6 +4,12 @@ from chomsky import *
 zero_matcher = ZeroOrMore(Literal('zero'))
 
 
+def test_zeroormore_repr():
+    assert repr(ZeroOrMore(Literal('zero'))) == "ZeroOrMore(Literal('zero'))"
+    assert repr(ZeroOrMore(Literal('zero'), suppress=False)) == "ZeroOrMore(Literal('zero'))"
+    assert repr(ZeroOrMore(Literal('zero'), suppress=True)) == "ZeroOrMore(Literal('zero'), suppress=True)"
+
+
 def test_zero_zeroormore():
     parsed = zero_matcher('')
     assert isinstance(parsed, ResultList)

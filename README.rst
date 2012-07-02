@@ -138,10 +138,24 @@ formatted data, for example.
 Sequence
 ~~~~~~~~
 
+There are two flavors of ``Sequence``.  One you can declare yourself, called
+``Sequence``, the other is created automatically when you add or multiply
+Matcher objects.  Don't worry about that one, it "just works" (we saw it above
+in the ``Regex`` example).
+
 ::
 
     test/matchers/test_sequence_matcher.py
+    matcher = Sequence(Literal('Hello '), Literal('World'), Letter('!.'))
+    matcher('Hello World!') => 'Hello World!'
+    matcher('Hello World.') => 'Hello World.'
+    matcher('Hello, World.') => ParseException
 
+    test/matchers/test_sequence_matcher.py
+    matcher = Sequence(Literal('Hello '), Literal('World'), Letter('!.'))
+    matcher('Hello World!') => 'Hello World!'
+    matcher('Hello World.') => 'Hello World.'
+    matcher('Hello, World.') => ParseException
 
 **arithmetic**::
 
@@ -150,13 +164,15 @@ Sequence
 
 **repetition**::
 
+    NMatches    # tested
     ZeroOrMore  # tested
     OneOrMore   # tested
     Optional    # tested
+    Any         # tested
 
-    Any, NextIs, NextIsNot
+    NextIs, NextIsNot
 
-**language building blocks*::*
+**language building blocks**::
 
     QuotedString, Number, Integer, Float, Hexadecimal, Octal, Binary
     LineComment, BlockComment, Block, IndentedBlock
@@ -166,12 +182,6 @@ Sequence
     NextIs, PreviousWas, NextIsNot, PreviousWasNot
     WordStart, WordEnd, LineStart, LineEnd,
     StringStart, StringEnd
-
-
-::
-
-    from chomsky import *
-
 
 ----
 TEST

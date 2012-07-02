@@ -2,6 +2,13 @@ from pytest import raises
 from chomsky import *
 
 
+def test_string_boundary_repr():
+    assert repr(StringStart()) == 'StringStart()'
+    assert repr(StringEnd()) == 'StringEnd()'
+    assert repr(StringStart(suppress=False)) == 'StringStart(suppress=False)'
+    assert repr(StringEnd(suppress=False)) == 'StringEnd(suppress=False)'
+
+
 def test_start_of_string_matcher():
     matcher = StringStart()
     parsed = matcher('')

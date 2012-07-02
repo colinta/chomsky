@@ -8,7 +8,14 @@ matchers = [
     ]
 
 
-def test_literal_grammar():
+def test_literal_repr():
+    assert repr(Literal('aeiou')) == "Literal('aeiou')"
+    assert repr(Literal('aeiou', suppress=False)) == "Literal('aeiou')"
+    assert repr(Literal('aeiou', suppress=True)) == "Literal('aeiou', suppress=True)"
+    assert repr(L('aeiou')) == "Literal('aeiou')"
+
+
+def test_literal_matcher():
     parse = ['aeiou']
     for matcher in matchers:
         for p in parse:
@@ -17,7 +24,7 @@ def test_literal_grammar():
             assert parsed == p
 
 
-def test_literal_grammar_fail():
+def test_literal_matcher_fail():
     parse = ['bad']
     for matcher in matchers:
         for p in parse:

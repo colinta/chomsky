@@ -8,6 +8,13 @@ matchers = [
     ]
 
 
+def test_letter_matcher_repr():
+    assert repr(Letter('aeiou')) == "Letter('aeiou')"
+    assert repr(A('aeiou')) == "Letter('aeiou')"
+    assert repr(Letter('aeiou', suppress=False)) == "Letter('aeiou')"
+    assert repr(Letter('aeiou', suppress=True)) == "Letter('aeiou', suppress=True)"
+
+
 def test_letter_matcher():
     parse = 'a e i o u'.split(' ')
     for matcher in matchers:
