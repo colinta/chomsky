@@ -11,6 +11,12 @@ def test_two_products():
     assert matcher('aeiouaeiou') == ['aeiou', 'aeiou']
 
 
+def test_two_products_lengths():
+    matcher = Literal('aeiou') * 2
+    assert matcher.minimum_length() == 10
+    assert matcher.maximum_length() == 10
+
+
 def test_sequence_product():
     matcher = Sequence(Literal('abcde')) * 2
     test_matcher = Sequence(Literal('abcde')) + Sequence(Literal('abcde'))

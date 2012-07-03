@@ -10,6 +10,11 @@ def test_optional_repr():
     assert repr(Optional(Literal('optional'), suppress=True)) == "Optional(Literal('optional'), suppress=True)"
 
 
+def test_optional_lengths():
+    assert optional_matcher.minimum_length() == 0
+    assert optional_matcher.maximum_length() == 8
+
+
 def test_one_optional():
     parsed = optional_matcher('optional')
     assert parsed == ['optional']

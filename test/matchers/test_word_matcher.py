@@ -24,7 +24,6 @@ def test_word_matcher():
     for matcher in matchers:
         for p in parse:
             parsed = matcher(p)
-            assert isinstance(parsed, Result)
             assert parsed == p
 
 

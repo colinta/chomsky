@@ -10,6 +10,11 @@ def test_oneormore_repr():
     assert repr(OneOrMore(Literal('one'), suppress=True)) == "OneOrMore(Literal('one'), suppress=True)"
 
 
+def test_oneormore_lengths():
+    assert one_matcher.minimum_length() == 3
+    assert one_matcher.maximum_length() == Infinity
+
+
 def test_one_oneormore():
     parsed = one_matcher('one')
     assert parsed == ['one']

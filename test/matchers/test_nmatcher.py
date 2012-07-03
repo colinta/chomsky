@@ -11,6 +11,11 @@ def test_nmatcher_repr():
     assert repr(NMatches(Literal('one'), min=1, max=2, suppress=True)) == "NMatches(Literal('one'), min=1, max=2, suppress=True)"
 
 
+def test_nmatcher_lenghs():
+    assert nmatcher.minimum_length() == 3
+    assert nmatcher.maximum_length() == 6
+
+
 def test_one_nmatcher():
     parsed = nmatcher('one')
     assert parsed == ['one']

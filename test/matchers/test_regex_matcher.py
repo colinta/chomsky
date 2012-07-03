@@ -23,14 +23,12 @@ def test_regex_matcher():
     for matcher in matchers:
         for p in parse:
             parsed = matcher(p)
-            assert isinstance(parsed, Result)
             assert parsed == p
 
 
 def test_regex_matcher_options():
     matcher = Regex(r'([0-9])([0-9])', group=1)
     parsed = matcher('23')
-    assert isinstance(parsed, Result)
     assert parsed == '2'
 
 

@@ -7,9 +7,27 @@ def test_two_additions_repr():
     assert repr(matcher) == "Sequence(Word('aeiou'), Word('abcde'))"
 
 
+def test_two_literal_additions_lengths():
+    matcher = Literal('word1') + Literal('other words')
+    assert matcher.minimum_length() == 16
+    assert matcher.maximum_length() == 16
+
+
+def test_two_additions_lengths():
+    matcher = Word('abcd') + Literal('other words')
+    assert matcher.minimum_length() == 12
+    assert matcher.maximum_length() == Infinity
+
+
 def test_three_additions_repr():
     matcher = Word('aeiou') + Word('abcde') + Word('12345')
     assert repr(matcher) == "Sequence(Word('aeiou'), Word('abcde'), Word('12345'))"
+
+
+def test_three_additions_lengths():
+    matcher = Word('aeiou') + Word('abcde') + Word('12345')
+    assert matcher.minimum_length() == 3
+    assert matcher.maximum_length() == Infinity
 
 
 def test_two_additions():

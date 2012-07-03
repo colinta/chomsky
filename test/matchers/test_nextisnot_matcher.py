@@ -7,8 +7,13 @@ nextisnot_matcher = Optional('-') + NextIsNot('0') + Word('0123546789')
 
 def test_nextisnot_repr():
     assert repr(NextIs(Word('123456789'))) == "NextIs(Word('123456789'))"
-    assert repr(NextIs(Word('123456789'), suppress=False)) == "NextIs(Word('123456789'))"
-    assert repr(NextIs(Word('123456789'), suppress=True)) == "NextIs(Word('123456789'), suppress=True)"
+    assert repr(NextIs(Word('123456789'), suppress=False)) == "NextIs(Word('123456789'), suppress=False)"
+    assert repr(NextIs(Word('123456789'), suppress=True)) == "NextIs(Word('123456789'))"
+
+
+def test_nextisnot_lengths():
+    assert nextisnot_matcher.minimum_length() == 1
+    assert nextisnot_matcher.maximum_length() == Infinity
 
 
 def test_nextisnot_1():
