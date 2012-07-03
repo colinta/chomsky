@@ -1,7 +1,7 @@
 import re
 import string
 
-from .exceptions import ParseException
+from .exceptions import ParseException, RollbackException
 from .result import Result, ResultList
 from .buffer import Buffer
 
@@ -66,7 +66,11 @@ class Matcher(object):
     __call__ = parse_string
 
     def rollback(self, result, buffer):
-        raise
+        # Moves the buffer position, and then claims that it can't rollback.
+        # What a liar.
+        if result:
+            buffer.advance(-len(result))
+        raise RollbackException()
 
     def minimum_length(self):
         return 0
@@ -228,8 +232,9 @@ class Word(Matcher):
     def rollback(self, result, buffer):
         if len(result) > self.min:
             buffer.advance(-1)
+            print "+moved buffer: {buffer!r}".format(**locals())
             return result[:-1]
-        raise
+        raise RollbackException()
 
     def minimum_length(self):
         return self.min
@@ -385,23 +390,39 @@ class AutoSequence(Matcher):
                         consumed.append(token_consumed)
                     rollbacks.append((self.separated_by, token_consumed))
 
+                print "+using {matcher!r} on {buffer!r}".format(**locals())
                 token_consumed = matcher.consume(buffer)
+                print "+matched {token_consumed!r}".format(**locals())
                 if not matcher.suppress and token_consumed is not None:
                     consumed.append(token_consumed)
                 rollbacks.append((matcher, token_consumed))
-            except ParseException:
-                print "rollbacks: {rollbacks!r}\nconsumed: {consumed!r}".format(**locals())
+            except ParseException, error:
+                print "!!!!!! EXCEPTION !!!!!!"
                 if rollbacks:
-                    rollback_matcher, result = rollbacks.pop()
-                    if not rollback_matcher.suppress and result is not None:
-                        consumed.pop()
-                    new_result = rollback_matcher.rollback(result, buffer)
-                    if not rollback_matcher.suppress and new_result is not None:
-                        consumed.append(new_result)
-                    if new_result is not None:
-                        rollbacks.append((rollback_matcher, new_result))
-                else:
-                    raise
+                    print "+rollbacks: {rollbacks!r}\n-consumed: {consumed!r}\n-error: {error!r}".format(**locals())
+                    # rollback until successful
+                    while matcher_i > 0:
+                        rollback_matcher, result = rollbacks.pop()
+                        # remove the matched content, if it wasn't suppressed
+                        if not rollback_matcher.suppress and result is not None:
+                            consumed.pop()
+
+                        try:
+                            new_result = rollback_matcher.rollback(result, buffer)
+                            print "+rolled back: {rollback_matcher!r} to {buffer!r}\n-result: {result!r} => {new_result!r}\n-consumed: {consumed!r}".format(**locals())
+                            if not rollback_matcher.suppress and new_result is not None:
+                                consumed.append(new_result)
+                            rollbacks.append((rollback_matcher, new_result))
+                            break
+                        except RollbackException:
+                            print "+couldn't rollback {rollback_matcher!r}".format(**locals())
+                            # couldn't rollback, so move the matcher pointer and
+                            # try to rollback the next item.
+                            matcher_i -= 1
+
+                if not rollbacks:
+                    print "Could not resolve ParseException."
+                    raise error
             else:
                 matcher_i += 1
         return consumed
@@ -494,8 +515,9 @@ class NMatches(Matcher):
         min = 0 if self.min is None else self.min
         if len(result) > min:
             buffer.advance(-len(result[-1]))
+            print "+moved buffer: {buffer!r}".format(**locals())
             return result[:-1]
-        raise
+        raise RollbackException()
 
     def minimum_length(self):
         if self.min:
