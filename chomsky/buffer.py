@@ -43,21 +43,20 @@ class Buffer(object):
         return len(self.__buffer)
 
     def __getitem__(self, key):
+        if self.__position >= len(self.__buffer):
+            raise ParseException(
+                'Unexpected StringEnd at {self.position}'.format(self=self),
+                buffer)
+
         if isinstance(key, int):
-            if self.__position >= len(self.__buffer):
-                raise ParseException(
-                    'Unexpected StringEnd at {self.position}'.format(self=self),
-                    buffer)
             return self.__buffer[self.position + key]
+
         if isinstance(key, slice):
-            if self.__position >= len(self.__buffer):
-                raise ParseException(
-                    'Unexpected StringEnd at {self.position}'.format(self=self),
-                    buffer)
             start = 0 if key.start == None else key.start
             stop = 0 if key.stop == None else key.stop
             return self.__buffer[slice(self.position + start, self.position + stop, key.step)]
+
         raise TypeError('Unknown key {key!r}'.format(key=key))
 
     def __repr__(self):
-        return 'Buffer({0!r}, {1!r})'.format(self.__buffer[:self.__position], self.__buffer[self.__position:])
+        return 'Buffer({0!r} + {1!r})'.format(self.__buffer[:self.__position], self.__buffer[self.__position:])
