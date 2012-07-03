@@ -16,6 +16,14 @@ def test_start_of_line_matcher():
 
 
 def test_start_of_line_and_literal_matcher():
+    matcher = S() + LineStart() + L('test')
+    parsed = matcher('test')
+    assert parsed == ['test']
+    parsed = matcher('\ntest')
+    assert parsed == ['test']
+
+
+def test_complicated_line_stuff_matcher():
     matcher = L("start") + S() + LineStart() + S() + L('hi!')
     parsed = matcher("start  \n  hi!")
     assert parsed == ['start', 'hi!']
@@ -33,6 +41,14 @@ def test_end_of_line_matcher():
     assert parsed == None
 
 
+def test_literal_and_end_of_line_matcher():
+    matcher = L('test') + LineEnd()
+    parsed = matcher('test')
+    assert parsed == ['test']
+    parsed = matcher('test\n')
+    assert parsed == ['test']
+
+
 def test_end_of_line_and_literal_matcher():
     matcher = L('hi!') + LineEnd()
     parsed = matcher('hi!')
@@ -40,6 +56,6 @@ def test_end_of_line_and_literal_matcher():
 
 
 def test_end_of_line_matcher_fail():
-    matcher = LineEnd()
+    matcher = L('test') + LineEnd()
     with raises(ParseException):
-        matcher('test')
+        matcher('testtest')
