@@ -74,3 +74,8 @@ def test_sequence_addition_right():
     matcher = Sequence(Word('aeiou'), Word('abcde')) + Word('12345')
     test_matcher = AutoSequence(Sequence(Word('aeiou'), Word('abcde')), Word('12345'))
     assert matcher == test_matcher
+
+
+def test_literal_shorthands():
+    matcher = ' ' + Word('abcde') + ' '
+    assert matcher == Sequence(L(' '), Word('abcde'), L(' '))

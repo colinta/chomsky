@@ -366,7 +366,7 @@ class AutoSequence(Matcher):
         An AutoSequence object is created anytime two Matchers are added, and
         adding subsequent Matchers to that sequence *appends* the matchers.
         """
-        self.matchers += (other,)
+        self.matchers += (to_matcher(other),)
         return self
 
     def consume(self, buffer):
