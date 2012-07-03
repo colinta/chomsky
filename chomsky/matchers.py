@@ -1,4 +1,5 @@
 import re
+import string
 
 from .exceptions import ParseException
 from .result import Result, ResultList
@@ -64,7 +65,7 @@ class Matcher(object):
 
     __call__ = parse_string
 
-    def rollback(self, buffer, consumed, result):
+    def rollback(self, result, buffer):
         raise
 
     def minimum_length(self):
@@ -72,6 +73,20 @@ class Matcher(object):
 
     def maximum_length(self):
         return Infinity
+
+
+class SuppressedMatcher(Matcher):
+    def __init__(self, **kwargs):
+        kwargs.setdefault('suppress', True)
+        super(SuppressedMatcher, self).__init__(**kwargs)
+
+    def __repr__(self, args_only=False):
+        args = ''
+        if not self.suppress:
+            args = 'suppress=False'
+        if args_only:
+            return args
+        return '{type.__name__}({args})'.format(args=args, type=type(self))
 
 
 class Letter(Matcher):
@@ -157,14 +172,19 @@ class Word(Matcher):
     min and max, if there is a desired length.  If the length of the consumed
     word is less than min, or greater than max, a ParseException is raised.
     """
+    default_min = 1
+    default_max = None
+
     def __init__(self, consumable, **kwargs):
         """
         kwargs can contain 'max' and 'min' options
         """
         self.consumable = consumable
         self.letter = Letter(consumable)
-        self.min = kwargs.pop('min', 1)
-        self.max = kwargs.pop('max', None)
+        self.min = kwargs.pop('min', self.default_min)
+        if self.min == None:
+            self.min = 0
+        self.max = kwargs.pop('max', self.default_max)
         super(Word, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
@@ -176,9 +196,9 @@ class Word(Matcher):
 
     def __repr__(self, args_only=False):
         args = '{self.consumable!r}'
-        if self.min != 1:
+        if self.min != self.default_min:
             args += ', min={self.min!r}'
-        if self.max != None:
+        if self.max != self.default_max:
             args += ', max={self.max!r}'
         args = args.format(self=self) + super(Word, self).__repr__(args_only=True)
         if args_only:
@@ -191,24 +211,25 @@ class Word(Matcher):
         try:
             while True:
                 consumed += self.letter.consume(buffer)
+                if self.max != None and len(consumed) == self.max:
+                    break
         except ParseException:
             pass
-        if self.min != None and len(consumed) < self.min:
+        if self.min and len(consumed) < self.min:
             buffer.restore_mark()
             raise ParseException(
                 'Expected {self!r} at {buffer.position}'.format(
                     self=self,
                     buffer=buffer),
                 buffer)
-        if self.max != None and len(consumed) > self.max:
-            buffer.restore_mark()
-            raise ParseException(
-                'Unexpected {self!r} at {buffer.position}'.format(
-                    self=self,
-                    buffer=buffer),
-                buffer)
         buffer.forget_mark()
         return Result(consumed)
+
+    def rollback(self, result, buffer):
+        if len(result) > self.min:
+            buffer.advance(-1)
+            return result[:-1]
+        raise
 
     def minimum_length(self):
         return self.min
@@ -218,10 +239,12 @@ class Word(Matcher):
 
 
 class Whitespace(Word):
-    default_whitespace = " \t"
     """
-    Matches whitespace.  Whitespace is a boundary, and defaults to " \t"
+    Matches whitespace.  Defaults to string.whitespace
     """
+    default_whitespace = string.whitespace
+    default_min = 0
+
     def __init__(self, consumable=None, **kwargs):
         if consumable is None:
             consumable = self.default_whitespace
@@ -235,10 +258,10 @@ class Whitespace(Word):
         else:
             args = ''
             comma = ''
-        if self.min != 1:
+        if self.min != self.default_min:
             args += comma + 'min={self.min!r}'
             comma = ', '
-        if self.max != None:
+        if self.max != self.default_max:
             args += comma + 'max={self.max!r}'
             comma = ', '
         if not self.suppress:
@@ -363,9 +386,16 @@ class AutoSequence(Matcher):
                     consumed.append(token_consumed)
                 rollbacks.append((matcher, token_consumed))
             except ParseException:
+                print "rollbacks: {rollbacks!r}\nconsumed: {consumed!r}".format(**locals())
                 if rollbacks:
                     rollback_matcher, result = rollbacks.pop()
-                    rollback_matcher.rollback(buffer, consumed, result)
+                    if not rollback_matcher.suppress and result is not None:
+                        consumed.pop()
+                    new_result = rollback_matcher.rollback(result, buffer)
+                    if not rollback_matcher.suppress and new_result is not None:
+                        consumed.append(new_result)
+                    if new_result is not None:
+                        rollbacks.append((rollback_matcher, new_result))
                 else:
                     raise
             else:
@@ -456,12 +486,11 @@ class NMatches(Matcher):
         buffer.forget_mark()
         return consumed
 
-    def rollback(self, buffer, consumed, result):
+    def rollback(self, result, buffer):
         min = 0 if self.min is None else self.min
         if len(result) > min:
-            result.pop()
-            consumed.append(result)
-            return
+            buffer.advance(-len(result[-1]))
+            return result[:-1]
         raise
 
     def minimum_length(self):
@@ -551,17 +580,7 @@ class Any(Matcher):
         return max(m.maximum_length() for m in self.matchers)
 
 
-class StringStart(Matcher):
-    def __init__(self, **kwargs):
-        kwargs.setdefault('suppress', True)
-        super(StringStart, self).__init__(**kwargs)
-
-    def __repr__(self, args_only=False):
-        args = ''
-        if not self.suppress:
-            args = 'suppress=False'
-        return '{type.__name__}({args})'.format(args=args, type=type(self))
-
+class StringStart(SuppressedMatcher):
     def consume(self, buffer):
         if buffer.position != 0:
             raise ParseException('Expected buffer to be at StringStart(0), not {0}'.format(buffer.position), buffer)
@@ -574,17 +593,7 @@ class StringStart(Matcher):
         return 0
 
 
-class StringEnd(Matcher):
-    def __init__(self, **kwargs):
-        kwargs.setdefault('suppress', True)
-        super(StringEnd, self).__init__(**kwargs)
-
-    def __repr__(self, args_only=False):
-        args = ''
-        if not self.suppress:
-            args = 'suppress=False'
-        return '{type.__name__}({args})'.format(args=args, type=type(self))
-
+class StringEnd(SuppressedMatcher):
     def consume(self, buffer):
         if buffer.position != len(buffer):
             raise ParseException('Expected buffer to be at StringEnd({0}), not {1}'.format(len(buffer), buffer.position), buffer)
@@ -597,13 +606,84 @@ class StringEnd(Matcher):
         return 0
 
 
-class NextIs(Matcher):
+class LineStart(SuppressedMatcher):
+    def consume(self, buffer):
+        if buffer.position > 0 and buffer[-1] != "\n":
+            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position - 1, buffer[-1], self=self), buffer)
+        return None
+
+    def minimum_length(self):
+        return 0
+
+    def maximum_length(self):
+        return 0
+
+
+class LineEnd(SuppressedMatcher):
+    def consume(self, buffer):
+        if buffer.position < len(buffer) and buffer[0] != "\n":
+            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position, buffer[0], self=self), buffer)
+        return None
+
+    def minimum_length(self):
+        return 0
+
+    def maximum_length(self):
+        return 0
+
+
+class WordStart(SuppressedMatcher):
+    default_word = string.letters
+
+    def __init__(self, consumable=None, **kwargs):
+        self.consumable = consumable if consumable else self.default_word
+        super(WordStart, self).__init__(**kwargs)
+
+    def consume(self, buffer):
+        if buffer.position > 0 and buffer[-1] in self.consumable:
+            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position - 1, buffer[-1], self=self), buffer)
+        if buffer[0] not in self.consumable:
+            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position, buffer[0], self=self), buffer)
+        return None
+
+    def minimum_length(self):
+        return 0
+
+    def maximum_length(self):
+        return 0
+
+
+class WordEnd(SuppressedMatcher):
+    default_word = string.letters
+
+    def __init__(self, consumable=None, **kwargs):
+        self.consumable = consumable if consumable else self.default_word
+        super(WordEnd, self).__init__(**kwargs)
+
+    def consume(self, buffer):
+        if buffer[-1] not in self.consumable:
+            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position - 1, buffer[-1], self=self), buffer)
+        if buffer.position < len(buffer) and buffer[0] in self.consumable:
+            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position, buffer[0], self=self), buffer)
+        return None
+
+    def minimum_length(self):
+        return 0
+
+    def maximum_length(self):
+        return 0
+
+
+class NextIs(SuppressedMatcher):
     def __init__(self, matcher, **kwargs):
         self.matcher = to_matcher(matcher)
         super(NextIs, self).__init__(**kwargs)
 
     def __repr__(self, args_only=False):
-        args = '{self.matcher!r}'.format(self=self) + super(NextIs, self).__repr__(args_only=True)
+        super_args = super(NextIs, self).__repr__(args_only=True)
+        if super_args:
+            super_args = ', ' + super_args
+        args = '{self.matcher!r}'.format(self=self) + super_args
         if args_only:
             return args
         return '{type.__name__}({args})'.format(args=args, type=type(self))
@@ -615,10 +695,10 @@ class NextIs(Matcher):
         return None
 
     def minimum_length(self):
-        return self.matcher.minimum_length()
+        return 0
 
     def maximum_length(self):
-        return self.matcher.maximum_length()
+        return 0
 
 
 class NextIsNot(NextIs):
