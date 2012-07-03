@@ -344,7 +344,14 @@ class AutoSequence(Matcher):
             and super(AutoSequence, self).__eq__(other)
 
     def __repr__(self, args_only=False):
-        matchers = ', '.join(repr(m) for m in self.matchers)
+        type_name = type(self).__name__
+        if type_name == 'AutoSequence':
+            type_name = 'Sequence'
+            joiner = ' + '
+        else:
+            joiner = ', '
+
+        matchers = joiner.join(repr(m) for m in self.matchers)
         args = '{matchers}'
         if self.separated_by is not None:
             args += ', sep={self.separated_by!r}'
@@ -352,9 +359,6 @@ class AutoSequence(Matcher):
         if args_only:
             return args
 
-        type_name = type(self).__name__
-        if type_name == 'AutoSequence':
-            type_name = 'Sequence'
         return '{type_name}({args})'.format(args=args, type_name=type_name)
 
     def __add__(self, other):
