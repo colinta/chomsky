@@ -232,7 +232,6 @@ class Word(Matcher):
     def rollback(self, result, buffer):
         if len(result) > self.min:
             buffer.advance(-1)
-            print "+moved buffer: {buffer!r}".format(**locals())
             return result[:-1]
         raise RollbackException()
 
@@ -390,16 +389,12 @@ class AutoSequence(Matcher):
                         consumed.append(token_consumed)
                     rollbacks.append((self.separated_by, token_consumed))
 
-                print "+using {matcher!r} on {buffer!r}".format(**locals())
                 token_consumed = matcher.consume(buffer)
-                print "+matched {token_consumed!r}".format(**locals())
                 if not matcher.suppress and token_consumed is not None:
                     consumed.append(token_consumed)
                 rollbacks.append((matcher, token_consumed))
             except ParseException, error:
-                print "!!!!!! EXCEPTION !!!!!!"
                 if rollbacks:
-                    print "+rollbacks: {rollbacks!r}\n-consumed: {consumed!r}\n-error: {error!r}".format(**locals())
                     # rollback until successful
                     while matcher_i > 0:
                         rollback_matcher, result = rollbacks.pop()
@@ -409,19 +404,16 @@ class AutoSequence(Matcher):
 
                         try:
                             new_result = rollback_matcher.rollback(result, buffer)
-                            print "+rolled back: {rollback_matcher!r} to {buffer!r}\n-result: {result!r} => {new_result!r}\n-consumed: {consumed!r}".format(**locals())
                             if not rollback_matcher.suppress and new_result is not None:
                                 consumed.append(new_result)
                             rollbacks.append((rollback_matcher, new_result))
                             break
                         except RollbackException:
-                            print "+couldn't rollback {rollback_matcher!r}".format(**locals())
                             # couldn't rollback, so move the matcher pointer and
                             # try to rollback the next item.
                             matcher_i -= 1
 
                 if not rollbacks:
-                    print "Could not resolve ParseException."
                     raise error
             else:
                 matcher_i += 1
@@ -515,7 +507,6 @@ class NMatches(Matcher):
         min = 0 if self.min is None else self.min
         if len(result) > min:
             buffer.advance(-len(result[-1]))
-            print "+moved buffer: {buffer!r}".format(**locals())
             return result[:-1]
         raise RollbackException()
 
