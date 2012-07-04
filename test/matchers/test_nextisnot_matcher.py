@@ -12,8 +12,8 @@ def test_nextisnot_repr():
 
 
 def test_nextisnot_lengths():
-    assert nextisnot_matcher.minimum_length() == 1
-    assert nextisnot_matcher.maximum_length() == Infinity
+    assert NextIs(' ').minimum_length() == 0
+    assert NextIs(' ').maximum_length() == 0
 
 
 def test_nextisnot_1():
