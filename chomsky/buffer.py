@@ -52,9 +52,20 @@ class Buffer(object):
             return self.__buffer[self.position + key]
 
         if isinstance(key, slice):
-            start = 0 if key.start == None else key.start
-            stop = 0 if key.stop == None else key.stop
-            return self.__buffer[slice(self.position + start, self.position + stop, key.step)]
+            if key.start == None and key.stop == None:
+                start = 0
+                stop = len(self.__buffer)
+            else:
+                if key.start == None:
+                    start = 0
+                else:
+                    start = self.position + key.start
+
+                if key.stop == None:
+                    stop = self.position
+                else:
+                    stop = self.position + key.stop
+            return Buffer(self.__buffer[slice(start, stop, key.step)])
 
         raise TypeError('Unknown key {key!r}'.format(key=key))
 
