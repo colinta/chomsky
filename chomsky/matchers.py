@@ -746,33 +746,27 @@ class PrevIs(SuppressedMatcher):
         return 0
 
 
-class PrevIsNot(SuppressedMatcher):
-    def __init__(self, matcher, **kwargs):
-        self.matcher = to_matcher(matcher)
-        super(PrevIs, self).__init__(**kwargs)
-
-    def __repr__(self, args_only=False):
-        args = ['{self.matcher!r}'.format(self=self)]
-        args.extend(super(PrevIs, self).__repr__(args_only=True))
-        if args_only:
-            return args
-        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
-
+class PrevIsNot(PrevIs):
     def consume(self, buffer):
         buffer.mark()
+        length = 0
+        raise_me = None
         while buffer.position > 0:
             buffer.advance(-1)
+            length += 1
+            test_buffer = buffer[0:length]
             try:
-                self.matcher.consume(buffer)
+                self.matcher.consume(test_buffer)
+                # make sure we used the entire buffer
+                if not test_buffer.rest():
+                    # it worked!  dang
+                    buffer.restore_mark()
+                    raise_me = ParseException('Did not expect buffer to be {self.matcher!r}, at {buffer.position}'.format(self=self, buffer=buffer), buffer)
+                    break
             except ParseException:
                 pass
-            else:
-                raise ParseException('Expect buffer to be {self.matcher!r}, at {buffer.position}'.format(self=self, buffer=buffer), buffer)
+
+        if raise_me:
+            raise raise_me
         buffer.restore_mark()
         return None
-
-    def minimum_length(self):
-        return 0
-
-    def maximum_length(self):
-        return 0
