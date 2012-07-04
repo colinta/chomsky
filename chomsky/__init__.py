@@ -18,4 +18,5 @@ R = Regex
 
 # hide some Matchers
 del AutoSequence
+del AutoAny
 del to_matcher

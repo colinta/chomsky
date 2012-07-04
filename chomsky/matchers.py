@@ -54,14 +54,20 @@ class Matcher(object):
     def __add__(self, other):
         return AutoSequence(self, to_matcher(other))
 
+    def __radd__(self, other):
+        return to_matcher(other) + self
+
     def __mul__(self, other):
         if isinstance(other, int):
             return AutoSequence(*([self] * other))
         else:
             raise TypeError
 
-    def __radd__(self, other):
-        return to_matcher(other) + self
+    def __or__(self, other):
+        return AutoAny(self, to_matcher(other))
+
+    def __ror__(self, other):
+        return to_matcher(other) | self
 
     def parse_string(self, string):
         buffer = Buffer(string)
@@ -349,7 +355,7 @@ class AutoSequence(Matcher):
         An AutoSequence object is created anytime two Matchers are added, and
         adding subsequent Matchers to that sequence *appends* the matchers.
         """
-        self.matchers += (to_matcher(other),)
+        self.matchers.append(to_matcher(other))
         return self
 
     def consume(self, buffer):
@@ -530,24 +536,26 @@ class OneOrMore(NMatches):
         super(OneOrMore, self).__init__(matcher, **kwargs)
 
 
-class Any(Matcher):
+class AutoAny(Matcher):
     """
-    Accepts a list of Matcher objects and consumes the first that passes.
+    Created when the `|` operator is used to combine matchers (an implicit
+    `Any` matcher)
     """
     def __init__(self, *matchers, **kwargs):
         self.matchers = [to_matcher(m) for m in matchers]
-        super(Any, self).__init__(self, **kwargs)
+        super(AutoAny, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
-        return isinstance(other, Any) and self.matchers == other.matchers \
+        return isinstance(other, AutoAny) and self.matchers == other.matchers \
             and super(Any, self).__eq__(other)
 
-    def __repr__(self, args_only=False):
-        args = [repr(m) for m in self.matchers]
-        args.extend(super(Any, self).__repr__(args_only=True))
-        if args_only:
-            return args
-        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
+    def __or__(self, other):
+        """
+        An AutoAny object is created anytime two Matchers are added, and
+        adding subsequent Matchers to that sequence *appends* the matchers.
+        """
+        self.matchers.append(to_matcher(other))
+        return self
 
     def consume(self, buffer):
         buffer.mark()
@@ -570,11 +578,53 @@ class Any(Matcher):
                 buffer=buffer),
             buffer)
 
+    def __repr__(self, args_only=False):
+        type_name = type(self).__name__
+        if type_name == 'AutoAny':
+            type_name = 'Any'
+            joiner = ' | '
+        else:
+            joiner = ', '
+
+        matchers = joiner.join(repr(m) for m in self.matchers)
+        args = ['{matchers}'.format(matchers=matchers)]
+        # args = [repr(m) for m in self.matchers]
+        args.extend(super(AutoAny, self).__repr__(args_only=True))
+        if args_only:
+            return args
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
+
     def minimum_length(self):
         return min(m.minimum_length() for m in self.matchers)
 
     def maximum_length(self):
         return max(m.maximum_length() for m in self.matchers)
+
+
+class Any(AutoAny):
+    """
+    Accepts a list of Matcher objects and consumes the first that passes.
+    """
+    def __init__(self, *matchers, **kwargs):
+        """
+        You can group Any operations::
+            Word('a') + Any(L('b') | 'c')
+
+        But if you do, you will get a single AutoAny object passed to the Any
+        constructor.  The Any constructor will assign the AutoAny object's
+        .matchers property to itself, and throw away the AutoAny object.
+        """
+        if len(matchers) == 1 and isinstance(matchers[0], AutoAny):
+            matchers = matchers[0].matchers
+        super(Any, self).__init__(*matchers, **kwargs)
+
+    def __or__(self, other):
+        """
+        Objects OR'd to an Any create a new AutoAny::
+
+            Any('a', 'b') | 'c' => 'a' | 'b' | 'c'
+        """
+        return AutoAny(*self.matchers) | other
 
 
 class StringStart(SuppressedMatcher):
