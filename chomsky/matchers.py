@@ -26,8 +26,10 @@ class Matcher(object):
     """
     Base class for Matcher objects, mostly to distinguish them from `Grammar` classes.
     """
+    default_suppressed = False
+
     def __init__(self, *args, **kwargs):
-        self.suppress = kwargs.pop('suppress', False)
+        self.suppress = kwargs.pop('suppress', self.default_suppressed)
         if kwargs:
             raise TypeError('Unknown options: {type.__name__}({keys!r})'.format(
                 type=type(self),
@@ -41,11 +43,13 @@ class Matcher(object):
         return not self.__eq__(other)
 
     def __repr__(self, args_only=False):
+        if self.suppress != self.default_suppressed:
+            args = ('suppress={self.suppress!r}'.format(self=self),)
+        else:
+            args = ()
         if args_only:
-            if self.suppress:
-                return ', suppress=True'
-            return ''
-        raise TypeError()
+            return args
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def __add__(self, other):
         return AutoSequence(self, to_matcher(other))
@@ -80,17 +84,7 @@ class Matcher(object):
 
 
 class SuppressedMatcher(Matcher):
-    def __init__(self, **kwargs):
-        kwargs.setdefault('suppress', True)
-        super(SuppressedMatcher, self).__init__(**kwargs)
-
-    def __repr__(self, args_only=False):
-        args = ''
-        if not self.suppress:
-            args = 'suppress=False'
-        if args_only:
-            return args
-        return '{type.__name__}({args})'.format(args=args, type=type(self))
+    default_suppressed = True
 
 
 class Letter(Matcher):
@@ -106,10 +100,10 @@ class Letter(Matcher):
             and super(Letter, self).__eq__(other)
 
     def __repr__(self, args_only=False):
-        args = '{self.consumable!r}'.format(self=self) + super(Letter, self).__repr__(args_only=True)
+        args = ('{self.consumable!r}'.format(self=self), ) + super(Letter, self).__repr__(args_only=True)
         if args_only:
             return args
-        return '{type.__name__}({args})'.format(type=type(self), args=args)
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def consume(self, buffer):
         if buffer[0] in self.consumable:
@@ -142,10 +136,10 @@ class Literal(Matcher):
             and super(Literal, self).__eq__(other)
 
     def __repr__(self, args_only=False):
-        args = '{self.literal!r}'.format(self=self) + super(Literal, self).__repr__(args_only=True)
+        args = ('{self.literal!r}'.format(self=self),) + super(Literal, self).__repr__(args_only=True)
         if args_only:
             return args
-        return '{type.__name__}({args})'.format(args=args, type=type(self))
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def consume(self, buffer):
         buffer.mark()
@@ -176,6 +170,7 @@ class Word(Matcher):
     min and max, if there is a desired length.  If the length of the consumed
     word is less than min, or greater than max, a ParseException is raised.
     """
+    default_word = None
     default_min = 1
     default_max = None
 
@@ -199,15 +194,18 @@ class Word(Matcher):
             and super(Word, self).__eq__(other)
 
     def __repr__(self, args_only=False):
-        args = '{self.consumable!r}'
+        args = []
+        if self.consumable != self.default_word:
+            args.append('{self.consumable!r}'.format(self=self))
         if self.min != self.default_min:
-            args += ', min={self.min!r}'
+            args.append('min={self.min!r}'.format(self=self))
         if self.max != self.default_max:
-            args += ', max={self.max!r}'
-        args = args.format(self=self) + super(Word, self).__repr__(args_only=True)
+            args.append('max={self.max!r}'.format(self=self))
+
+        args.extend(super(Word, self).__repr__(args_only=True))
         if args_only:
             return args
-        return '{type.__name__}({args})'.format(args=args, type=type(self))
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def consume(self, buffer):
         buffer.mark()
@@ -246,34 +244,15 @@ class Whitespace(Word):
     """
     Matches whitespace.  Defaults to string.whitespace
     """
-    default_whitespace = string.whitespace
+    default_suppressed = True
+    default_word = string.whitespace
     default_min = 0
 
     def __init__(self, consumable=None, **kwargs):
         if consumable is None:
-            consumable = self.default_whitespace
+            consumable = self.default_word
         kwargs.setdefault('suppress', True)
         super(Whitespace, self).__init__(consumable, **kwargs)
-
-    def __repr__(self, args_only=False):
-        if self.consumable != self.default_whitespace:
-            args = '{self.consumable!r}'
-            comma = ', '
-        else:
-            args = ''
-            comma = ''
-        if self.min != self.default_min:
-            args += comma + 'min={self.min!r}'
-            comma = ', '
-        if self.max != self.default_max:
-            args += comma + 'max={self.max!r}'
-            comma = ', '
-        if not self.suppress:
-            args += comma + 'suppress=False'
-        args = args.format(self=self)
-        if args_only:
-            return args
-        return '{type.__name__}({args})'.format(args=args, type=type(self))
 
 
 class Regex(Matcher):
@@ -300,15 +279,16 @@ class Regex(Matcher):
             and super(Regex, self).__eq__(other)
 
     def __repr__(self, args_only=False):
-        args = '{self.regex.pattern!r}'
+        args = ['{self.regex.pattern!r}'.format(self=self)]
+
         if self.group != self.default_group:
-            args += ', group={self.group!r}'
+            args.append('group={self.group!r}'.format(self=self))
         if self.advance != self.default_advance:
-            args += ', advance={self.advance!r}'
-        args = args.format(self=self) + super(Regex, self).__repr__(args_only=True)
+            args.append('advance={self.advance!r}'.format(self=self))
+        args.extend(super(Regex, self).__repr__(args_only=True))
         if args_only:
             return args
-        return '{type.__name__}({args})'.format(args=args, type=type(self))
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def consume(self, buffer):
         buffer.mark()
@@ -356,14 +336,13 @@ class AutoSequence(Matcher):
             joiner = ', '
 
         matchers = joiner.join(repr(m) for m in self.matchers)
-        args = '{matchers}'
+        args = ['{matchers}'.format(matchers=matchers)]
         if self.separated_by is not None:
-            args += ', sep={self.separated_by!r}'
-        args = args.format(self=self, matchers=matchers) + super(AutoSequence, self).__repr__(args_only=True)
+            args.append('sep={self.separated_by!r}'.format(self=self))
+        args.extend(super(AutoSequence, self).__repr__(args_only=True))
         if args_only:
             return args
-
-        return '{type_name}({args})'.format(args=args, type_name=type_name)
+        return '{type_name}({args})'.format(args=', '.join(args), type_name=type_name)
 
     def __add__(self, other):
         """
@@ -468,16 +447,16 @@ class NMatches(Matcher):
             and super(NMatches, self).__eq__(other)
 
     def __repr__(self, args_only=False):
-        args = '{self.matcher!r}'
+        args = ['{self.matcher!r}'.format(self=self)]
         if self.min != self.default_min:
-            args += ', min={self.min!r}'
+            args.append('min={self.min!r}'.format(self=self))
         if self.max != self.default_max:
-            args += ', max={self.max!r}'
+            args.append('max={self.max!r}'.format(self=self))
 
-        args = args.format(self=self) + super(NMatches, self).__repr__(args_only=True)
+        args.extend(super(NMatches, self).__repr__(args_only=True))
         if args_only:
             return args
-        return '{type.__name__}({args})'.format(args=args, type=type(self))
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def consume(self, buffer):
         buffer.mark()
@@ -564,10 +543,11 @@ class Any(Matcher):
             and super(Any, self).__eq__(other)
 
     def __repr__(self, args_only=False):
-        args = ', '.join(repr(m) for m in self.matchers) + super(Any, self).__repr__(args_only=True)
+        args = [repr(m) for m in self.matchers]
+        args.extend(super(Any, self).__repr__(args_only=True))
         if args_only:
             return args
-        return '{type.__name__}({args})'.format(args=args, type=type(self))
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def consume(self, buffer):
         buffer.mark()
@@ -697,13 +677,11 @@ class NextIs(SuppressedMatcher):
         super(NextIs, self).__init__(**kwargs)
 
     def __repr__(self, args_only=False):
-        super_args = super(NextIs, self).__repr__(args_only=True)
-        if super_args:
-            super_args = ', ' + super_args
-        args = '{self.matcher!r}'.format(self=self) + super_args
+        args = ['{self.matcher!r}'.format(self=self)]
+        args.extend(super(NextIs, self).__repr__(args_only=True))
         if args_only:
             return args
-        return '{type.__name__}({args})'.format(args=args, type=type(self))
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def consume(self, buffer):
         buffer.mark()
