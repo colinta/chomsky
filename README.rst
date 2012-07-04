@@ -24,6 +24,7 @@ INSTALLATION
 USAGE
 -----
 
+~~~~~~~~
 Matchers
 ~~~~~~~~
 
@@ -237,10 +238,12 @@ classes all implement (the base class returns ``0`` and ``float('inf')``).  A
 and no less characters.  The other classes also provide this min/max length
 calculation. But this provides only a modest performance increase.
 
-The ``Prev`` matcher does not require that the previous token be an instance of
+The ``PrevIs`` matcher does not require that the previous token be an instance of
 the specified matcher, only that the buffer previous to the current location
 match.  The buffer is rolled back until a match is found, or until the beginning
-of the buffer is reached.
+of the buffer is reached.  Sound resource intensive?  Consider ``PrevIsNot``!
+It looks backwards, hoping that the buffer *never* matches, no matter how far
+back it goes.
 
 ``NextIs``::
 
@@ -260,16 +263,48 @@ of the buffer is reached.
     matcher('-123') => [['-'], '123']
     matcher('-0') => ParseException
 
-**language building blocks**::
+``PrevIs``::
+
+    test/matcher/test_nextis_matcher.py
+    matcher = Word('-.') + PrevIs('-') + Word('1234567890')
+    matcher('-1') => [['-'], '1']
+    matcher('.123') => ParseException
+
+``PrevIsNot``::
+
+    test/matcher/test_nextis_matcher.py
+    matcher = Word('abc') + PrevIsNot('c') + Word('abc')
+    matcher('ab') => ['a', 'b']
+    matcher('abc') => ['ab', 'c']
+    matcher('abcabc') => ['abcab', 'c']
+    matcher('cc') => ParseException
+
+~~~~~~~~
+Grammars
+~~~~~~~~
+
+``Grammar`` objects are what you will want to work with if you are building a
+language grammar.  They are composed of ``Mathcer`` classes (and other
+``Grammar`` classes), but the objects they return are instances of the
+``Grammar``, not simple strings and lists.
+
+The built-in ``Grammar``s are meant to help you understand how they work, and to
+use in your own language.
+
+Numbers
+~~~~~~~
+
+``Integer``::
+
+    test/matcher/test_nextis_matcher.py
+    matcher = '-' + NextIsNot('0') + Word('1234567890')
+    matcher('1') => [[], '1']
+    matcher('-1') => [['-'], '1']
+    matcher('-123') => [['-'], '123']
+    matcher('-0') => ParseException
 
     QuotedString, Number, Integer, Float, Hexadecimal, Octal, Binary
     LineComment, BlockComment, Block, IndentedBlock
-
-**location*::*
-
-    NextIs, PreviousWas, NextIsNot, PreviousWasNot
-    WordStart, WordEnd, LineStart, LineEnd,
-    StringStart, StringEnd
 
 ----
 TEST

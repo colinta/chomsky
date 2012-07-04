@@ -24,7 +24,7 @@ def to_matcher(obj):
 
 class Matcher(object):
     """
-    Base class for Matcher objects, mostly to distinguish them from `Grammar` classes.
+    Provides functionality shared with all Matcher objects.
     """
     default_suppressed = False
 
@@ -709,6 +709,10 @@ class NextIsNot(NextIs):
 
 
 class PrevIs(SuppressedMatcher):
+    """
+    This matcher is very resource intensive, because it needs to reverse check
+    that any previous text would match self.matcher.
+    """
     def __init__(self, matcher, **kwargs):
         self.matcher = to_matcher(matcher)
         super(PrevIs, self).__init__(**kwargs)
@@ -747,6 +751,10 @@ class PrevIs(SuppressedMatcher):
 
 
 class PrevIsNot(PrevIs):
+    """
+    This matcher is very resource intensive, because it needs to reverse check
+    that no previous text would match self.matcher.
+    """
     def consume(self, buffer):
         buffer.mark()
         length = 0
