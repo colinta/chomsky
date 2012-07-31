@@ -166,3 +166,7 @@ class PhpVariable(Variable):
 
 class RubyVariable(Variable):
     bad_grammar = RubyReservedWord
+
+
+class EscapeSequence(Grammar):
+    grammar = Group('\\' + Any(('\\u' + HexadecimalInteger * 4), *list("nrtabfv\n\'\"\\")))
