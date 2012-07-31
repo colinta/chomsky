@@ -35,4 +35,4 @@ def test_three_sequence_products():
     matcher = (Word(string.letters) + Literal(' ')) * 3
     assert matcher('why hello there ') == [['why', ' '], ['hello', ' '], ['there', ' ']]
     with raises(ParseException):
-        matcher('not enough spaces')
+        print matcher('not enough spaces')

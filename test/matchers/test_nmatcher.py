@@ -51,4 +51,4 @@ def test_one2_nmatcher_with_words():
 
 def test_two_nmatcher_with_words():
     with raises(ParseException):
-        n_with_words_matcher('pre-unounounouno-post')
+        print n_with_words_matcher('pre-unounounouno-post')

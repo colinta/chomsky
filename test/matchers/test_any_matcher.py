@@ -3,12 +3,21 @@ from chomsky import *
 
 
 any_matcher = Any(Literal('Joey'), Literal('Bob'), Literal('Billy'))
+autoany_matcher = Literal('Joey') | Literal('Bob') | Literal('Billy')
 
 
 def test_any_repr():
     assert repr(Any(Literal('Joey'), Literal('Bob'), Literal('Billy'))) == "Any(Literal('Joey'), Literal('Bob'), Literal('Billy'))"
     assert repr(Any(Literal('Joey'), Literal('Bob'), Literal('Billy'), suppress=False)) == "Any(Literal('Joey'), Literal('Bob'), Literal('Billy'))"
     assert repr(Any(Literal('Joey'), Literal('Bob'), Literal('Billy'), suppress=True)) == "Any(Literal('Joey'), Literal('Bob'), Literal('Billy'), suppress=True)"
+
+
+def test_autoany_repr():
+    assert repr(Literal('Joey') | Literal('Bob') | Literal('Billy')) == "Any(Literal('Joey') | Literal('Bob') | Literal('Billy'))"
+    assert repr('Joey' | Literal('Bob') | Literal('Billy')) == "Any(Literal('Joey') | Literal('Bob') | Literal('Billy'))"
+    assert repr(Literal('Joey') | Literal('Bob') | 'Billy') == "Any(Literal('Joey') | Literal('Bob') | Literal('Billy'))"
+    assert repr(Literal('Joey') | 'Bob' | Literal('Billy')) == "Any(Literal('Joey') | Literal('Bob') | Literal('Billy'))"
+    assert repr('Joey' | Literal('Bob') | 'Billy') == "Any(Literal('Joey') | Literal('Bob') | Literal('Billy'))"
 
 
 def test_any_lengths():
@@ -22,6 +31,12 @@ def test_any():
         assert parsed == name
 
 
+def test_autoany():
+    for name in ['Joey', 'Bob', 'Billy']:
+        parsed = autoany_matcher(name)
+        assert parsed == name
+
+
 def test_any_fail():
     with raises(ParseException):
-        any_matcher('bahhumbug')
+        print any_matcher('bahhumbug')

@@ -32,7 +32,7 @@ def test_complicated_line_stuff_matcher():
 def test_start_of_line_matcher_fail():
     matcher = L('\ntest') + LineStart()
     with raises(ParseException):
-        matcher('test')
+        print matcher('test')
 
 
 def test_end_of_line_matcher():
@@ -58,4 +58,4 @@ def test_end_of_line_and_literal_matcher():
 def test_end_of_line_matcher_fail():
     matcher = L('test') + LineEnd()
     with raises(ParseException):
-        matcher('testtest')
+        print matcher('testtest')

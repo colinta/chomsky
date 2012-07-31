@@ -7,9 +7,19 @@ def test_two_sequences_repr():
     assert repr(matcher) == "Sequence(Word('aeiou'), Word('abcde'))"
 
 
+def test_two_autosequences_repr():
+    matcher = Word('aeiou') + Word('abcde')
+    assert repr(matcher) == "Sequence(Word('aeiou') + Word('abcde'))"
+
+
 def test_three_sequences_repr():
     matcher = Sequence(Word('aeiou'), Word('abcde'), Word('12345'))
     assert repr(matcher) == "Sequence(Word('aeiou'), Word('abcde'), Word('12345'))"
+
+
+def test_three_autosequences_repr():
+    matcher = Word('aeiou') + Word('abcde') + Word('12345')
+    assert repr(matcher) == "Sequence(Word('aeiou') + Word('abcde') + Word('12345'))"
 
 
 def test_two_sequences():
@@ -31,18 +41,21 @@ def test_sequence_addition():
 
 
 def test_three_sequences():
-    matcher = Word('aeiou') + Word('abcde') + Word('12345')
-    test_matcher = AutoSequence(Word('aeiou'), Word('abcde'), Word('12345'))
+    matcher = Word('aeiou') + Word('pqrst') + Word('12345')
+    test_matcher = AutoSequence(Word('aeiou'), Word('pqrst'), Word('12345'))
     assert matcher == test_matcher
+    assert matcher('aeioupqrst12345') == ['aeiou', 'pqrst', '12345']
 
 
 def test_sequence_addition_left():
-    matcher = Word('aeiou') + Sequence(Word('abcde'), Word('12345'))
-    test_matcher = AutoSequence(Word('aeiou'), Sequence(Word('abcde'), Word('12345')))
+    matcher = Word('aeiou') + Sequence(Word('pqrst'), Word('12345'))
+    test_matcher = AutoSequence(Word('aeiou'), Sequence(Word('pqrst'), Word('12345')))
     assert matcher == test_matcher
+    assert matcher('aeioupqrst12345') == ['aeiou', ['pqrst', '12345']]
 
 
 def test_sequence_addition_right():
-    matcher = Sequence(Word('aeiou'), Word('abcde')) + Word('12345')
-    test_matcher = AutoSequence(Sequence(Word('aeiou'), Word('abcde')), Word('12345'))
+    matcher = Sequence(Word('aeiou'), Word('pqrst')) + Word('12345')
+    test_matcher = AutoSequence(Sequence(Word('aeiou'), Word('pqrst')), Word('12345'))
     assert matcher == test_matcher
+    assert matcher('aeioupqrst12345') == [['aeiou', 'pqrst'], '12345']

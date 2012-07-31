@@ -33,10 +33,10 @@ def test_whitespace_nl_matcher():
 def test_whitespace_matcher_fail():
     matcher = Whitespace(min=1)
     with raises(ParseException):
-        matcher('abc')
+        print matcher('abc')
 
 
 def test_whitespace_nl_matcher_fail():
     matcher = Whitespace(min=1)
     with raises(ParseException):
-        matcher('abc')
+        print matcher('abc')

@@ -2,7 +2,7 @@ from pytest import raises
 from chomsky import *
 
 
-previs_matcher = Word('123456789.') + PrevIs(Word('.')) + Word('1234567890')
+previs_matcher = Word('123456789.') + PrevIs('.') + Word('1234567890')
 
 
 def test_previs_repr():
@@ -39,4 +39,4 @@ def test_previs_11_22():
 
 def test_previs_fail():
     with raises(ParseException):
-        previs_matcher('1122')
+        print previs_matcher('1122')

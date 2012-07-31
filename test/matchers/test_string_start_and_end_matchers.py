@@ -24,7 +24,7 @@ def test_start_of_string_and_literal_matcher():
 def test_start_of_string_matcher_fail():
     matcher = L('test') + StringStart()
     with raises(ParseException):
-        matcher('test')
+        print matcher('test')
 
 
 def test_end_of_string_matcher():
@@ -42,4 +42,4 @@ def test_end_of_string_and_literal_matcher():
 def test_end_of_string_matcher_fail():
     matcher = StringEnd()
     with raises(ParseException):
-        matcher('test')
+        print matcher('test')
