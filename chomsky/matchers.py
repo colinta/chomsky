@@ -592,7 +592,7 @@ class AutoAny(Matcher):
         args.extend(super(AutoAny, self).__repr__(args_only=True))
         if args_only:
             return args
-        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
+        return '{type_name}({args})'.format(type_name=type_name, args=', '.join(args))
 
     def minimum_length(self):
         return min(m.minimum_length() for m in self.matchers)
