@@ -10,6 +10,9 @@ Infinity = float('inf')
 
 
 def to_matcher(obj):
+    if isinstance(obj, type):
+        return obj
+
     if isinstance(obj, Matcher):
         return obj
 

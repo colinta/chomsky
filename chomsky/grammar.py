@@ -1,9 +1,10 @@
+import string
 from .buffer import Buffer
 from .exceptions import ParseException
-from .matchers import Matcher, AutoSequence, to_matcher
+from .matchers import *
 
 
-class GrammarMeta(type):
+class GrammarType(type):
     """
     Ensures that Grammar classes are well-formed:
 
@@ -16,25 +17,22 @@ class GrammarMeta(type):
             if 'grammar' not in cls_dict:
                 raise TypeError('grammar is required in {classname}'.format(**locals()))
 
-            grammar = cls_dict['grammar']
-            if not isinstance(grammar, Matcher):
-                grammar = to_matcher(grammar)
-            if not isinstance(grammar, AutoSequence):
-                grammar = AutoSequence(grammar)
-            cls_dict['grammar'] = grammar
-        return super(GrammarMeta, meta).__new__(meta, classname, bases, cls_dict)
+            cls_dict['grammar'] = to_matcher(cls_dict['grammar'])
+        return super(GrammarType, meta).__new__(meta, classname, bases, cls_dict)
+
+    def __repr__(cls):
+        return cls.__name__
+
+    def consume(cls, buffer):
+        raise NotImplementedError('GrammarType.consume()')
 
 
 class Grammar(object):
-    __metaclass__ = GrammarMeta
+    __metaclass__ = GrammarType
 
-    def __init__(self, parseme):
+    def __init__(self, parseme=None):
         self.buffer = Buffer(parseme)
         self.parsed = self.grammar.consume(self.buffer)
-
-    @classmethod
-    def consume(cls, buffer):
-        raise NotImplementedError('Grammar.consume()')
 
     def __getitem__(self, key):
         if isinstance(key, int):
@@ -45,4 +43,11 @@ class Grammar(object):
             return self.parsed[key]
 
     def __repr__(self):
-        return '{type.__name__}({self.parsed!r})'.format(self=self, type=type(self))
+        return '{type.__name__}({buffer!r})'.format(self=self, buffer=str(self.buffer), type=type(self))
+
+    def __str__(self):
+        return str(self.parsed)
+
+
+class Integer(Grammar):
+    grammar = ('0' | (Optional('-') + NextIsNot('0') + Word(string.digits)))
