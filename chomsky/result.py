@@ -5,4 +5,5 @@ class Result(str):
 
 
 class ResultList(list):
-    pass
+    def __str__(self):
+        return ''.join(str(result) for result in self)
