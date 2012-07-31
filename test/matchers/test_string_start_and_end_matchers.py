@@ -21,6 +21,18 @@ def test_start_of_string_and_literal_matcher():
     assert parsed == ['hi!']
 
 
+def test_start_and_end_of_string_matcher():
+    matcher = StringStart() + L('hi!') + StringEnd()
+    parsed = matcher('hi!')
+    assert parsed == ['hi!']
+
+
+def test_multiple_start_and_end_of_string_matcher():
+    matcher = StringStart() + StringStart() + L('hi!') + StringEnd() + StringEnd()
+    parsed = matcher('hi!')
+    assert parsed == ['hi!']
+
+
 def test_start_of_string_matcher_fail():
     matcher = L('test') + StringStart()
     with raises(ParseException):

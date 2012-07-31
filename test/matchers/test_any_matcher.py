@@ -31,6 +31,12 @@ def test_any():
         assert parsed == name
 
 
+def test_any_same_char():
+    for char in ['***', '**', '*']:
+        parsed = Any(Literal('***'), Literal('**'), Literal('*'))(char)
+        assert parsed == char
+
+
 def test_autoany():
     for name in ['Joey', 'Bob', 'Billy']:
         parsed = autoany_matcher(name)

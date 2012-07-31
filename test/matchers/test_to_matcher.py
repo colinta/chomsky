@@ -1,4 +1,3 @@
-from pytest import raises
 from chomsky import *
 from chomsky.matchers import to_matcher
 

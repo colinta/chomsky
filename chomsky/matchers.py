@@ -153,7 +153,12 @@ class Literal(Matcher):
     def consume(self, buffer):
         buffer.mark()
         for c in self.literal:
-            if buffer[0] == c:
+            try:
+                b = buffer[0]
+            except ParseException:
+                buffer.restore_mark()
+                raise
+            if b == c:
                 buffer.advance(1)
             else:
                 buffer.restore_mark()
@@ -811,15 +816,16 @@ class PrevIs(SuppressedMatcher):
 class PrevIsNot(PrevIs):
     """
     This matcher is very resource intensive, because it needs to reverse check
-    that no previous text would match self.matcher.
+    that no previous text would match self.matcher.  It is helped (but not by
+    much) by using the "minimum_length" and "maximum_length" methods.
     """
     def consume(self, buffer):
         buffer.mark()
-        length = 0
+        length = self.matcher.minimum_length()
+        max_length = self.matcher.maximum_length()
         raise_me = None
         while buffer.position > 0:
             buffer.advance(-1)
-            length += 1
             test_buffer = buffer[0:length]
             try:
                 self.matcher.consume(test_buffer)
@@ -831,8 +837,43 @@ class PrevIsNot(PrevIs):
                     break
             except ParseException:
                 pass
+            length += 1
+            if length > max_length:
+                break
 
         if raise_me:
             raise raise_me
         buffer.restore_mark()
         return None
+
+
+class Group(Matcher):
+    """
+    Flattens a Sequence into one string.
+    """
+    def __init__(self, matcher, *args, **kwargs):
+        if args:
+            self.matcher = Sequence(matcher, *args)
+        else:
+            self.matcher = to_matcher(matcher)
+        super(Group, self).__init__(self, **kwargs)
+
+    def __eq__(self, other):
+        return isinstance(other, Group) and self.matcher == other.matcher \
+            and super(Group, self).__eq__(other)
+
+    def __repr__(self, args_only=False):
+        args = ['{self.matcher!r}'.format(self=self)]
+        args.extend(super(Group, self).__repr__(args_only=True))
+        if args_only:
+            return args
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
+
+    def consume(self, buffer):
+        return ''.join(str(s) for s in self.matcher.consume(buffer))
+
+    def minimum_length(self):
+        return self.matcher.minimum_length()
+
+    def maximum_length(self):
+        return self.matcher.maximum_length()
