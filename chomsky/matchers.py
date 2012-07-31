@@ -776,10 +776,11 @@ class PrevIs(SuppressedMatcher):
 
     def consume(self, buffer):
         buffer.mark()
-        length = 0
+        length = self.matcher.minimum_length()
+        max_length = self.matcher.maximum_length()
+        # assert False
         while buffer.position > 0:
             buffer.advance(-1)
-            length += 1
             test_buffer = buffer[0:length]
             try:
                 self.matcher.consume(test_buffer)
@@ -790,6 +791,10 @@ class PrevIs(SuppressedMatcher):
                     return None
             except ParseException:
                 pass
+            length += 1
+            if length > max_length:
+                break
+
         buffer.restore_mark()
         raise ParseException('Expect buffer to be {self.matcher!r}, at {buffer.position}'.format(self=self, buffer=buffer), buffer)
 
