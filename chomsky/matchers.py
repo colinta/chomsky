@@ -65,7 +65,7 @@ class Matcher(object):
 
     def __mul__(self, other):
         if isinstance(other, int):
-            return AutoSequence(*([self] * other))
+            return Exactly(self, other)
         else:
             raise TypeError
 
@@ -618,6 +618,25 @@ class OneOrMore(NMatches):
         kwargs['min'] = 1
         kwargs['max'] = None
         super(OneOrMore, self).__init__(matcher, **kwargs)
+
+
+class Exactly(NMatches):
+    default_min = None
+    default_max = None
+
+    def __init__(self, matcher, times, **kwargs):
+        kwargs['min'] = times
+        kwargs['max'] = times
+        super(Exactly, self).__init__(matcher, **kwargs)
+
+    def __repr__(self, args_only=False):
+        args = ['{self.matcher!r}, {self.min!r}'.format(self=self)]
+
+        # skip NMatches!
+        args.extend(Matcher.__repr__(self, args_only=True))
+        if args_only:
+            return args
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
 
 class AutoAny(Matcher):

@@ -33,13 +33,13 @@ def test_regex_matcher_options():
 
 
 def test_regex_matcher_more_options():
-    matcher = Sequence(Regex(r'([0-9])([0-9]+)', group=2, advance=1) * 3)
+    matcher = Regex(r'([0-9])([0-9]+)', group=2, advance=1) * 3
     parsed = matcher('1234')
     assert parsed == ['234', '34', '4']
 
 
 def test_regex_matcher_even_more_options():
-    matcher = Sequence(Regex(r'([0-9])([0-9])([0-9])', group=(1, 3)) * 3, sep=Whitespace)
+    matcher = Sequence(Regex(r'([0-9])([0-9])([0-9])', group=(1, 3)), Regex(r'([0-9])([0-9])([0-9])', group=(1, 3)), Regex(r'([0-9])([0-9])([0-9])', group=(1, 3)), sep=Whitespace)
     parsed = matcher('123 456 789')
     assert parsed == [['1', '3'], ['4', '6'], ['7', '9']]
 
