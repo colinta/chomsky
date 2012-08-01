@@ -2,13 +2,13 @@ from pytest import raises
 from chomsky import *
 
 
-nextis_matcher = NextIs(Word('123456789')) + Word('1234567890')
+nextis_matcher = NextIs(Chars('123456789')) + Chars('1234567890')
 
 
 def test_nextis_repr():
-    assert repr(NextIs(Word('123456789'))) == "NextIs(Word('123456789'))"
-    assert repr(NextIs(Word('123456789'), suppress=False)) == "NextIs(Word('123456789'), suppress=False)"
-    assert repr(NextIs(Word('123456789'), suppress=True)) == "NextIs(Word('123456789'))"
+    assert repr(NextIs(Chars('123456789'))) == "NextIs(Chars('123456789'))"
+    assert repr(NextIs(Chars('123456789'), suppress=False)) == "NextIs(Chars('123456789'), suppress=False)"
+    assert repr(NextIs(Chars('123456789'), suppress=True)) == "NextIs(Chars('123456789'))"
 
 
 def test_nextis_lengths():

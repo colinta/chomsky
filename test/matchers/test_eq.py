@@ -18,14 +18,14 @@ def test_literal_eq():
 
 
 def test_word_eq():
-    assert Word('word') == Word('word')
-    assert Word('word', min=2) == Word('word', min=2)
-    assert Word('word', min=2) != Word('word', min=3)
-    assert Word('word', max=2) == Word('word', max=2)
-    assert Word('word', max=2) != Word('word', max=3)
-    assert Word('word') != Word('blah')
-    assert Word('word', suppress=True) != Word('word', suppress=False)
-    assert Word('word', suppress=True) == Word('word', suppress=True)
+    assert Chars('word') == Chars('word')
+    assert Chars('word', min=2) == Chars('word', min=2)
+    assert Chars('word', min=2) != Chars('word', min=3)
+    assert Chars('word', max=2) == Chars('word', max=2)
+    assert Chars('word', max=2) != Chars('word', max=3)
+    assert Chars('word') != Chars('blah')
+    assert Chars('word', suppress=True) != Chars('word', suppress=False)
+    assert Chars('word', suppress=True) == Chars('word', suppress=True)
 
 
 def test_whitespace_eq():

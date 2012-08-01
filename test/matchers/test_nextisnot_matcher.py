@@ -2,13 +2,13 @@ from pytest import raises
 from chomsky import *
 
 
-nextisnot_matcher = Optional('-') + NextIsNot('0') + Word('0123546789')
+nextisnot_matcher = Optional('-') + NextIsNot('0') + Chars('0123546789')
 
 
 def test_nextisnot_repr():
-    assert repr(NextIsNot(Word('123456789'))) == "NextIsNot(Word('123456789'))"
-    assert repr(NextIsNot(Word('123456789'), suppress=False)) == "NextIsNot(Word('123456789'), suppress=False)"
-    assert repr(NextIsNot(Word('123456789'), suppress=True)) == "NextIsNot(Word('123456789'))"
+    assert repr(NextIsNot(Chars('123456789'))) == "NextIsNot(Chars('123456789'))"
+    assert repr(NextIsNot(Chars('123456789'), suppress=False)) == "NextIsNot(Chars('123456789'), suppress=False)"
+    assert repr(NextIsNot(Chars('123456789'), suppress=True)) == "NextIsNot(Chars('123456789'))"
 
 
 def test_nextisnot_lengths():

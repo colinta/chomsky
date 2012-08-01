@@ -2,13 +2,13 @@ from pytest import raises
 from chomsky import *
 
 
-previsnot_matcher = Word('0123546789.') + PrevIsNot('.') + Word('0123546789')
+previsnot_matcher = Chars('0123546789.') + PrevIsNot('.') + Chars('0123546789')
 
 
 def test_previsnot_repr():
-    assert repr(PrevIsNot(Word('123456789'))) == "PrevIsNot(Word('123456789'))"
-    assert repr(PrevIsNot(Word('123456789'), suppress=False)) == "PrevIsNot(Word('123456789'), suppress=False)"
-    assert repr(PrevIsNot(Word('123456789'), suppress=True)) == "PrevIsNot(Word('123456789'))"
+    assert repr(PrevIsNot(Chars('123456789'))) == "PrevIsNot(Chars('123456789'))"
+    assert repr(PrevIsNot(Chars('123456789'), suppress=False)) == "PrevIsNot(Chars('123456789'), suppress=False)"
+    assert repr(PrevIsNot(Chars('123456789'), suppress=True)) == "PrevIsNot(Chars('123456789'))"
 
 
 def test_previsnot_lengths():

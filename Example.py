@@ -3,11 +3,11 @@ from chomsky import *
 
 
 class Variable(Grammar):
-    grammar = Letter(string.letters + '_') + Word(string.letters + string.digits + '_')
+    grammar = Letter(string.letters + '_') + Chars(string.letters + string.digits + '_')
 
 
 class Expression(Grammar):
-    grammar = String | Integer | Variable
+    grammar = Chars | Integer | Variable
     suppress = True
 
 
@@ -24,4 +24,4 @@ class Function(Grammar):
 
 
 Function('foo("bar", 1, bar, pip=pop)')
-    # => [Variable('foo'), [String("bar", quote='"'), Integer(1), Variable("baz"), KeywordArgument(Variable('pip'), Variable('pop')))]]
+    # => [Variable('foo'), [Chars("bar", quote='"'), Integer(1), Variable("baz"), KeywordArgument(Variable('pip'), Variable('pop')))]]

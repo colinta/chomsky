@@ -2,17 +2,17 @@ from chomsky import *
 
 
 def test_two_group_repr():
-    matcher = Group(Word('aeiou') + Word('abcde'))
-    assert repr(matcher) == "Group(Sequence(Word('aeiou') + Word('abcde')))"
+    matcher = Group(Chars('aeiou') + Chars('abcde'))
+    assert repr(matcher) == "Group(Sequence(Chars('aeiou') + Chars('abcde')))"
 
 
 def test_three_group_repr():
-    matcher = Group(Sequence(Word('aeiou'), Word('abcde'), Word('12345')))
-    assert repr(matcher) == "Group(Sequence(Word('aeiou'), Word('abcde'), Word('12345')))"
+    matcher = Group(Sequence(Chars('aeiou'), Chars('abcde'), Chars('12345')))
+    assert repr(matcher) == "Group(Sequence(Chars('aeiou'), Chars('abcde'), Chars('12345')))"
 
 
 def test_two_group():
-    matcher = Group(Word('aeiou'), Word('bcdfg'))
+    matcher = Group(Chars('aeiou'), Chars('bcdfg'))
     parsed = matcher('aeioufgbcd')
     assert parsed == 'aeioufgbcd'
 
@@ -24,26 +24,26 @@ def test_two_sequence_shorthand():
 
 
 def test_sequence_addition():
-    matcher = Sequence(Word('abcde')) + Sequence(Word('aeiou'))
-    test_matcher = Sequence(Word('abcde')) + Sequence(Word('aeiou'))
+    matcher = Sequence(Chars('abcde')) + Sequence(Chars('aeiou'))
+    test_matcher = Sequence(Chars('abcde')) + Sequence(Chars('aeiou'))
     assert matcher == test_matcher
 
 
 def test_three_group():
-    matcher = Group(Word('aeiou') + Word('pqrst') + Word('12345'))
+    matcher = Group(Chars('aeiou') + Chars('pqrst') + Chars('12345'))
     assert matcher('aeioupqrst12345') == 'aeioupqrst12345'
 
 
 def test_sequence_addition_left():
-    matcher = Word('aeiou') + Group(Word('pqrst') + Word('12345'))
+    matcher = Chars('aeiou') + Group(Chars('pqrst') + Chars('12345'))
     assert matcher('aeioupqrst12345') == ['aeiou', 'pqrst12345']
 
 
 def test_sequence_addition_right():
-    matcher = Group(Word('aeiou') + Word('pqrst')) + Word('12345')
+    matcher = Group(Chars('aeiou') + Chars('pqrst')) + Chars('12345')
     assert matcher('aeioupqrst12345') == ['aeioupqrst', '12345']
 
 
 def test_sequence_addition_nested():
-    matcher = Group(Word('aeiou') + Sequence(Word('pqrst') + Word('12345')))
+    matcher = Group(Chars('aeiou') + Sequence(Chars('pqrst') + Chars('12345')))
     assert matcher('aeioupqrst12345') == 'aeioupqrst12345'

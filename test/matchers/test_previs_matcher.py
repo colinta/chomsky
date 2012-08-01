@@ -2,14 +2,14 @@ from pytest import raises
 from chomsky import *
 
 
-previs_matcher = Word('123456789.') + PrevIs('.') + Word('1234567890')
+previs_matcher = Chars('123456789.') + PrevIs('.') + Chars('1234567890')
 
 
 def test_previs_repr():
-    assert repr(PrevIs(Word('123456789'))) == "PrevIs(Word('123456789'))"
+    assert repr(PrevIs(Chars('123456789'))) == "PrevIs(Chars('123456789'))"
     assert repr(PrevIs(' ')) == "PrevIs(Literal(' '))"
-    assert repr(PrevIs(Word('123456789'), suppress=False)) == "PrevIs(Word('123456789'), suppress=False)"
-    assert repr(PrevIs(Word('123456789'), suppress=True)) == "PrevIs(Word('123456789'))"
+    assert repr(PrevIs(Chars('123456789'), suppress=False)) == "PrevIs(Chars('123456789'), suppress=False)"
+    assert repr(PrevIs(Chars('123456789'), suppress=True)) == "PrevIs(Chars('123456789'))"
 
 
 def test_previs_lengths():

@@ -11,8 +11,8 @@ from .result import *
 # aliases
 A = Letter
 L = Literal
-W = Word
-S = Whitespace
+W = Chars  # short for 'Word', for compatibility with pyparse
+S = Whitespace  # short for 'Space'
 R = Regex
 
 

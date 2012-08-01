@@ -2,7 +2,7 @@ from chomsky import *
 
 
 def test_word_rollback():
-    matcher = Word('abc') + Literal('c') + Word('de')
+    matcher = Chars('abc') + Literal('c') + Chars('de')
     parsed = matcher('baced')
     assert parsed == ['ba', 'c', 'ed']
 

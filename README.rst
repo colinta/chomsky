@@ -30,7 +30,7 @@ Matchers
 
 ``Matcher`` objects are the most basic building blocks.  They are not smart,
 they return only strings and lists, and they make no assumptions about what you
-might be trying to build.  For instance, the ``Word`` Matcher does not assume
+might be trying to build.  For instance, the ``Chars`` Matcher does not assume
 that you want to consume whitespace.
 
 ``Matcher`` objects are great for building a small parsing language for
@@ -58,8 +58,8 @@ built-in strings in the `string module`_.
     import string
     matcher = A(string.letters + string.digits + '_')
 
-Word
-~~~~
+Chars
+~~~~~
 
 Matches one or more letters from string of accepted letters.
 
@@ -70,18 +70,18 @@ You can also set ``min`` and ``max`` options.  ``min`` will raise a
 ::
 
     test/matchers/test_word_matcher.py
-    matcher = Word('abcde')
+    matcher = Chars('abcde')
     matcher('a') => 'a'
     matcher('bcd') => 'bcd'
     matcher('defg') => 'defg'
     matcher('fghi') => ParseException
 
     # max
-    matcher = Word('abcde', max=2)
+    matcher = Chars('abcde', max=2)
     matcher('bcd') => 'bc'
 
     # min
-    matcher = Word('abcde', min=3)
+    matcher = Chars('abcde', min=3)
     matcher('ab') => ParseException
 
 Literal
@@ -167,7 +167,7 @@ multiplication to repeat a series of ``Matcher``s.
 
     test/matcher/test_matcher_multiplication.py
     import string
-    matcher = (Word(string.letters) + Literal(' ')) * 3
+    matcher = (Chars(string.letters) + Literal(' ')) * 3
     matcher('why hello there ') => [['why', ' '], ['hello', ' '], ['there', ' ']]
     matcher('not enough spaces') => ParseException
 
@@ -248,7 +248,7 @@ back it goes.
 ``NextIs``::
 
     test/matcher/test_nextis_matcher.py
-    matcher = '-' + NextIs(Word('123456789')) + Word('1234567890')
+    matcher = '-' + NextIs(Chars('123456789')) + Chars('1234567890')
     matcher('1') => [[], '1']
     matcher('-1') => [['-'], '1']
     matcher('-123') => [['-'], '123']
@@ -257,7 +257,7 @@ back it goes.
 ``NextIsNot``::
 
     test/matcher/test_nextis_matcher.py
-    matcher = '-' + NextIsNot('0') + Word('1234567890')
+    matcher = '-' + NextIsNot('0') + Chars('1234567890')
     matcher('1') => [[], '1']
     matcher('-1') => [['-'], '1']
     matcher('-123') => [['-'], '123']
@@ -266,14 +266,14 @@ back it goes.
 ``PrevIs``::
 
     test/matcher/test_nextis_matcher.py
-    matcher = Word('-.') + PrevIs('-') + Word('1234567890')
+    matcher = Chars('-.') + PrevIs('-') + Chars('1234567890')
     matcher('-1') => [['-'], '1']
     matcher('.123') => ParseException
 
 ``PrevIsNot``::
 
     test/matcher/test_nextis_matcher.py
-    matcher = Word('abc') + PrevIsNot('c') + Word('abc')
+    matcher = Chars('abc') + PrevIsNot('c') + Chars('abc')
     matcher('ab') => ['a', 'b']
     matcher('abc') => ['ab', 'c']
     matcher('abcabc') => ['abcab', 'c']
@@ -297,7 +297,7 @@ Numbers
 ``Integer``::
 
     test/matcher/test_nextis_matcher.py
-    matcher = '-' + NextIsNot('0') + Word('1234567890')
+    matcher = '-' + NextIsNot('0') + Chars('1234567890')
     matcher('1') => [[], '1']
     matcher('-1') => [['-'], '1']
     matcher('-123') => [['-'], '123']

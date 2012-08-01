@@ -32,6 +32,7 @@ class Matcher(object):
     default_suppressed = False
 
     def __init__(self, *args, **kwargs):
+        self.grammar = None
         self.suppress = kwargs.pop('suppress', self.default_suppressed)
         if kwargs:
             raise TypeError('Unknown options: {type.__name__}({keys!r})'.format(
@@ -177,7 +178,7 @@ class Literal(Matcher):
         return len(self.literal)
 
 
-class Word(Matcher):
+class Chars(Matcher):
     """
     Consumes as many characters as possible from a list of acceptable
     characters by consuming as many Letter matches as possible.  You can pass
@@ -198,14 +199,14 @@ class Word(Matcher):
         if self.min == None:
             self.min = 0
         self.max = kwargs.pop('max', self.default_max)
-        super(Word, self).__init__(self, **kwargs)
+        super(Chars, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
-        return isinstance(other, Word) and self.consumable == other.consumable \
+        return isinstance(other, Chars) and self.consumable == other.consumable \
             and self.letter == other.letter \
             and self.min == other.min \
             and self.max == other.max \
-            and super(Word, self).__eq__(other)
+            and super(Chars, self).__eq__(other)
 
     def __repr__(self, args_only=False):
         args = []
@@ -216,7 +217,7 @@ class Word(Matcher):
         if self.max != self.default_max:
             args.append('max={self.max!r}'.format(self=self))
 
-        args.extend(super(Word, self).__repr__(args_only=True))
+        args.extend(super(Chars, self).__repr__(args_only=True))
         if args_only:
             return args
         return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
@@ -254,7 +255,7 @@ class Word(Matcher):
         return self.max if self.max is not None else Infinity
 
 
-class Whitespace(Word):
+class Whitespace(Chars):
     """
     Matches whitespace.  Defaults to string.whitespace
     """
@@ -428,7 +429,7 @@ class Sequence(AutoSequence):
     def __init__(self, *matchers, **kwargs):
         """
         You can group Sequences::
-            Word('a') + Sequence(L('b') + 'c')
+            Chars('a') + Sequence(L('b') + 'c')
 
         But if you do, you will get a single AutoSequence object passed to the
         Sequence constructor.  The Sequence constructor will assign the
@@ -616,7 +617,7 @@ class Any(AutoAny):
     def __init__(self, *matchers, **kwargs):
         """
         You can group Any operations::
-            Word('a') + Any(L('b') | 'c')
+            Chars('a') + Any(L('b') | 'c')
 
         But if you do, you will get a single AutoAny object passed to the Any
         constructor.  The Any constructor will assign the AutoAny object's
