@@ -2,12 +2,12 @@ from pytest import raises
 from chomsky import *
 
 
-def test_escapeseq_repr():
+def test_escapesequence_repr():
     assert repr(EscapeSequence('\\\"')) == "EscapeSequence('\\\\\"')"
 
 
-def test_escapeseq_grammar():
-    for c in 'nrtabfv\'\"\n\\':
+def test_escapesequence_grammar():
+    for c in 'nrtabfv\'\"\n\r\\':
         print repr(c)
         m = EscapeSequence('\\' + c)
         assert m.parsed == '\\' + c
