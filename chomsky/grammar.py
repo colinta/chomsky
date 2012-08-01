@@ -4,34 +4,6 @@ from .exceptions import ParseException
 from .matchers import *
 
 
-class GrammarType(type):
-    def __init__(cls, classname, bases, cls_dict):
-        cls.suppress = cls_dict.get('suppress', getattr(cls, 'suppress', False))
-        cls.ignore_whitespace = cls_dict.get('ignore_whitespace', getattr(cls, 'ignore_whitespace', True))
-        cls.whitespace = cls_dict.get('whitespace', getattr(cls, 'whitespace', Whitespace()))
-
-    def rollback(cls, *args, **kwargs):
-        return cls.grammar.rollback(*args, **kwargs)
-
-    def minimum_length(cls, *args, **kwargs):
-        return cls.grammar.minimum_length(*args, **kwargs)
-
-    def maximum_length(cls, *args, **kwargs):
-        return cls.grammar.maximum_length(*args, **kwargs)
-
-    def consume(cls, buffer):
-        try:
-            return cls.grammar.consume(buffer)
-        except ParseException:
-            if cls.ignore_whitespace:
-                cls.whitespace.consume(buffer)
-                return cls.grammar.consume(buffer)
-            raise
-
-    def __repr__(cls):
-        return cls.__name__
-
-
 class Grammar(object):
     """
     Note: There is a common need to have invalid versions of an otherwise simple

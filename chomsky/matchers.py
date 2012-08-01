@@ -28,6 +28,8 @@ def to_matcher(obj):
 class Matcher(object):
     """
     Provides functionality shared with all Matcher objects.
+
+    Any methods added here should also be added to the GrammarType class.
     """
     default_suppressed = False
 
@@ -91,6 +93,49 @@ class Matcher(object):
 
     def maximum_length(self):
         return Infinity
+
+
+class GrammarType(type):
+    def __init__(cls, classname, bases, cls_dict):
+        cls.suppress = cls_dict.get('suppress', getattr(cls, 'suppress', False))
+        cls.ignore_whitespace = cls_dict.get('ignore_whitespace', getattr(cls, 'ignore_whitespace', True))
+        cls.whitespace = cls_dict.get('whitespace', getattr(cls, 'whitespace', Whitespace()))
+
+    def __add__(cls, other):
+        return cls.grammar.__add__(other)
+
+    def __radd__(cls, other):
+        return cls.grammar.__radd__(other)
+
+    def __mul__(cls, other):
+        return cls.grammar.__mul__(other)
+
+    def __or__(cls, other):
+        return cls.grammar.__or__(other)
+
+    def __ror__(cls, other):
+        return cls.grammar.__ror__(other)
+
+    def rollback(cls, *args, **kwargs):
+        return cls.grammar.rollback(*args, **kwargs)
+
+    def minimum_length(cls, *args, **kwargs):
+        return cls.grammar.minimum_length(*args, **kwargs)
+
+    def maximum_length(cls, *args, **kwargs):
+        return cls.grammar.maximum_length(*args, **kwargs)
+
+    def consume(cls, buffer):
+        try:
+            return cls.grammar.consume(buffer)
+        except ParseException:
+            if cls.ignore_whitespace:
+                cls.whitespace.consume(buffer)
+                return cls.grammar.consume(buffer)
+            raise
+
+    def __repr__(cls):
+        return cls.__name__
 
 
 class SuppressedMatcher(Matcher):
