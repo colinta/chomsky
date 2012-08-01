@@ -97,6 +97,21 @@ class SuppressedMatcher(Matcher):
     default_suppressed = True
 
 
+class NoMatch(SuppressedMatcher):
+    def consume(self, buffer):
+        raise ParseException(
+            'NoMatch {self!r} at {buffer.position}'.format(
+                self=self,
+                buffer=buffer),
+            buffer)
+
+    def minimum_length(self):
+        return 1
+
+    def maximum_length(self):
+        return 1
+
+
 class Letter(Matcher):
     """
     Consumes one characters from a list of acceptable characters.
