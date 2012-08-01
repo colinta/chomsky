@@ -1,3 +1,4 @@
+import re
 from pytest import raises
 from chomsky import *
 
@@ -15,6 +16,8 @@ def test_regex_repr():
     assert repr(Regex(r'a[bc]+d(1|2|3)', group=1, advance=1)) == "Regex('a[bc]+d(1|2|3)', group=1, advance=1)"
     assert repr(Regex(r'a[bc]+d(1|2|3)', group=1, advance=1, suppress=False)) == "Regex('a[bc]+d(1|2|3)', group=1, advance=1)"
     assert repr(Regex(r'a[bc]+d(1|2|3)', group=1, advance=1, suppress=True)) == "Regex('a[bc]+d(1|2|3)', group=1, advance=1, suppress=True)"
+    assert repr(Regex(r'flags', flags=re.MULTILINE | re.DOTALL)) == "Regex('flags', flags=re.DOTALL | re.MULTILINE)"
+    assert repr(Regex(r'flags', flags=re.MULTILINE | re.DOTALL | 256)) == "Regex('flags', flags=re.DOTALL | re.MULTILINE | 0x100)"
     assert repr(R(r'a[bc]+d(1|2|3)')) == "Regex('a[bc]+d(1|2|3)')"
 
 

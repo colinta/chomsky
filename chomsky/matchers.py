@@ -346,6 +346,7 @@ class Whitespace(Chars):
 
 
 class Regex(Matcher):
+    default_flags = 0
     default_group = 0
     default_advance = 0
 
@@ -356,14 +357,15 @@ class Regex(Matcher):
         """
         kwargs can contain 'flags', 'group' and 'advance' options
         """
-        flags = kwargs.pop('flags', 0)
-        self.regex = re.compile(regex, flags=flags)
+        self.flags = kwargs.pop('flags', self.default_flags)
+        self.regex = re.compile(regex, flags=self.flags)
         self.group = kwargs.pop('group', self.default_group)
         self.advance = kwargs.pop('advance', self.default_advance)
         super(Regex, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
         return isinstance(other, Regex) and self.regex.pattern == other.regex.pattern \
+            and self.flags == other.flags \
             and self.group == other.group \
             and self.advance == other.advance \
             and super(Regex, self).__eq__(other)
@@ -371,6 +373,25 @@ class Regex(Matcher):
     def __repr__(self, args_only=False):
         args = ['{self.regex.pattern!r}'.format(self=self)]
 
+        if self.flags != self.default_flags:
+            flags = self.flags
+            flag_args = []
+            flag_dict = {
+                're.IGNORECASE': re.IGNORECASE,
+                're.LOCALE': re.LOCALE,
+                're.MULTILINE': re.MULTILINE,
+                're.DOTALL': re.DOTALL,
+                're.UNICODE': re.UNICODE,
+                're.VERBOSE': re.VERBOSE,
+                }
+            for const, flag in flag_dict.iteritems():
+                if flags & flag:
+                    flags -= flag
+                    flag_args.append(const)
+            flag_args = sorted(flag_args)
+            if flags:
+                flag_args.append(hex(flags))
+            args.append('flags={flags}'.format(flags=' | '.join(flag_args)))
         if self.group != self.default_group:
             args.append('group={self.group!r}'.format(self=self))
         if self.advance != self.default_advance:
