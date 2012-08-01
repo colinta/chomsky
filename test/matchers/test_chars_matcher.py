@@ -34,6 +34,8 @@ def test_inverse_word_matcher():
     for p in parse:
         parsed = matcher(p)
         assert parsed == p
+    parsed = matcher('bc!a')
+    assert parsed == 'bc!'
 
 
 def test_word_matcher_fail():
