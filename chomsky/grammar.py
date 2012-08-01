@@ -1,4 +1,6 @@
 import string
+import re
+
 from .buffer import Buffer
 from .exceptions import ParseException
 from .matchers import *
@@ -177,15 +179,16 @@ class QuotedGrammarType(GrammarType):
     def __init__(cls, classname, bases, cls_dict):
         super(QuotedGrammarType, cls).__init__(classname, bases, cls_dict)
         if cls_dict.get('delimiter'):
-            if 'ignore' in cls_dict:
-                ignore = cls_dict['ignore']
+            if 'insides' in cls_dict:
+                consumer = cls_dict['insides']
             else:
-                ignore = cls_dict['delimiter']
+                insides = cls_dict['delimiter']
                 for c in "\n\r\\":
-                    if c not in ignore:
-                        ignore += c
-                ignore = Chars(ignore, inverse=True)
-            cls.grammar = Group(cls_dict['delimiter'] + ZeroOrMore(EscapeSequence | ignore) + cls_dict['delimiter'])
+                    if c not in insides:
+                        insides += c
+                consumer = Chars(insides, inverse=True)
+
+            cls.grammar = Group(cls_dict['delimiter'] + ZeroOrMore(EscapeSequence | consumer) + cls_dict['delimiter'])
 
 
 class QuotedString(Grammar):
@@ -196,5 +199,15 @@ class SingleQuotedString(QuotedString):
     delimiter = "'"
 
 
+class TripleSingleQuotedString(QuotedString):
+    delimiter = "'''"
+    insides = Regex('.(?!=\'\'\')', flags=re.DOTALL)
+
+
 class DoubleQuotedString(QuotedString):
     delimiter = '"'
+
+
+class TripleDoubleQuotedString(QuotedString):
+    delimiter = '"""'
+    insides = Regex('.(?!=""")', flags=re.DOTALL)
