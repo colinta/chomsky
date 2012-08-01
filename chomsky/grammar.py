@@ -170,4 +170,31 @@ class RubyVariable(Variable):
 
 
 class EscapeSequence(Grammar):
-    grammar = Group('\\' + Any(('\\u' + HexadecimalInteger * 4), *list("nrtabfv\n\'\"\\")))
+    grammar = Group('\\' + Any(('u' + Chars('0123456789abcdefABCDEF') * 4), *list("nrtabfv\n\r\'\"\\")))
+
+
+class QuotedGrammarType(GrammarType):
+    def __init__(cls, classname, bases, cls_dict):
+        super(QuotedGrammarType, cls).__init__(classname, bases, cls_dict)
+        if cls_dict.get('delimiter'):
+            if 'ignore' in cls_dict:
+                ignore = cls_dict['ignore']
+            else:
+                ignore = cls_dict['delimiter']
+                for c in "\n\r\\":
+                    if c not in ignore:
+                        ignore += c
+                ignore = Chars(ignore, inverse=True)
+            cls.grammar = Group(cls_dict['delimiter'] + ZeroOrMore(EscapeSequence | ignore) + cls_dict['delimiter'])
+
+
+class QuotedString(Grammar):
+    __metaclass__ = QuotedGrammarType
+
+
+class SingleQuotedString(QuotedString):
+    delimiter = "'"
+
+
+class DoubleQuotedString(QuotedString):
+    delimiter = '"'
