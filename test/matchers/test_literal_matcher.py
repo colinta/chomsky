@@ -24,7 +24,7 @@ def test_literal_matcher():
     parse = ['aeiou']
     for matcher in matchers:
         for p in parse:
-            parsed = matcher.parse_string(p)
+            parsed = matcher(p)
             assert parsed == p
 
 
@@ -33,4 +33,4 @@ def test_literal_matcher_fail():
     for matcher in matchers:
         for p in parse:
             with raises(ParseException):
-                matcher.parse_string(p)
+                matcher(p)

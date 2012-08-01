@@ -75,11 +75,8 @@ class Matcher(object):
     def __ror__(self, other):
         return to_matcher(other) | self
 
-    def parse_string(self, string):
-        buffer = Buffer(string)
-        return self.consume(buffer)
-
-    __call__ = parse_string
+    def __call__(self, string):
+        return self.consume(Buffer(string))
 
     def rollback(self, result, buffer):
         # Moves the buffer position, and then claims that it can't rollback.
