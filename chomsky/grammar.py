@@ -74,7 +74,8 @@ Hex = HexadecimalInteger
 
 class OperatorGrammarType(GrammarType):
     def __init__(cls, classname, bases, cls_dict):
-        if not cls.grammar:
+        super(OperatorGrammarType, cls).__init__(classname, bases, cls_dict)
+        if cls_dict.get('operators'):
             cls.grammar = Any(*cls_dict['operators'])
 
 
@@ -86,13 +87,13 @@ Op = Operator
 
 class ReservedWordGrammarType(GrammarType):
     def __init__(cls, classname, bases, cls_dict):
-        if cls_dict['words']:
+        super(ReservedWordGrammarType, cls).__init__(classname, bases, cls_dict)
+        if cls_dict.get('words'):
             cls.grammar = Any(*cls_dict.pop('words'))
 
 
 class ReservedWord(Grammar):
     __metaclass__ = ReservedWordGrammarType
-    words = None
 
     def __repr__(self):
         args = ""
