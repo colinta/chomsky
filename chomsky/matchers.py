@@ -142,7 +142,7 @@ class SuppressedMatcher(Matcher):
 class NoMatch(SuppressedMatcher):
     def consume(self, buffer):
         raise ParseException(
-            'NoMatch {self!r} at {buffer.position}'.format(
+            'NoMatch {self!r} at {buffer}'.format(
                 self=self,
                 buffer=buffer),
             buffer)
@@ -178,7 +178,7 @@ class Letter(Matcher):
             buffer.advance(1)
             return Result(consumed)
         raise ParseException(
-            'Expected {self!r} at {buffer.position}'.format(
+            'Expected {self!r} at {buffer}'.format(
                 self=self,
                 buffer=buffer),
             buffer)
@@ -221,7 +221,7 @@ class Literal(Matcher):
             else:
                 buffer.restore_mark()
                 raise ParseException(
-                    'Expected {self!r} at {buffer.position}'.format(
+                    'Expected {self!r} at {buffer}'.format(
                         self=self,
                         buffer=buffer),
                     buffer)
@@ -292,7 +292,7 @@ class Chars(Matcher):
         if self.min and len(consumed) < self.min:
             buffer.restore_mark()
             raise ParseException(
-                'Expected {self!r} at {buffer.position}'.format(
+                'Expected {self!r} at {buffer}'.format(
                     self=self,
                     buffer=buffer),
                 buffer)
@@ -368,7 +368,7 @@ class Regex(Matcher):
         if not match:
             buffer.restore_mark()
             raise ParseException(
-                'Expected {self!r} at {buffer.position}'.format(
+                'Expected {self!r} at {buffer}'.format(
                     self=self,
                     buffer=buffer),
                 buffer)
@@ -547,7 +547,7 @@ class NMatches(Matcher):
         if self.min is not None and len(consumed) < self.min:
             buffer.restore_mark()
             raise ParseException(
-                'Expected {self!r} at {buffer.position}'.format(
+                'Expected {self!r} at {buffer}'.format(
                     self=self,
                     buffer=buffer),
                 buffer)
@@ -639,7 +639,7 @@ class AutoAny(Matcher):
 
         buffer.restore_mark()
         raise ParseException(
-            'Expected {self!r} at {buffer.position}'.format(
+            'Expected {self!r} at {buffer}'.format(
                 self=self,
                 buffer=buffer),
             buffer)
@@ -821,7 +821,7 @@ class NextIsNot(NextIs):
             buffer.restore_mark()
             return None
         buffer.restore_mark()
-        raise ParseException('Did not expect buffer to be {self.matcher!r}, at {buffer.position}'.format(self=self, buffer=buffer), buffer)
+        raise ParseException('Did not expect buffer to be {self.matcher!r}, at {buffer}'.format(self=self, buffer=buffer), buffer)
 
 
 class PrevIs(SuppressedMatcher):
@@ -862,7 +862,7 @@ class PrevIs(SuppressedMatcher):
                 break
 
         buffer.restore_mark()
-        raise ParseException('Expect buffer to be {self.matcher!r}, at {buffer.position}'.format(self=self, buffer=buffer), buffer)
+        raise ParseException('Expect buffer to be {self.matcher!r}, at {buffer}'.format(self=self, buffer=buffer), buffer)
 
     def minimum_length(self):
         return 0
@@ -891,7 +891,7 @@ class PrevIsNot(PrevIs):
                 if not test_buffer.rest():
                     # it worked!  dang
                     buffer.restore_mark()
-                    raise_me = ParseException('Did not expect buffer to be {self.matcher!r}, at {buffer.position}'.format(self=self, buffer=buffer), buffer)
+                    raise_me = ParseException('Did not expect buffer to be {self.matcher!r}, at {buffer}'.format(self=self, buffer=buffer), buffer)
                     break
             except ParseException:
                 pass
