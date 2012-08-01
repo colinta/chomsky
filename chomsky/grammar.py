@@ -5,10 +5,8 @@ from .matchers import *
 
 
 class GrammarType(type):
-    def __new__(meta, classname, bases, cls_dict):
-        cls = super(GrammarType, meta).__new__(meta, classname, bases, cls_dict)
+    def __init__(cls, classname, bases, cls_dict):
         cls.suppress = False
-        return cls
 
     def rollback(cls, *args, **kwargs):
         return cls.grammar.rollback(*args, **kwargs)
@@ -94,11 +92,9 @@ Hex = HexadecimalInteger
 
 
 class OperatorGrammarType(GrammarType):
-    def __new__(meta, classname, bases, cls_dict):
-        cls = super(OperatorGrammarType, meta).__new__(meta, classname, bases, cls_dict)
+    def __init__(cls, classname, bases, cls_dict):
         if not cls.grammar:
             cls.grammar = Any(*cls_dict['operators'])
-        return cls
 
 
 class Operator(Grammar):
@@ -108,11 +104,9 @@ Op = Operator
 
 
 class ReservedWordGrammarType(GrammarType):
-    def __new__(meta, classname, bases, cls_dict):
-        cls = super(ReservedWordGrammarType, meta).__new__(meta, classname, bases, cls_dict)
+    def __init__(cls, classname, bases, cls_dict):
         if cls_dict['words']:
             cls.grammar = Any(*cls_dict.pop('words'))
-        return cls
 
 
 class ReservedWord(Grammar):
@@ -167,12 +161,11 @@ class RubyReservedWord(ReservedWord):
 
 
 class VariableGrammarType(GrammarType):
-    def __new__(meta, classname, bases, cls_dict):
-        cls = super(VariableGrammarType, meta).__new__(meta, classname, bases, cls_dict)
+    def __init__(cls, classname, bases, cls_dict):
+        super(VariableGrammarType, cls).__init__(classname, bases, cls_dict)
         starts_with = cls_dict.get('starts_with', cls.starts_with)
         ends_with = cls_dict.get('ends_with', cls.ends_with)
         cls.grammar = Group(starts_with + ends_with)
-        return cls
 
 
 class Variable(Grammar):
