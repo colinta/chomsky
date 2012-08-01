@@ -13,6 +13,7 @@ def test_letter_matcher_repr():
     assert repr(A('aeiou')) == "Letter('aeiou')"
     assert repr(Letter('aeiou', suppress=False)) == "Letter('aeiou')"
     assert repr(Letter('aeiou', suppress=True)) == "Letter('aeiou', suppress=True)"
+    assert repr(Letter('aeiou', inverse=True)) == "Letter('aeiou', inverse=True)"
 
 
 def test_letter_matcher_lengths():
@@ -26,6 +27,14 @@ def test_letter_matcher():
         for p in parse:
             parsed = matcher(p)
             assert parsed == p
+
+
+def test_inverse_letter_matcher():
+    parse = 'b c d f g h ! @ # $ % ^ & * ( )'.split(' ')
+    matcher = Letter('aeiou', inverse=True)
+    for p in parse:
+        parsed = matcher(p)
+        assert parsed == p
 
 
 def test_letter_matcher_fail():

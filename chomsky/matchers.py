@@ -156,24 +156,37 @@ class NoMatch(SuppressedMatcher):
 
 class Letter(Matcher):
     """
-    Consumes one characters from a list of acceptable characters.
+    Consumes one characters from a list of acceptable characters, OR, if
+    inverse=True, consumes one character as long as it is NOT an acceptable
+    character.
     """
+    default_inverse = False
+
     def __init__(self, consumable, **kwargs):
         self.consumable = consumable
+        self.inverse = bool(kwargs.pop('inverse', self.default_inverse))
         super(Letter, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
-        return isinstance(other, Letter) and self.consumable == other.consumable \
+        return isinstance(other, Letter) \
+            and self.consumable == other.consumable \
+            and self.inverse == other.inverse \
             and super(Letter, self).__eq__(other)
 
     def __repr__(self, args_only=False):
-        args = ('{self.consumable!r}'.format(self=self), ) + super(Letter, self).__repr__(args_only=True)
+        args = ['{self.consumable!r}'.format(self=self)]
+
+        if self.inverse != self.default_inverse:
+            args.append('inverse={self.inverse!r}'.format(self=self))
+
+        args.extend(super(Letter, self).__repr__(args_only=True))
         if args_only:
             return args
         return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def consume(self, buffer):
-        if buffer[0] in self.consumable:
+        # inverse and NOT in consumable, or in consumable and NOT inverse
+        if (buffer[0] in self.consumable) == (not self.inverse):
             consumed = buffer[0]
             buffer.advance(1)
             return Result(consumed)
@@ -245,17 +258,19 @@ class Chars(Matcher):
     default_word = None
     default_min = 1
     default_max = None
+    default_inverse = False
 
     def __init__(self, consumable, **kwargs):
         """
-        kwargs can contain 'max' and 'min' options
+        kwargs can contain 'max', 'min', and 'inverse' options
         """
         self.consumable = consumable
-        self.letter = Letter(consumable)
         self.min = kwargs.pop('min', self.default_min)
         if self.min == None:
             self.min = 0
         self.max = kwargs.pop('max', self.default_max)
+        self.inverse = kwargs.pop('inverse', self.default_inverse)
+        self.letter = Letter(consumable, inverse=self.inverse)
         super(Chars, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
@@ -263,6 +278,7 @@ class Chars(Matcher):
             and self.letter == other.letter \
             and self.min == other.min \
             and self.max == other.max \
+            and self.inverse == other.inverse \
             and super(Chars, self).__eq__(other)
 
     def __repr__(self, args_only=False):
@@ -273,6 +289,8 @@ class Chars(Matcher):
             args.append('min={self.min!r}'.format(self=self))
         if self.max != self.default_max:
             args.append('max={self.max!r}'.format(self=self))
+        if self.inverse != self.default_inverse:
+            args.append('inverse={self.inverse!r}'.format(self=self))
 
         args.extend(super(Chars, self).__repr__(args_only=True))
         if args_only:
