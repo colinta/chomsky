@@ -172,7 +172,7 @@ class RubyVariable(Variable):
 
 
 class EscapeSequence(Grammar):
-    grammar = Group('\\' + Any(('u' + Chars('0123456789abcdefABCDEF') * 4), *list("nrtabfv\n\r\'\"\\")))
+    grammar = Group('\\' + Any('u' + Letter('0123456789abcdefABCDEF') * 4, *list("nrtabfv\n\r\'\"\\")))
 
 
 class QuotedGrammarType(GrammarType):

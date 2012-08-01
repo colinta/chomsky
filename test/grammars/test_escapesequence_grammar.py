@@ -14,6 +14,12 @@ def test_escapesequence_grammar():
         assert str(m) == '\\' + c
 
 
-def test_escapeseq_fail():
+def test_escapesequence_unicode_grammar():
+    m = EscapeSequence('\\u12ab')
+    assert m.parsed == '\\u12ab'
+    assert str(m) == '\\u12ab'
+
+
+def test_escapesequence_fail():
     with raises(ParseException):
         print EscapeSequence('\\G')
