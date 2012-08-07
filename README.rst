@@ -153,7 +153,7 @@ in the ``Regex`` example).
     matcher('Hello, World.') => ParseException
 
 The automatic ``Sequence`` type is created whenever you use addition or
-multiplication to repeat a series of ``Matcher``s.
+multiplication to repeat a series of ``Matcher``-s.
 
 **Addition**::
 
@@ -288,7 +288,7 @@ language grammar.  They are composed of ``Mathcer`` classes (and other
 ``Grammar`` classes), but the objects they return are instances of the
 ``Grammar``, not simple strings and lists.
 
-The built-in ``Grammar``s are meant to help you understand how they work, and to
+The built-in ``Grammar``-s are meant to help you understand how they work, and to
 use in your own language.
 
 Numbers
@@ -319,13 +319,12 @@ TEST
 LICENSE
 -------
 
-:Author: Colin Thomas-Arnold
-:Copyright: 2012 Colin Thomas-Arnold <http://colinta.com/>
-
 Copyright (c) 2012, Colin Thomas-Arnold
 All rights reserved.
 
-See LICENSE_ for more details (it's a simplified BSD license).
+:author:    Colin Thomas-Arnold
+:copyright: 2012 Colin Thomas-Arnold <http://colinta.com/>
+:license:   simplified BSD, see LICENSE_ for more details.
 
 .. _LICENSE:      https://github.com/colinta/chomsky/blob/master/LICENSE
 .. _modgrammar:   http://pypi.python.org/pypi/modgrammar
