@@ -219,24 +219,14 @@ class Literal(Matcher):
         return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def consume(self, buffer):
-        buffer.mark()
-        for c in self.literal:
-            try:
-                b = buffer[0]
-            except ParseException:
-                buffer.restore_mark()
-                raise
-            if b == c:
-                buffer.advance(1)
-            else:
-                buffer.restore_mark()
-                raise ParseException(
-                    'Expected {self!r} at {buffer!r}'.format(
-                        self=self,
-                        buffer=buffer),
-                    buffer)
-        buffer.forget_mark()
-        return Result(self.literal)
+        if str(buffer[0:len(self.literal)]) == self.literal:
+            buffer.advance(len(self.literal))
+            return Result(self.literal)
+        raise ParseException(
+            'Expected {self!r} at {buffer!r}'.format(
+                self=self,
+                buffer=buffer),
+            buffer)
 
     def minimum_length(self):
         return len(self.literal)
