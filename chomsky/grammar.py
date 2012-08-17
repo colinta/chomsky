@@ -182,7 +182,6 @@ class PythonVariable(Variable):
 
 
 class PhpVariable(Variable):
-    bad_grammar = PhpReservedWord
     starts_with = Char('$') + Char(string.ascii_letters + '_')
 
 

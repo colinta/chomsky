@@ -14,12 +14,28 @@ def test_pythonvariable_repr():
     assert repr(PythonVariable('abcd')) == "PythonVariable('abcd')"
 
 
+def test_phpvariable_repr():
+    assert repr(PhpVariable('$abcd')) == "PhpVariable('$abcd')"
+
+
+def test_rubyvariable_repr():
+    assert repr(RubyVariable('abcd')) == "RubyVariable('abcd')"
+
+
 def test_variable_type():
     assert isinstance(Variable('abcd'), Variable)
 
 
 def test_pythonvariable_type():
     assert isinstance(PythonVariable('abcd'), PythonVariable)
+
+
+def test_phpvariable_type():
+    assert isinstance(PhpVariable('$abcd'), PhpVariable)
+
+
+def test_rubyvariable_type():
+    assert isinstance(RubyVariable('abcd'), RubyVariable)
 
 
 def test_variable_grammar_abcd():
@@ -30,6 +46,18 @@ def test_variable_grammar_abcd():
 
 def test_pythonvariable_grammar_abcd():
     m = PythonVariable('abcd')
+    assert m.parsed == 'abcd'
+    assert str(m) == 'abcd'
+
+
+def test_phpvariable_grammar_abcd():
+    m = PhpVariable('$abcd')
+    assert m.parsed == '$abcd'
+    assert str(m) == '$abcd'
+
+
+def test_rubyvariable_grammar_abcd():
+    m = RubyVariable('abcd')
     assert m.parsed == 'abcd'
     assert str(m) == 'abcd'
 
@@ -76,6 +104,11 @@ def test_pythonvariable_fail_reserved():
 def test_phpvariable_fail_reserved():
     with raises(ParseException):
         print PhpVariable('function')
+
+
+def test_phpvariable_fail_nodollar():
+    with raises(ParseException):
+        print PhpVariable('valid_name')
 
 
 def test_rubyvariable_fail_reserved():
