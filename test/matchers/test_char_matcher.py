@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from pytest import raises
 from chomsky import *
 
@@ -14,6 +15,7 @@ def test_char_matcher_repr():
     assert repr(Char('aeiou', suppress=False)) == "Char('aeiou')"
     assert repr(Char('aeiou', suppress=True)) == "Char('aeiou', suppress=True)"
     assert repr(Char('aeiou', inverse=True)) == "Char('aeiou', inverse=True)"
+    assert repr(Char(u'aeiou', inverse=True)) == "Char(u'aeiou', inverse=True)"
 
 
 def test_char_matcher_lengths():
@@ -27,6 +29,13 @@ def test_char_matcher():
         for p in parse:
             parsed = matcher(p)
             assert parsed == p
+
+
+def test_char_matcher_unicode():
+    parse = u'あ い う え お'.split(' ')
+    for p in parse:
+        parsed = Char(u'あいうえお')(p)
+        assert parsed == p
 
 
 def test_inverse_char_matcher():

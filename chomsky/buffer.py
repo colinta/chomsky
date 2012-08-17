@@ -77,4 +77,7 @@ class Buffer(object):
         return 'Buffer({0!r} + {1!r})'.format(self.__buffer[:self.__position], self.__buffer[self.__position:])
 
     def __str__(self):
-        return str(self.__buffer)
+        try:
+            return str(self.__buffer)
+        except UnicodeEncodeError:
+            return unicode(self.__buffer)

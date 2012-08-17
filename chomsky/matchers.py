@@ -16,7 +16,7 @@ def to_matcher(obj):
     if isinstance(obj, Matcher):
         return obj
 
-    if isinstance(obj, str):
+    if isinstance(obj, basestring):
         return Literal(obj)
 
     if isinstance(obj, list) or isinstance(obj, tuple):
@@ -219,7 +219,7 @@ class Literal(Matcher):
         return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def consume(self, buffer):
-        if str(buffer[0:len(self.literal)]) == self.literal:
+        if unicode(buffer[0:len(self.literal)]) == self.literal:
             buffer.advance(len(self.literal))
             return Result(self.literal)
         raise ParseException(
@@ -979,7 +979,10 @@ class Group(Matcher):
         r = self.matcher.consume(buffer)
         if isinstance(r, Result):
             return r
-        return Result(''.join(str(s) for s in r))
+        try:
+            return Result(''.join(str(s) for s in r))
+        except UnicodeEncodeError:
+            return Result(u''.join(unicode(s) for s in r))
 
     def minimum_length(self):
         return self.matcher.minimum_length()

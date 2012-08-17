@@ -44,7 +44,10 @@ class Grammar(object):
 
         if self.bad_grammar:
             try:
-                buffer = Buffer(str(self.parsed))
+                try:
+                    buffer = Buffer(str(self.parsed))
+                except UnicodeEncodeError:
+                    buffer = Buffer(unicode(self.parsed))
                 (StringStart() + self.bad_grammar + StringEnd()).consume(buffer)
             except ParseException:
                 pass
@@ -56,10 +59,16 @@ class Grammar(object):
             return self.parsed[key]
 
     def __repr__(self):
-        return '{type.__name__}({buffer!r})'.format(self=self, buffer=str(self.buffer), type=type(self))
+        try:
+            return '{type.__name__}({buffer!r})'.format(self=self, buffer=str(self.buffer), type=type(self))
+        except UnicodeEncodeError:
+            return '{type.__name__}({buffer!r})'.format(self=self, buffer=unicode(self.buffer), type=type(self))
 
     def __str__(self):
-        return str(self.parsed)
+        try:
+            return str(self.parsed)
+        except UnicodeEncodeError:
+            return unicode(self.parsed)
 
     def __add__(self, other):
         return [self, other]
@@ -119,7 +128,10 @@ class ReservedWord(Grammar):
         args = ""
         if self.words != type(self).words:
             args = ", words={self.words!r}".format(self=self)
-        return '{type.__name__}({buffer!r}{args})'.format(self=self, buffer=str(self.buffer), type=type(self), args=args)
+        try:
+            return '{type.__name__}({buffer!r}{args})'.format(self=self, buffer=str(self.buffer), type=type(self), args=args)
+        except UnicodeEncodeError:
+            return '{type.__name__}({buffer!r}{args})'.format(self=self, buffer=unicode(self.buffer), type=type(self), args=args)
 
 
 class PythonReservedWord(ReservedWord):

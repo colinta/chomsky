@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from chomsky import *
 
 
@@ -15,6 +16,12 @@ def test_two_group():
     matcher = Group(Chars('aeiou'), Chars('bcdfg'))
     parsed = matcher('aeioufgbcd')
     assert parsed == 'aeioufgbcd'
+
+
+def test_two_group_unicode():
+    matcher = Group(Chars(u'あいうえお'), Chars(u'べしでふじ'))
+    parsed = matcher(u'いあえおうふじべしで')
+    assert parsed == u'いあえおうふじべしで'
 
 
 def test_two_sequence_shorthand():

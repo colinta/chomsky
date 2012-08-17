@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from pytest import raises
 from chomsky import *
 
@@ -26,6 +27,12 @@ def test_literal_matcher():
         for p in parse:
             parsed = matcher(p)
             assert parsed == p
+
+
+def test_literal_matcher_unicode():
+    parse = u'あえうえお'
+    parsed = Literal(u'あえうえお')(parse)
+    assert parsed == parse
 
 
 def test_literal_matcher_fail():

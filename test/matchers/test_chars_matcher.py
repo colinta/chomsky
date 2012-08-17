@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from pytest import raises
 from chomsky import *
 
@@ -8,7 +9,7 @@ matchers = [
     ]
 
 
-def test_word_repr():
+def test_chars_repr():
     assert repr(Chars('aeiou')) == "Chars('aeiou')"
     assert repr(Chars('aeiou', min=1)) == "Chars('aeiou')"
     assert repr(Chars('aeiou', min=2)) == "Chars('aeiou', min=2)"
@@ -18,14 +19,23 @@ def test_word_repr():
     assert repr(Chars('aeiou', suppress=True)) == "Chars('aeiou', suppress=True)"
     assert repr(Chars('aeiou', inverse=True)) == "Chars('aeiou', inverse=True)"
     assert repr(W('aeiou')) == "Chars('aeiou')"
+    assert repr(W(u'aeiou')) == "Chars(u'aeiou')"
+    assert repr(W(u'あいうえお')) == "Chars(u'\\u3042\\u3044\\u3046\\u3048\\u304a')"
 
 
-def test_word_matcher():
+def test_chars_matcher():
     parse = 'a ae aei aeio aeiou'.split(' ')
     for matcher in matchers:
         for p in parse:
             parsed = matcher(p)
             assert parsed == p
+
+
+def test_chars_matcher_unicode():
+    parse = u'あ あい あいう あいうえ あいうえお'.split(' ')
+    for p in parse:
+        parsed = Chars(u'あいうえお')(p)
+        assert parsed == p
 
 
 def test_inverse_word_matcher():
@@ -38,7 +48,7 @@ def test_inverse_word_matcher():
     assert parsed == 'bc!'
 
 
-def test_word_matcher_fail():
+def test_chars_matcher_fail():
     parse = 'b bc bad'.split(' ')
     for matcher in matchers:
         for p in parse:

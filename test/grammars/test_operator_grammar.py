@@ -1,9 +1,19 @@
+# -*- encoding: utf-8 -*-
 from pytest import raises
 from chomsky import *
 
 
+class UnicodeOperator(Grammar):
+    __metaclass__ = OperatorGrammarType
+    operators = list(u'÷')
+
+
 def test_operator_repr():
     assert repr(Operator('-')) == "Operator('-')"
+
+
+def test_unicodeoperator_repr():
+    assert repr(UnicodeOperator(u'÷')) == u"UnicodeOperator(u'\\xf7')"
 
 
 def test_operator_type():
@@ -14,6 +24,12 @@ def test_operator_grammar_minus():
     m = Operator('-')
     assert m.parsed == '-'
     assert str(m) == '-'
+
+
+def test_operator_grammar_unicode():
+    m = UnicodeOperator(u'÷')
+    assert m.parsed == u'÷'
+    assert unicode(m) == u'÷'
 
 
 def test_operator_grammar_plus():

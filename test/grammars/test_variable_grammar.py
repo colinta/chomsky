@@ -1,9 +1,14 @@
+# -*- encoding: utf-8 -*-
 from pytest import raises
 from chomsky import *
 
 
-class TestDollarVariable(Variable):
-    starts_with = Chars('$')
+class TestPercentVariable(Variable):
+    starts_with = Char('%')
+
+
+class TestUnicodeVariable(Variable):
+    starts_with = Char(u'–')
 
 
 def test_variable_repr():
@@ -81,9 +86,15 @@ def test_variable_grammar_all():
 
 
 def test_variable_starts_with():
-    m = TestDollarVariable('$abcd_123_')
-    assert m.parsed == '$abcd_123_'
-    assert str(m) == '$abcd_123_'
+    m = TestPercentVariable('%abcd_123_')
+    assert m.parsed == '%abcd_123_'
+    assert str(m) == '%abcd_123_'
+
+
+def test_variable_starts_with_unicode():
+    m = TestUnicodeVariable(u'–abcd_123_')
+    assert m.parsed == u'–abcd_123_'
+    assert unicode(m) == u'–abcd_123_'
 
 
 def test_variable_fail_digits():
@@ -93,7 +104,12 @@ def test_variable_fail_digits():
 
 def test_variable_fail_starts_with():
     with raises(ParseException):
-        print TestDollarVariable('_abc')
+        print TestPercentVariable('_abc')
+
+
+def test_variable_fail_starts_with_unicode():
+    with raises(ParseException):
+        print TestUnicodeVariable(u'-abc')
 
 
 def test_pythonvariable_fail_reserved():

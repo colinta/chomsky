@@ -1,6 +1,6 @@
 
 
-class Result(str):
+class Result(unicode):
     def __repr__(self):
         return 'Result(' + super(Result, self).__repr__() + ')'
 
