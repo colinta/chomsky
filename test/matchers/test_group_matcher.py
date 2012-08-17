@@ -3,7 +3,7 @@ from chomsky import *
 
 def test_two_group_repr():
     matcher = Group(Chars('aeiou') + Chars('abcde'))
-    assert repr(matcher) == "Group(Sequence(Chars('aeiou') + Chars('abcde')))"
+    assert repr(matcher) == "Group(Chars('aeiou') + Chars('abcde'))"
 
 
 def test_three_group_repr():

@@ -4,7 +4,7 @@ from chomsky.matchers import AutoSequence
 
 def test_two_additions_repr():
     matcher = Chars('aeiou') + Chars('abcde')
-    assert repr(matcher) == "Sequence(Chars('aeiou') + Chars('abcde'))"
+    assert repr(matcher) == "(Chars('aeiou') + Chars('abcde'))"
 
 
 def test_two_literal_additions_lengths():
@@ -21,7 +21,7 @@ def test_two_additions_lengths():
 
 def test_three_additions_repr():
     matcher = Chars('aeiou') + Chars('abcde') + Chars('12345')
-    assert repr(matcher) == "Sequence(Chars('aeiou') + Chars('abcde') + Chars('12345'))"
+    assert repr(matcher) == "(Chars('aeiou') + Chars('abcde') + Chars('12345'))"
 
 
 def test_three_additions_lengths():

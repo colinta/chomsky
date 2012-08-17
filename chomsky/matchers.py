@@ -99,19 +99,22 @@ class GrammarType(type):
         cls.whitespace = cls_dict.get('whitespace', getattr(cls, 'whitespace', Whitespace()))
 
     def __add__(cls, other):
-        return cls.grammar.__add__(other)
+        return AutoSequence(cls, to_matcher(other))
 
     def __radd__(cls, other):
-        return cls.grammar.__radd__(other)
+        return to_matcher(other) + cls
 
     def __mul__(cls, other):
-        return cls.grammar.__mul__(other)
+        if isinstance(other, int):
+            return Exactly(cls, other)
+        else:
+            raise TypeError
 
     def __or__(cls, other):
-        return cls.grammar.__or__(other)
+        return AutoAny(cls, to_matcher(other))
 
     def __ror__(cls, other):
-        return cls.grammar.__ror__(other)
+        return to_matcher(other) | cls
 
     def rollback(cls, *args, **kwargs):
         return cls.grammar.rollback(*args, **kwargs)
@@ -123,13 +126,7 @@ class GrammarType(type):
         return cls.grammar.maximum_length(*args, **kwargs)
 
     def consume(cls, buffer):
-        try:
-            return cls.grammar.consume(buffer)
-        except ParseException:
-            if cls.ignore_whitespace:
-                cls.whitespace.consume(buffer)
-                return cls.grammar.consume(buffer)
-            raise
+        return cls(buffer)
 
     def __repr__(cls):
         return cls.__name__
@@ -441,7 +438,7 @@ class AutoSequence(Matcher):
     def __repr__(self, args_only=False):
         type_name = type(self).__name__
         if type_name == 'AutoSequence':
-            type_name = 'Sequence'
+            type_name = ''
             joiner = ' + '
         else:
             joiner = ', '
@@ -675,7 +672,7 @@ class AutoAny(Matcher):
 
     def __or__(self, other):
         """
-        An AutoAny object is created anytime two Matchers are added, and
+        An AutoAny object is created anytime two Matchers are 'OR'ed, and
         adding subsequent Matchers to that sequence *appends* the matchers.
         """
         self.matchers.append(to_matcher(other))
@@ -979,14 +976,20 @@ class Group(Matcher):
             and super(Group, self).__eq__(other)
 
     def __repr__(self, args_only=False):
-        args = ['{self.matcher!r}'.format(self=self)]
+        matcher = repr(self.matcher)
+        if matcher.startswith('(') and matcher.endswith(')'):
+            matcher = matcher[1:-1]
+        args = ['{matcher}'.format(matcher=matcher)]
         args.extend(super(Group, self).__repr__(args_only=True))
         if args_only:
             return args
         return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def consume(self, buffer):
-        return ''.join(str(s) for s in self.matcher.consume(buffer))
+        r = self.matcher.consume(buffer)
+        if isinstance(r, Result):
+            return r
+        return Result(''.join(str(s) for s in r))
 
     def minimum_length(self):
         return self.matcher.minimum_length()

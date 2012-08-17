@@ -28,8 +28,19 @@ class Grammar(object):
     grammar = None
 
     def __init__(self, parseme=None):
-        self.buffer = Buffer(parseme)
-        self.parsed = type(self).consume(self.buffer)
+        if isinstance(parseme, Buffer):
+            self.buffer = parseme
+        else:
+            self.buffer = Buffer(parseme)
+        cls = type(self)
+        try:
+            self.parsed = cls.grammar.consume(self.buffer)
+        except ParseException:
+            if cls.ignore_whitespace:
+                cls.whitespace.consume(self.buffer)
+                self.parsed = cls.grammar.consume(self.buffer)
+            else:
+                raise
 
         if self.bad_grammar:
             try:
@@ -49,6 +60,13 @@ class Grammar(object):
 
     def __str__(self):
         return str(self.parsed)
+
+    def __add__(self, other):
+        return [self, other]
+
+    def __radd__(self, other):
+        if isinstance(other, list):
+            return [other] + [self]
 
 
 class Integer(Grammar):
@@ -199,15 +217,15 @@ class SingleQuotedString(QuotedString):
     delimiter = "'"
 
 
-class TripleSingleQuotedString(QuotedString):
-    delimiter = "'''"
-    insides = Regex('.(?!=\'\'\')', flags=re.DOTALL)
-
-
 class DoubleQuotedString(QuotedString):
     delimiter = '"'
 
 
+class TripleSingleQuotedString(QuotedString):
+    delimiter = "'''"
+    insides = Regex('.', flags=re.DOTALL)
+
+
 class TripleDoubleQuotedString(QuotedString):
     delimiter = '"""'
-    insides = Regex('.(?!=""")', flags=re.DOTALL)
+    insides = Regex('.', flags=re.DOTALL)

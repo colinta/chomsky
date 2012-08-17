@@ -9,7 +9,7 @@ def test_two_sequences_repr():
 
 def test_two_autosequences_repr():
     matcher = Chars('aeiou') + Chars('abcde')
-    assert repr(matcher) == "Sequence(Chars('aeiou') + Chars('abcde'))"
+    assert repr(matcher) == "(Chars('aeiou') + Chars('abcde'))"
 
 
 def test_three_sequences_repr():
@@ -19,7 +19,7 @@ def test_three_sequences_repr():
 
 def test_three_autosequences_repr():
     matcher = Chars('aeiou') + Chars('abcde') + Chars('12345')
-    assert repr(matcher) == "Sequence(Chars('aeiou') + Chars('abcde') + Chars('12345'))"
+    assert repr(matcher) == "(Chars('aeiou') + Chars('abcde') + Chars('12345'))"
 
 
 def test_two_sequences():

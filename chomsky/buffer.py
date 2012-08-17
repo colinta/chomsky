@@ -2,6 +2,10 @@ from .exceptions import ParseException
 
 
 class Buffer(object):
+    @property
+    def buffer(self):
+        return self.__buffer
+
     def __init__(self, buffer):
         self.__buffer = buffer
         self.__position = 0
