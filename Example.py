@@ -3,7 +3,7 @@ from chomsky import *
 
 
 class Variable(Grammar):
-    grammar = Letter(string.letters + '_') + Chars(string.letters + string.digits + '_')
+    grammar = Char(string.letters + '_') + Chars(string.letters + string.digits + '_')
 
 
 class Expression(Grammar):

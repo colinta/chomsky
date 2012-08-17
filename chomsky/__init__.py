@@ -9,7 +9,7 @@ from .result import *
 
 
 # aliases
-A = Letter
+A = Char
 L = Literal
 W = Chars  # short for 'Word', for compatibility with pyparse
 S = Whitespace  # short for 'Space'

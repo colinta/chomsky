@@ -3,25 +3,25 @@ from chomsky import *
 
 
 matchers = [
-    Letter('aeiou'),
+    Char('aeiou'),
     A('aeiou'),
     ]
 
 
-def test_letter_matcher_repr():
-    assert repr(Letter('aeiou')) == "Letter('aeiou')"
-    assert repr(A('aeiou')) == "Letter('aeiou')"
-    assert repr(Letter('aeiou', suppress=False)) == "Letter('aeiou')"
-    assert repr(Letter('aeiou', suppress=True)) == "Letter('aeiou', suppress=True)"
-    assert repr(Letter('aeiou', inverse=True)) == "Letter('aeiou', inverse=True)"
+def test_char_matcher_repr():
+    assert repr(Char('aeiou')) == "Char('aeiou')"
+    assert repr(A('aeiou')) == "Char('aeiou')"
+    assert repr(Char('aeiou', suppress=False)) == "Char('aeiou')"
+    assert repr(Char('aeiou', suppress=True)) == "Char('aeiou', suppress=True)"
+    assert repr(Char('aeiou', inverse=True)) == "Char('aeiou', inverse=True)"
 
 
-def test_letter_matcher_lengths():
+def test_char_matcher_lengths():
     assert matchers[0].minimum_length() == 1
     assert matchers[0].maximum_length() == 1
 
 
-def test_letter_matcher():
+def test_char_matcher():
     parse = 'a e i o u'.split(' ')
     for matcher in matchers:
         for p in parse:
@@ -29,15 +29,15 @@ def test_letter_matcher():
             assert parsed == p
 
 
-def test_inverse_letter_matcher():
+def test_inverse_char_matcher():
     parse = 'b c d f g h ! @ # $ % ^ & * ( )'.split(' ')
-    matcher = Letter('aeiou', inverse=True)
+    matcher = Char('aeiou', inverse=True)
     for p in parse:
         parsed = matcher(p)
         assert parsed == p
 
 
-def test_letter_matcher_fail():
+def test_char_matcher_fail():
     parse = 'b c d'.split(' ')
     for matcher in matchers:
         for p in parse:

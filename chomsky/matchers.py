@@ -151,7 +151,7 @@ class NoMatch(SuppressedMatcher):
         return 1
 
 
-class Letter(Matcher):
+class Char(Matcher):
     """
     Consumes one characters from a list of acceptable characters, OR, if
     inverse=True, consumes one character as long as it is NOT an acceptable
@@ -162,13 +162,13 @@ class Letter(Matcher):
     def __init__(self, consumable, **kwargs):
         self.consumable = consumable
         self.inverse = bool(kwargs.pop('inverse', self.default_inverse))
-        super(Letter, self).__init__(self, **kwargs)
+        super(Char, self).__init__(self, **kwargs)
 
     def __eq__(self, other):
-        return isinstance(other, Letter) \
+        return isinstance(other, Char) \
             and self.consumable == other.consumable \
             and self.inverse == other.inverse \
-            and super(Letter, self).__eq__(other)
+            and super(Char, self).__eq__(other)
 
     def __repr__(self, args_only=False):
         args = ['{self.consumable!r}'.format(self=self)]
@@ -176,7 +176,7 @@ class Letter(Matcher):
         if self.inverse != self.default_inverse:
             args.append('inverse={self.inverse!r}'.format(self=self))
 
-        args.extend(super(Letter, self).__repr__(args_only=True))
+        args.extend(super(Char, self).__repr__(args_only=True))
         if args_only:
             return args
         return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
@@ -202,7 +202,7 @@ class Letter(Matcher):
 
 class Literal(Matcher):
     """
-    Consumes a literal word by decomposing it into individual Letter() matchers.
+    Consumes a literal word by decomposing it into individual Char() matchers.
     """
     def __init__(self, literal, **kwargs):
         self.literal = literal
@@ -248,7 +248,7 @@ class Literal(Matcher):
 class Chars(Matcher):
     """
     Consumes as many characters as possible from a list of acceptable
-    characters by consuming as many Letter matches as possible.  You can pass
+    characters by consuming as many Char matches as possible.  You can pass
     min and max, if there is a desired length.  If the length of the consumed
     word is less than min, or greater than max, a ParseException is raised.
     """
@@ -267,7 +267,7 @@ class Chars(Matcher):
             self.min = 0
         self.max = kwargs.pop('max', self.default_max)
         self.inverse = kwargs.pop('inverse', self.default_inverse)
-        self.letter = Letter(consumable, inverse=self.inverse)
+        self.letter = Char(consumable, inverse=self.inverse)
         super(Chars, self).__init__(self, **kwargs)
 
     def __eq__(self, other):

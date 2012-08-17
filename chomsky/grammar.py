@@ -20,7 +20,7 @@ class Grammar(object):
     matcher automatically)
 
         grammar = Group(Optional('-') + ('0x' | '0X') + Chars('01234567890abcdefABCDEF'))
-        bad_grammar = '-0' + Letter('xX')' + Letter('0')  # won't match -0x0000
+        bad_grammar = '-0' + Char('xX')' + Char('0')  # won't match -0x0000
     """
     __metaclass__ = GrammarType
 
@@ -75,20 +75,20 @@ Int = Integer
 
 
 class BinaryInteger(Grammar):
-    grammar = Group(Optional('-') + '0' + Letter('bB') + Chars('01'))
-    bad_grammar = '-0' + Letter('bB') + Chars('0')
+    grammar = Group(Optional('-') + '0' + Char('bB') + Chars('01'))
+    bad_grammar = '-0' + Char('bB') + Chars('0')
 Binary = BinaryInteger
 
 
 class OctalInteger(Grammar):
-    grammar = Group(Optional('-') + '0' + Optional(Letter('oO')) + Chars('01234567'))
-    bad_grammar = '-0' + Optional(Letter('oO')) + Chars('0')
+    grammar = Group(Optional('-') + '0' + Optional(Char('oO')) + Chars('01234567'))
+    bad_grammar = '-0' + Optional(Char('oO')) + Chars('0')
 Octal = OctalInteger
 
 
 class HexadecimalInteger(Grammar):
-    grammar = Group(Optional('-') + '0' + Letter('xX') + Chars('01234567890abcdefABCDEF'))
-    bad_grammar = '-0' + Letter('xX') + Chars('0')
+    grammar = Group(Optional('-') + '0' + Char('xX') + Chars('01234567890abcdefABCDEF'))
+    bad_grammar = '-0' + Char('xX') + Chars('0')
 Hex = HexadecimalInteger
 
 
@@ -172,7 +172,7 @@ class VariableGrammarType(GrammarType):
 
 class Variable(Grammar):
     __metaclass__ = VariableGrammarType
-    starts_with = Letter(string.ascii_letters + '_')
+    starts_with = Char(string.ascii_letters + '_')
     ends_with = Chars(string.ascii_letters + '_' + string.digits, min=0)
 Var = Variable
 
@@ -183,6 +183,7 @@ class PythonVariable(Variable):
 
 class PhpVariable(Variable):
     bad_grammar = PhpReservedWord
+    starts_with = Char('$') + Char(string.ascii_letters + '_')
 
 
 class RubyVariable(Variable):
@@ -190,7 +191,7 @@ class RubyVariable(Variable):
 
 
 class EscapeSequence(Grammar):
-    grammar = Group('\\' + Any('u' + Letter('0123456789abcdefABCDEF') * 4, *list("nrtabfv\n\r\'\"\\")))
+    grammar = Group('\\' + Any('u' + Char('0123456789abcdefABCDEF') * 4, *list("nrtabfv\n\r\'\"\\")))
 
 
 class QuotedGrammarType(GrammarType):

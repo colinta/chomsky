@@ -1,13 +1,13 @@
 from chomsky import *
 
 
-def test_letter_eq():
-    assert Letter('a') == Letter('a')
-    assert Letter('a') != Letter('b')
-    assert Letter('ab') == Letter('ab')
-    assert Letter('ab') != Letter('ba')
-    assert Letter('ab', suppress=True) != Letter('ab', suppress=False)
-    assert Letter('ab', suppress=True) == Letter('ab', suppress=True)
+def test_char_eq():
+    assert Char('a') == Char('a')
+    assert Char('a') != Char('b')
+    assert Char('ab') == Char('ab')
+    assert Char('ab') != Char('ba')
+    assert Char('ab', suppress=True) != Char('ab', suppress=False)
+    assert Char('ab', suppress=True) == Char('ab', suppress=True)
 
 
 def test_literal_eq():

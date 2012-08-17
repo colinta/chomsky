@@ -38,8 +38,8 @@ consistent data, where ``Grammar`` objects are not needed.  But for building a
 language parser, you will probably use the more heavy-duty Grammar building
 blocks.
 
-Letter
-~~~~~~
+Char
+~~~~
 
 Matches a single letter from a string of accepted letters.  There are lots of
 built-in strings in the `string module`_.
@@ -48,7 +48,7 @@ built-in strings in the `string module`_.
 
     test/matchers/test_letter_matcher.py
 
-    matcher = Letter('abcde')
+    matcher = Char('abcde')
     matcher('a') => 'a'
     matcher('bcd') => 'b'
     matcher('f') => raise ParseException
@@ -147,7 +147,7 @@ in the ``Regex`` example).
 ::
 
     test/matchers/test_sequence_matcher.py
-    matcher = Sequence(Literal('Hello '), Literal('World'), Letter('!.'))
+    matcher = Sequence(Literal('Hello '), Literal('World'), Char('!.'))
     matcher('Hello World!') => ['Hello ', 'World', '!']
     matcher('Hello World.') => ['Hello ', 'World', '.']
     matcher('Hello, World.') => ParseException
@@ -158,7 +158,7 @@ multiplication to repeat a series of ``Matcher``-s.
 **Addition**::
 
     test/matchers/test_matcher_addition.py
-    matcher = Literal('Hello ') + Literal('World') + Letter('!.')
+    matcher = Literal('Hello ') + Literal('World') + Char('!.')
     matcher('Hello World!') => ['Hello ', 'World', '!']
     matcher('Hello World.') => ['Hello ', 'World', '.']
     matcher('Hello, World.') => ParseException
