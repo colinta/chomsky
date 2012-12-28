@@ -7,7 +7,7 @@ class GrammarSequenceTest(Grammar):
 
 
 def test_grammarsequence_repr():
-    assert repr(GrammarSequenceTest('0 + 1')) == "GrammarSequenceTest('0+1')"
+    assert repr(GrammarSequenceTest('0 + 1')) == "GrammarSequenceTest('0 + 1')"
 
 
 def test_grammarsequence_type():
