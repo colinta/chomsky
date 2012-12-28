@@ -77,6 +77,16 @@ class Grammar(object):
         if isinstance(other, list):
             return [other] + [self]
 
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return other.parsed == self.parsed
+        return False
+
+    def __req__(self, other):
+        if isinstance(other, type(self)):
+            return other.parsed == self.parsed
+        return False
+
 
 class Integer(Grammar):
     grammar = Group('0' | (Optional('-') + NextIsNot('0') + Chars(string.digits)))
