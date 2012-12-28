@@ -57,6 +57,7 @@ class Grammar(object):
     def __getitem__(self, key):
         if isinstance(key, int):
             return self.parsed[key]
+        return super(Grammar, self).__getitem__(key)
 
     def __repr__(self):
         try:
