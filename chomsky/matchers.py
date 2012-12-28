@@ -95,7 +95,9 @@ class Matcher(object):
 class GrammarType(type):
     def __init__(cls, classname, bases, cls_dict):
         cls.suppress = cls_dict.get('suppress', getattr(cls, 'suppress', False))
+        # default ignore_whitespace == True
         cls.ignore_whitespace = cls_dict.get('ignore_whitespace', getattr(cls, 'ignore_whitespace', True))
+        # default whitespace matcher
         cls.whitespace = cls_dict.get('whitespace', getattr(cls, 'whitespace', Whitespace()))
 
     def __add__(cls, other):
