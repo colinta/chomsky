@@ -80,6 +80,6 @@ def test_octal_fail_neg_00000():
         print OctalInteger('-00000')
 
 
-def test_octal_fail_01():
+def test_octal_fail_a():
     with raises(ParseException):
         print OctalInteger('a')

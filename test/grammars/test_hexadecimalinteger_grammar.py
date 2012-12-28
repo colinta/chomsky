@@ -62,6 +62,6 @@ def test_hexadecimal_fail_neg_0x0000():
         print HexadecimalInteger('-0x0000')
 
 
-def test_hexadecimal_fail_01():
+def test_hexadecimal_fail_a():
     with raises(ParseException):
         print HexadecimalInteger('a')
