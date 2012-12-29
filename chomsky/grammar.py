@@ -1,6 +1,7 @@
 import string
 import re
 
+from .util import str_or_unicode
 from .buffer import Buffer
 from .exceptions import ParseException
 from .matchers import *
@@ -44,10 +45,7 @@ class Grammar(object):
 
         if self.bad_grammar:
             try:
-                try:
-                    buffer = Buffer(str(self.parsed))
-                except UnicodeEncodeError:
-                    buffer = Buffer(unicode(self.parsed))
+                buffer = Buffer(str_or_unicode(self.parsed))
                 (StringStart() + self.bad_grammar + StringEnd()).consume(buffer)
             except ParseException:
                 pass
@@ -65,16 +63,10 @@ class Grammar(object):
         except AttributeError:
             insides = self.buffer
 
-        try:
-            return '{type.__name__}({insides!r})'.format(self=self, insides=str(insides), type=type(self))
-        except UnicodeEncodeError:
-            return '{type.__name__}({insides!r})'.format(self=self, insides=unicode(insides), type=type(self))
+        return '{type.__name__}({insides!r})'.format(self=self, insides=str_or_unicode(insides), type=type(self))
 
     def __str__(self):
-        try:
-            return str(self.parsed)
-        except UnicodeEncodeError:
-            return unicode(self.parsed)
+        return str_or_unicode(self.parsed)
 
     def __len__(self):
         return len(self.parsed)
@@ -151,10 +143,7 @@ class ReservedWord(Grammar):
         args = ""
         if self.words != type(self).words:
             args = ", words={self.words!r}".format(self=self)
-        try:
-            return '{type.__name__}({buffer!r}{args})'.format(self=self, buffer=str(self.buffer), type=type(self), args=args)
-        except UnicodeEncodeError:
-            return '{type.__name__}({buffer!r}{args})'.format(self=self, buffer=unicode(self.buffer), type=type(self), args=args)
+        return '{type.__name__}({buffer!r}{args})'.format(self=self, buffer=str_or_unicode(self.buffer), type=type(self), args=args)
 
 
 class PythonReservedWord(ReservedWord):

@@ -1,6 +1,7 @@
 import re
 import string
 
+from .util import str_or_unicode
 from .exceptions import ParseException, RollbackException
 from .result import Result, ResultList
 from .buffer import Buffer
@@ -1014,10 +1015,7 @@ class Group(Matcher):
         r = self.matcher.consume(buffer)
         if isinstance(r, Result):
             return r
-        try:
-            return Result(''.join(str(s) for s in r))
-        except UnicodeEncodeError:
-            return Result(u''.join(unicode(s) for s in r))
+        return Result(''.join(str_or_unicode(s) for s in r))
 
     def minimum_length(self):
         return self.matcher.minimum_length()
