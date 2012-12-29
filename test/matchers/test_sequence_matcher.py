@@ -47,6 +47,11 @@ def test_three_sequences():
     assert matcher('aeioupqrst12345') == ['aeiou', 'pqrst', '12345']
 
 
+def test_three_sequences_whitespace_sep():
+    matcher = Sequence(Chars('aeiou'), Chars('pqrst'), Chars('12345'), sep=Whitespace)
+    assert matcher('auieoaieo ttrrssppqq 543212345') == ['auieoaieo', 'ttrrssppqq', '543212345']
+
+
 def test_sequence_addition_left():
     matcher = Chars('aeiou') + Sequence(Chars('pqrst'), Chars('12345'))
     test_matcher = AutoSequence(Chars('aeiou'), Sequence(Chars('pqrst'), Chars('12345')))
