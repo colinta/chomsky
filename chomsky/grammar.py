@@ -88,7 +88,8 @@ class Grammar(object):
 
     def __eq__(self, other):
         if isinstance(other, Grammar):
-            return self.parsed == other.parsed
+            type_check = isinstance(other, type(self)) or isinstance(self, type(other))
+            return type_check and self.parsed == other.parsed
         return self.parsed == other
 
 
