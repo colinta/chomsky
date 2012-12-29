@@ -101,12 +101,18 @@ class GrammarType(type):
     be considered a subclass of Matcher.  In this way, a Grammar *class* is a
     Matcher *instance*.  Python is kind of wonderful like that.
     """
+
+    'Stores Grammars so that Recur can find them later'
+    types = {}
+
     def __init__(cls, classname, bases, cls_dict):
         cls.suppress = cls_dict.get('suppress', getattr(cls, 'suppress', False))
         # default ignore_whitespace == True
         cls.ignore_whitespace = cls_dict.get('ignore_whitespace', getattr(cls, 'ignore_whitespace', True))
         # default whitespace matcher
         cls.whitespace = cls_dict.get('whitespace', getattr(cls, 'whitespace', Whitespace()))
+
+        GrammarType.types['classname'] = cls
 
     def __add__(cls, other):
         return AutoSequence(cls, to_matcher(other), sep=Optional(cls.whitespace, suppress=True))
@@ -1065,3 +1071,7 @@ class Flatten(Matcher):
 
     def maximum_length(self):
         return self.matcher.maximum_length()
+
+
+class Recur(Matcher):
+    pass
