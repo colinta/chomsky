@@ -26,6 +26,7 @@ def test_oneline_grammar_newlines_fail():
     with raises(ParseException):
         OneLineGrammarTest('0+\n1')
 
+
 def test_oneline_grammar_newlines_pass():
     # but this is fine
     m = OneLineGrammarTest('0+1\n')
