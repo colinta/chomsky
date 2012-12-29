@@ -119,6 +119,10 @@ class HexadecimalInteger(Grammar):
 Hex = HexadecimalInteger
 
 
+class Number(Grammar):
+    grammar = Float | BinaryInteger | OctalInteger | HexadecimalInteger | Integer
+
+
 class OperatorGrammarType(GrammarType):
     def __init__(cls, classname, bases, cls_dict):
         super(OperatorGrammarType, cls).__init__(classname, bases, cls_dict)
@@ -267,8 +271,7 @@ class String(Grammar):
 
 class Value(Grammar):
     grammar = (
-            BinaryInteger | OctalInteger | HexadecimalInteger | Integer
+            Number
           | Variable
-          | TripleSingleQuotedString | TripleDoubleQuotedString
-          | SingleQuotedString | DoubleQuotedString
+          | String
              )
