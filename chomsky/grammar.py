@@ -259,3 +259,16 @@ class TripleDoubleQuotedString(QuotedString):
 
 class String(Grammar):
     grammar = (TripleSingleQuotedString | TripleDoubleQuotedString | SingleQuotedString | DoubleQuotedString)
+
+
+class Value(Grammar):
+    grammar = (
+            BinaryInteger | OctalInteger | HexadecimalInteger | Integer
+          | Variable
+          | TripleSingleQuotedString | TripleDoubleQuotedString
+          | SingleQuotedString | DoubleQuotedString
+             )
+
+
+class Expression(Grammar):
+    grammar = Value + ZeroOrMore(Optional(Whitespace(), suppress=True) + Operator + Optional(Whitespace(), suppress=True) + Value)
