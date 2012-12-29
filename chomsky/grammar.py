@@ -61,15 +61,23 @@ class Grammar(object):
 
     def __repr__(self):
         try:
-            return '{type.__name__}({buffer!r})'.format(self=self, buffer=str(self.buffer), type=type(self))
+            insides = self.parsed
+        except AttributeError:
+            insides = self.buffer
+
+        try:
+            return '{type.__name__}({insides!r})'.format(self=self, insides=str(insides), type=type(self))
         except UnicodeEncodeError:
-            return '{type.__name__}({buffer!r})'.format(self=self, buffer=unicode(self.buffer), type=type(self))
+            return '{type.__name__}({insides!r})'.format(self=self, insides=unicode(insides), type=type(self))
 
     def __str__(self):
         try:
             return str(self.parsed)
         except UnicodeEncodeError:
             return unicode(self.parsed)
+
+    def __len__(self):
+        return len(self.parsed)
 
     def __add__(self, other):
         return [self, other]
@@ -79,14 +87,9 @@ class Grammar(object):
             return [other] + [self]
 
     def __eq__(self, other):
-        if isinstance(other, type(self)):
-            return other.parsed == self.parsed
-        return False
-
-    def __req__(self, other):
-        if isinstance(other, type(self)):
-            return other.parsed == self.parsed
-        return False
+        if isinstance(other, Grammar):
+            return self.parsed == other.parsed
+        return self.parsed == other
 
 
 class Integer(Grammar):
@@ -252,3 +255,7 @@ class TripleSingleQuotedString(QuotedString):
 class TripleDoubleQuotedString(QuotedString):
     delimiter = '"""'
     insides = Regex('.', flags=re.DOTALL)
+
+
+class String(Grammar):
+    grammar = (TripleSingleQuotedString | TripleDoubleQuotedString | SingleQuotedString | DoubleQuotedString)

@@ -65,7 +65,7 @@ class Matcher(object):
 
     def __mul__(self, other):
         if isinstance(other, int):
-            return Exactly(self, other)
+            return Exactly(other, self)
         else:
             raise TypeError
 
@@ -93,6 +93,14 @@ class Matcher(object):
 
 
 class GrammarType(type):
+    """
+    Grammars could also be called "tokens".  They use Matchers, which are very
+    low-level, to build a more useful token, like an "Integer" or "String".
+
+    A Grammar must have a metaclass that extends GrammarType.  GrammarType can
+    be considered a subclass of Matcher.  In this way, a Grammar *class* is a
+    Matcher *instance*.  Python is kind of wonderful like that.
+    """
     def __init__(cls, classname, bases, cls_dict):
         cls.suppress = cls_dict.get('suppress', getattr(cls, 'suppress', False))
         # default ignore_whitespace == True
@@ -101,14 +109,14 @@ class GrammarType(type):
         cls.whitespace = cls_dict.get('whitespace', getattr(cls, 'whitespace', Whitespace()))
 
     def __add__(cls, other):
-        return AutoSequence(cls, to_matcher(other))
+        return AutoSequence(cls, to_matcher(other), sep=Optional(cls.whitespace, suppress=True))
 
     def __radd__(cls, other):
         return to_matcher(other) + cls
 
     def __mul__(cls, other):
         if isinstance(other, int):
-            return Exactly(cls, other)
+            return Exactly(other, cls)
         else:
             raise TypeError
 
@@ -466,7 +474,7 @@ class AutoSequence(Matcher):
                     token_consumed = self.separated_by.consume(buffer)
                     if not self.separated_by.suppress and token_consumed is not None:
                         consumed.append(token_consumed)
-                    rollbacks.append((self.separated_by, token_consumed))
+                    # rollbacks.append((self.separated_by, token_consumed))
 
                 token_consumed = matcher.consume(buffer)
                 if not matcher.suppress and token_consumed is not None:
@@ -634,7 +642,7 @@ class Exactly(NMatches):
     default_min = None
     default_max = None
 
-    def __init__(self, matcher, times, **kwargs):
+    def __init__(self, times, matcher, **kwargs):
         kwargs['min'] = times
         kwargs['max'] = times
         super(Exactly, self).__init__(matcher, **kwargs)
@@ -647,6 +655,25 @@ class Exactly(NMatches):
         if args_only:
             return args
         return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
+
+
+class OneLine(Exactly):
+    def __init__(self, matcher, **kwargs):
+        matcher.separated_by = Optional(Whitespace(' \t'), suppress=True)
+        super(OneLine, self).__init__(1, matcher, **kwargs)
+
+    def consume(self, buffer):
+        start = buffer.position
+        retval = super(OneLine, self).consume(buffer)
+        end = buffer.position
+        matched = str(buffer)[start:end]
+        if "\n" in matched:
+            raise ParseException(
+            'New lines not valid in {self!r} at {buffer!r}'.format(
+                self=self,
+                buffer=buffer), buffer)
+        # return only the matched item
+        return retval[0]
 
 
 class AutoAny(Matcher):

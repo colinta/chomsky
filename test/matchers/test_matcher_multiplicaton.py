@@ -6,7 +6,7 @@ import string
 
 def test_two_products():
     matcher = Literal('aeiou') * 2
-    test_matcher = Exactly(Literal('aeiou'), 2)
+    test_matcher = Exactly(2, Literal('aeiou'))
     assert matcher == test_matcher
     assert matcher('aeiouaeiou') == ['aeiou', 'aeiou']
 
@@ -19,14 +19,14 @@ def test_two_products_lengths():
 
 def test_sequence_product():
     matcher = Sequence(Literal('abcde')) * 2
-    test_matcher = Exactly(Sequence(Literal('abcde')), 2)
+    test_matcher = Exactly(2, Sequence(Literal('abcde')))
     assert matcher == test_matcher
     assert matcher('abcdeabcde') == [['abcde'], ['abcde']]
 
 
 def test_three_products():
     matcher = Literal('aeiou') * 3
-    test_matcher = Exactly(Literal('aeiou'), 3)
+    test_matcher = Exactly(3, Literal('aeiou'))
     assert matcher == test_matcher
     assert matcher('aeiouaeiouaeiou') == ['aeiou', 'aeiou', 'aeiou']
 
