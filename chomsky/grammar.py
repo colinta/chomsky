@@ -268,7 +268,3 @@ class Value(Grammar):
           | TripleSingleQuotedString | TripleDoubleQuotedString
           | SingleQuotedString | DoubleQuotedString
              )
-
-
-class Expression(Grammar):
-    grammar = Value + ZeroOrMore(Optional(Whitespace(), suppress=True) + Operator + Optional(Whitespace(), suppress=True) + Value)
