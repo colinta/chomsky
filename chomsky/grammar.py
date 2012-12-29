@@ -97,6 +97,10 @@ class Integer(Grammar):
 Int = Integer
 
 
+class Float(Grammar):
+    grammar = Group(Integer + '.' + Chars('0123456789'))
+
+
 class BinaryInteger(Grammar):
     grammar = Group(Optional('-') + '0' + Char('bB') + Chars('01'))
     bad_grammar = '-0' + Char('bB') + Chars('0')
