@@ -1018,3 +1018,50 @@ class Group(Matcher):
 
     def maximum_length(self):
         return self.matcher.maximum_length()
+
+
+class Flatten(Matcher):
+    """
+    Flattens a list of lists into one list
+    """
+    def __init__(self, matcher, *args, **kwargs):
+        if args:
+            self.matcher = Sequence(matcher, *args)
+        else:
+            self.matcher = to_matcher(matcher)
+        super(Flatten, self).__init__(self, **kwargs)
+
+    def __eq__(self, other):
+        return isinstance(other, Flatten) and self.matcher == other.matcher \
+            and super(Flatten, self).__eq__(other)
+
+    def __repr__(self, args_only=False):
+        matcher = repr(self.matcher)
+        if matcher.startswith('(') and matcher.endswith(')'):
+            matcher = matcher[1:-1]
+        args = ['{matcher}'.format(matcher=matcher)]
+        args.extend(super(Flatten, self).__repr__(args_only=True))
+        if args_only:
+            return args
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
+
+    def consume(self, buffer):
+        results = self.matcher.consume(buffer)
+        if isinstance(results, Result):
+            return results
+        return self.consume_list(results)
+
+    def consume_list(self, results):
+        ret = ResultList()
+        for r in results:
+            if isinstance(r, Result):
+                ret.append(r)
+            else:
+                ret.extend(self.consume_list(r))
+        return ret
+
+    def minimum_length(self):
+        return self.matcher.minimum_length()
+
+    def maximum_length(self):
+        return self.matcher.maximum_length()
