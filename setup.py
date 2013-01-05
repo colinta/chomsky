@@ -9,17 +9,11 @@ def read(fname):
 
 setup(
         name="chomsky",
-        version="v0.0.14",
+        version="v0.0.15",
         author="Colin Thomas-Arnold",
         author_email="colinta@gmail",
         url="https://github.com/colinta/chomsky",
         install_requires=[],
-
-        # entry_points={
-        #     'console_scripts': [
-        #         'ply = chomsky.__main__:run'
-        #     ]
-        # },
 
         description="Another language grammar parser.  Inspired by modgrammar and pyparsing",
         long_description=read("README.rst"),

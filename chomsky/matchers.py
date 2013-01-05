@@ -115,6 +115,12 @@ class GrammarType(type):
     'Stores Grammars so that Recur can find them later'
     types = {}
 
+    def __new__(meta, name, bases, cls_dict):
+        if 'consume' in cls_dict:
+            cls_dict['consume_grammar'] = cls_dict['consume']
+            del cls_dict['consume']
+        return type.__new__(meta, name, bases, cls_dict)
+
     def __init__(cls, classname, bases, cls_dict):
         cls.suppress = cls_dict.get('suppress', getattr(cls, 'suppress', False))
         # default ignore_whitespace == True

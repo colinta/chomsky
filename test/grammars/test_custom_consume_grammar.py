@@ -6,7 +6,7 @@ class ExclamationGrammar(Grammar):
     '''
     Consumes any number of exclamation marks
     '''
-    def consume_grammar(self, buffer):
+    def consume(self, buffer):
         self.parsed = ''
         while buffer and buffer[0] == '!':
             self.parsed += '!'

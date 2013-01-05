@@ -33,9 +33,16 @@ class Grammar(object):
             self.buffer = parseme
         else:
             self.buffer = Buffer(parseme)
+        # you won't find the `consume_grammar` method instantiated anywhere...
+        # instead, the 'consume' method below is *renamed* to consume_grammar
+        # by the GrammarType meta class.  The reason is that the
+        # `GrammarType.consume` method is the method that must be called
+        # during parsing, but *I* *preferred* custom consuming in a Grammar
+        # class to be done the same way as a Matcher class - by defining a
+        # `consume` method.
         self.consume_grammar(self.buffer)
 
-    def consume_grammar(self, buffer):
+    def consume(self, buffer):
         cls = type(self)
         try:
             self.parsed = cls.grammar.consume(buffer)
