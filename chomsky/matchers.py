@@ -11,8 +11,17 @@ Infinity = float('inf')
 
 
 def to_matcher(obj):
-    if isinstance(obj, type):
+    if not obj:
         return obj
+
+    # GrammarTypes *are* matchers
+    if isinstance(obj, GrammarType):
+        return obj
+
+    # all other types are probably a Matcher class, and so needs to be
+    # instantiated
+    if isinstance(obj, type):
+        return obj()
 
     if isinstance(obj, Matcher):
         return obj
