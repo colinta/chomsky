@@ -440,9 +440,7 @@ class AutoSequence(Matcher):
         """
         kwargs can include 'sep', which is a matcher to match in between every item.
         """
-        self.separated_by = kwargs.pop('sep', None)
-        if isinstance(self.separated_by, type):
-            self.separated_by = self.separated_by()
+        self.separated_by = to_matcher(kwargs.pop('sep', None))
         self.matchers = [to_matcher(m) for m in matchers]
         super(AutoSequence, self).__init__(**kwargs)
 
