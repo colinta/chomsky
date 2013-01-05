@@ -673,7 +673,6 @@ class Exactly(NMatches):
 
 class OneLine(Exactly):
     def __init__(self, matcher, **kwargs):
-        matcher.separated_by = Optional(Whitespace(' \t'), suppress=True)
         super(OneLine, self).__init__(1, matcher, **kwargs)
 
     def consume(self, buffer):
