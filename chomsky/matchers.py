@@ -364,6 +364,62 @@ class Whitespace(Chars):
         super(Whitespace, self).__init__(consumable, **kwargs)
 
 
+class Token(Matcher):
+    """
+    'takenizes' a matcher by consuming whitespace before and after the matcher
+    """
+    def __init__(self, matcher, **kwargs):
+        self.matcher = to_matcher(matcher)
+        super(Token, self).__init__(**kwargs)
+
+    def consume(self, buffer):
+        try:
+            Whitespace().consume(buffer)
+        except ParseException:
+            pass
+        retval = self.matcher.consume(buffer)
+        try:
+            Whitespace().consume(buffer)
+        except ParseException:
+            pass
+        return retval
+
+    def __eq__(self, other):
+        return isinstance(other, Token) and self.matcher == other.matcher \
+            and super(Token, self).__eq__(other)
+
+    def __repr__(self, args_only=False):
+        args = ['{self.matcher!r}'.format(self=self)]
+
+        args.extend(super(Token, self).__repr__(args_only=True))
+        if args_only:
+            return args
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
+
+    def rollback(self, result, buffer):
+        if buffer[0] in ' \n\t':
+            moved = 0
+            while buffer[0] in ' \n\t':
+                moved += 1
+                buffer.advance(-1)
+            return result[:-moved]
+        result = self.matcher.rollback(result, buffer)
+
+        moved = 0
+        while buffer[0] in ' \n\t':
+            moved += 1
+            buffer.advance(-1)
+        if moved:
+            result = result[:-moved]
+        return result
+
+    def minimum_length(self):
+        return self.matcher.minimum_length()
+
+    def maximum_length(self):
+        return Infinity
+
+
 class Regex(Matcher):
     default_flags = 0
     default_group = 0
