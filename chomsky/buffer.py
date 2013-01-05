@@ -44,6 +44,9 @@ class Buffer(object):
     def position(self):
         return self.__position
 
+    def __nonzero__(self):
+        return len(self.__buffer) and self.__position < len(self.__buffer)
+
     def __len__(self):
         return len(self.__buffer)
 
