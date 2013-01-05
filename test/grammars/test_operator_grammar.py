@@ -38,6 +38,12 @@ def test_operator_grammar_plus():
     assert str(m) == '+'
 
 
+def test_operator_grammar_dot():
+    m = Operator('.')
+    assert m.parsed == '.'
+    assert str(m) == '.'
+
+
 def test_operator_grammar_equal():
     m = Operator('==')
     assert m.parsed == '=='
