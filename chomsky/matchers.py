@@ -690,6 +690,64 @@ class OneLine(Exactly):
         return retval[0]
 
 
+class SeparatedBy(NMatches):
+    '''
+    Convenient shorthand to create a list-like matcher.  Suppresses whitespace
+    surrounding the separator, and suppresses the separator
+    '''
+    default_suppress_separator = True
+
+    def __init__(self, separated_by, matcher, **kwargs):
+        kwargs['min'] = 0
+        kwargs['max'] = None
+        self.separated_by = to_matcher(separated_by)
+        self.separated_by.suppress = kwargs.get('suppress_separator', self.default_suppress_separator)
+        super(SeparatedBy, self).__init__(matcher, **kwargs)
+
+    def __eq__(self, other):
+        return isinstance(other, SeparatedBy) and self.matchers == other.matchers and \
+            self.separated_by == other.separated_by \
+            and super(SeparatedBy, self).__eq__(other)
+
+    def __repr__(self, args_only=False):
+        args = ['{self.separated_by!r}, {self.matcher!r}'.format(self=self)]
+
+        # skip NMatches!
+        args.extend(Matcher.__repr__(self, args_only=True))
+        if args_only:
+            return args
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
+
+    def consume(self, buffer):
+        buffer.mark()
+        consumed = ResultList()
+        try:
+            matched_count = 0
+            while True:
+                if consumed:
+                    token_consumed = self.separated_by.consume(buffer)
+                    if not self.separated_by.suppress and token_consumed is not None:
+                        consumed.append(token_consumed)
+
+                matched = self.matcher.consume(buffer)
+                if matched is not None:
+                    consumed.append(matched)
+                matched_count += 1
+                if self.max is not None and matched_count == self.max:
+                    break
+        except ParseException:
+            pass
+        if self.min is not None and len(consumed) < self.min:
+            buffer.restore_mark()
+            raise ParseException(
+                'Expected {self!r} at {buffer!r}'.format(
+                    self=self,
+                    buffer=buffer),
+                buffer)
+        buffer.forget_mark()
+        return consumed
+
+
 class AutoAny(Matcher):
     """
     Created when the `|` operator is used to combine matchers (an implicit
