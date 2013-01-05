@@ -188,7 +188,7 @@ class Char(Matcher):
     def __init__(self, consumable, **kwargs):
         self.consumable = consumable
         self.inverse = bool(kwargs.pop('inverse', self.default_inverse))
-        super(Char, self).__init__(self, **kwargs)
+        super(Char, self).__init__(**kwargs)
 
     def __eq__(self, other):
         return isinstance(other, Char) \
@@ -232,7 +232,7 @@ class Literal(Matcher):
     """
     def __init__(self, literal, **kwargs):
         self.literal = literal
-        super(Literal, self).__init__(self, **kwargs)
+        super(Literal, self).__init__(**kwargs)
 
     def __eq__(self, other):
         return isinstance(other, Literal) and self.literal == other.literal \
@@ -284,7 +284,7 @@ class Chars(Matcher):
         self.max = kwargs.pop('max', self.default_max)
         self.inverse = kwargs.pop('inverse', self.default_inverse)
         self.letter = Char(consumable, inverse=self.inverse)
-        super(Chars, self).__init__(self, **kwargs)
+        super(Chars, self).__init__(**kwargs)
 
     def __eq__(self, other):
         return isinstance(other, Chars) and self.consumable == other.consumable \
@@ -374,7 +374,7 @@ class Regex(Matcher):
         self.regex = re.compile(regex, flags=self.flags)
         self.group = kwargs.pop('group', self.default_group)
         self.advance = kwargs.pop('advance', self.default_advance)
-        super(Regex, self).__init__(self, **kwargs)
+        super(Regex, self).__init__(**kwargs)
 
     def __eq__(self, other):
         return isinstance(other, Regex) and self.regex.pattern == other.regex.pattern \
@@ -444,7 +444,7 @@ class AutoSequence(Matcher):
         if isinstance(self.separated_by, type):
             self.separated_by = self.separated_by()
         self.matchers = [to_matcher(m) for m in matchers]
-        super(AutoSequence, self).__init__(self, **kwargs)
+        super(AutoSequence, self).__init__(**kwargs)
 
     def __eq__(self, other):
         return isinstance(other, AutoSequence) and self.matchers == other.matchers and \
@@ -564,7 +564,7 @@ class NMatches(Matcher):
         self.matcher = to_matcher(matcher)
         self.min = kwargs.pop('min')
         self.max = kwargs.pop('max')
-        super(NMatches, self).__init__(self, **kwargs)
+        super(NMatches, self).__init__(**kwargs)
 
     def __eq__(self, other):
         return isinstance(other, NMatches) and self.matcher == other.matcher \
@@ -699,7 +699,7 @@ class AutoAny(Matcher):
     """
     def __init__(self, *matchers, **kwargs):
         self.matchers = [to_matcher(m) for m in matchers]
-        super(AutoAny, self).__init__(self, **kwargs)
+        super(AutoAny, self).__init__(**kwargs)
 
     def __eq__(self, other):
         return isinstance(other, AutoAny) and self.matchers == other.matchers \
@@ -1004,7 +1004,7 @@ class Group(Matcher):
             self.matcher = Sequence(matcher, *args)
         else:
             self.matcher = to_matcher(matcher)
-        super(Group, self).__init__(self, **kwargs)
+        super(Group, self).__init__(**kwargs)
 
     def __eq__(self, other):
         return isinstance(other, Group) and self.matcher == other.matcher \
@@ -1042,7 +1042,7 @@ class Flatten(Matcher):
             self.matcher = Sequence(matcher, *args)
         else:
             self.matcher = to_matcher(matcher)
-        super(Flatten, self).__init__(self, **kwargs)
+        super(Flatten, self).__init__(**kwargs)
 
     def __eq__(self, other):
         return isinstance(other, Flatten) and self.matcher == other.matcher \
