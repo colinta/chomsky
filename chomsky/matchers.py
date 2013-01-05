@@ -1137,4 +1137,13 @@ class Flatten(Matcher):
 
 
 class Recur(Matcher):
-    pass
+    def __init__(self, grammar_type, *args, **kwargs):
+        self.grammar_type = grammar_type
+        super(Recur, self).__init__(*args, **kwargs)
+
+    def consume(self, buffer):
+        try:
+            grammar = GrammarType.types[self.grammar_type]
+        except KeyError:
+            raise ParseException('Unknown grammar {self.grammar_type!r}'.format(self=self), buffer)
+        return grammar(buffer)
