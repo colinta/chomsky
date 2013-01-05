@@ -33,24 +33,28 @@ class Grammar(object):
             self.buffer = parseme
         else:
             self.buffer = Buffer(parseme)
+        self.consume_grammar(self.buffer)
+
+    def consume_grammar(self, buffer):
         cls = type(self)
         try:
-            self.parsed = cls.grammar.consume(self.buffer)
+            self.parsed = cls.grammar.consume(buffer)
         except ParseException:
             if cls.ignore_whitespace:
-                cls.whitespace.consume(self.buffer)
-                self.parsed = cls.grammar.consume(self.buffer)
+                cls.whitespace.consume(buffer)
+                self.parsed = cls.grammar.consume(buffer)
             else:
                 raise
 
         if self.bad_grammar:
             try:
                 buffer = Buffer(str_or_unicode(self.parsed))
-                (StringStart() + self.bad_grammar + StringEnd()).consume(buffer)
+                bad_matcher = StringStart() + self.bad_grammar + StringEnd()
+                bad_matcher.consume(buffer)
             except ParseException:
                 pass
             else:
-                raise ParseException("Invalid match {parseme!r} in {self!r}".format(parseme=parseme, self=self), buffer)
+                raise ParseException("Invalid match {buffer!r} in {self!r}".format(buffer=buffer, self=self), buffer)
 
     def __getitem__(self, key):
         if isinstance(key, int):
