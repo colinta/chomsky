@@ -133,6 +133,11 @@ class Operator(Grammar):
 Op = Operator
 
 
+class UnaryOperator(Grammar):
+    __metaclass__ = OperatorGrammarType
+    operators = ['~', '+', '-', '!']
+
+
 class ReservedWordGrammarType(GrammarType):
     def __init__(cls, classname, bases, cls_dict):
         super(ReservedWordGrammarType, cls).__init__(classname, bases, cls_dict)
