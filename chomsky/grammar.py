@@ -129,7 +129,7 @@ class OperatorGrammarType(GrammarType):
 
 class Operator(Grammar):
     __metaclass__ = OperatorGrammarType
-    operators = list('+-/*%<>') + ['==', '!=', '&&', '||'] + list('&|')
+    operators = ['==', '!=', '&&', '||', '**'] + list('+-/*%<>&|')
 Op = Operator
 
 
