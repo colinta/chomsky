@@ -122,7 +122,7 @@ class GrammarType(type):
         # default whitespace matcher
         cls.whitespace = cls_dict.get('whitespace', getattr(cls, 'whitespace', Whitespace()))
 
-        GrammarType.types['classname'] = cls
+        GrammarType.types[classname] = cls
 
     def __add__(cls, other):
         return AutoSequence(cls, to_matcher(other), sep=Optional(cls.whitespace, suppress=True))
