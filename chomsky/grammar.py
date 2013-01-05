@@ -61,7 +61,7 @@ class Grammar(object):
             except ParseException:
                 pass
             else:
-                raise ParseException("Invalid match {buffer!r} in {self!r}".format(buffer=buffer, self=self), buffer)
+                raise ParseException("Invalid match {buffer!r} in {self!r}".format(buffer=buffer, self=self))
 
     def __getitem__(self, key):
         if isinstance(key, int):

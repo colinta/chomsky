@@ -173,8 +173,8 @@ class NoMatch(SuppressedMatcher):
         raise ParseException(
             'NoMatch {self!r} at {buffer!r}'.format(
                 self=self,
-                buffer=buffer),
-            buffer)
+                buffer=buffer)
+            )
 
     def minimum_length(self):
         return 1
@@ -222,8 +222,8 @@ class Char(Matcher):
         raise ParseException(
             'Expected {self!r} at {buffer!r}'.format(
                 self=self,
-                buffer=buffer),
-            buffer)
+                buffer=buffer)
+            )
 
     def minimum_length(self):
         return 1
@@ -257,8 +257,8 @@ class Literal(Matcher):
         raise ParseException(
             'Expected {self!r} at {buffer!r}'.format(
                 self=self,
-                buffer=buffer),
-            buffer)
+                buffer=buffer)
+            )
 
     def minimum_length(self):
         return len(self.literal)
@@ -331,8 +331,8 @@ class Chars(Matcher):
             raise ParseException(
                 'Expected {self!r} at {buffer!r}'.format(
                     self=self,
-                    buffer=buffer),
-                buffer)
+                    buffer=buffer)
+                )
         buffer.forget_mark()
         return Result(consumed)
 
@@ -428,8 +428,8 @@ class Regex(Matcher):
             raise ParseException(
                 'Expected {self!r} at {buffer!r}'.format(
                     self=self,
-                    buffer=buffer),
-                buffer)
+                    buffer=buffer)
+                )
         buffer.advance(match.end(self.advance))
         buffer.forget_mark()
         if isinstance(self.group, tuple) or isinstance(self.group, list):
@@ -605,8 +605,8 @@ class NMatches(Matcher):
             raise ParseException(
                 'Expected {self!r} at {buffer!r}'.format(
                     self=self,
-                    buffer=buffer),
-                buffer)
+                    buffer=buffer)
+                )
         buffer.forget_mark()
         return consumed
 
@@ -690,7 +690,8 @@ class OneLine(Exactly):
             raise ParseException(
             'New lines not valid in {self!r} at {buffer!r}'.format(
                 self=self,
-                buffer=buffer), buffer)
+                buffer=buffer)
+            )
         # return only the matched item
         return retval[0]
 
@@ -747,8 +748,8 @@ class SeparatedBy(NMatches):
             raise ParseException(
                 'Expected {self!r} at {buffer!r}'.format(
                     self=self,
-                    buffer=buffer),
-                buffer)
+                    buffer=buffer)
+                )
         buffer.forget_mark()
         return consumed
 
@@ -792,8 +793,8 @@ class AutoAny(Matcher):
         raise ParseException(
             'Expected {self!r} at {buffer!r}'.format(
                 self=self,
-                buffer=buffer),
-            buffer)
+                buffer=buffer)
+            )
 
     def __repr__(self, args_only=False):
         type_name = type(self).__name__
@@ -847,7 +848,7 @@ class Any(AutoAny):
 class StringStart(SuppressedMatcher):
     def consume(self, buffer):
         if buffer.position != 0:
-            raise ParseException('Expected buffer to be at StringStart(0), not {0}'.format(buffer.position), buffer)
+            raise ParseException('Expected buffer to be at StringStart(0), not {0}'.format(buffer.position))
         return None
 
     def minimum_length(self):
@@ -860,7 +861,7 @@ class StringStart(SuppressedMatcher):
 class StringEnd(SuppressedMatcher):
     def consume(self, buffer):
         if buffer.position != len(buffer):
-            raise ParseException('Expected buffer to be at StringEnd({0}), not {1}'.format(len(buffer), buffer.position), buffer)
+            raise ParseException('Expected buffer to be at StringEnd({0}), not {1}'.format(len(buffer), buffer.position))
         return None
 
     def minimum_length(self):
@@ -873,7 +874,7 @@ class StringEnd(SuppressedMatcher):
 class LineStart(SuppressedMatcher):
     def consume(self, buffer):
         if buffer.position > 0 and buffer[-1] != "\n":
-            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position - 1, buffer[-1], self=self), buffer)
+            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position - 1, buffer[-1], self=self))
         return None
 
     def minimum_length(self):
@@ -886,7 +887,7 @@ class LineStart(SuppressedMatcher):
 class LineEnd(SuppressedMatcher):
     def consume(self, buffer):
         if buffer.position < len(buffer) and buffer[0] != "\n":
-            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position, buffer[0], self=self), buffer)
+            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position, buffer[0], self=self))
         return None
 
     def minimum_length(self):
@@ -905,9 +906,9 @@ class WordStart(SuppressedMatcher):
 
     def consume(self, buffer):
         if buffer.position > 0 and buffer[-1] in self.consumable:
-            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position - 1, buffer[-1], self=self), buffer)
+            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position - 1, buffer[-1], self=self))
         if buffer[0] not in self.consumable:
-            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position, buffer[0], self=self), buffer)
+            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position, buffer[0], self=self))
         return None
 
     def minimum_length(self):
@@ -926,9 +927,9 @@ class WordEnd(SuppressedMatcher):
 
     def consume(self, buffer):
         if buffer[-1] not in self.consumable:
-            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position - 1, buffer[-1], self=self), buffer)
+            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position - 1, buffer[-1], self=self))
         if buffer.position < len(buffer) and buffer[0] in self.consumable:
-            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position, buffer[0], self=self), buffer)
+            raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position, buffer[0], self=self))
         return None
 
     def minimum_length(self):
@@ -972,7 +973,7 @@ class NextIsNot(NextIs):
             buffer.restore_mark()
             return None
         buffer.restore_mark()
-        raise ParseException('Did not expect buffer to be {self.matcher!r}, at {buffer!r}'.format(self=self, buffer=buffer), buffer)
+        raise ParseException('Did not expect buffer to be {self.matcher!r}, at {buffer!r}'.format(self=self, buffer=buffer))
 
 
 class PrevIs(SuppressedMatcher):
@@ -1013,7 +1014,7 @@ class PrevIs(SuppressedMatcher):
                 break
 
         buffer.restore_mark()
-        raise ParseException('Expect buffer to be {self.matcher!r}, at {buffer!r}'.format(self=self, buffer=buffer), buffer)
+        raise ParseException('Expect buffer to be {self.matcher!r}, at {buffer!r}'.format(self=self, buffer=buffer))
 
     def minimum_length(self):
         return 0
@@ -1042,7 +1043,7 @@ class PrevIsNot(PrevIs):
                 if not test_buffer.rest():
                     # it worked!  dang
                     buffer.restore_mark()
-                    raise_me = ParseException('Did not expect buffer to be {self.matcher!r}, at {buffer!r}'.format(self=self, buffer=buffer), buffer)
+                    raise_me = ParseException('Did not expect buffer to be {self.matcher!r}, at {buffer!r}'.format(self=self, buffer=buffer))
                     break
             except ParseException:
                 pass
@@ -1150,5 +1151,5 @@ class Recur(Matcher):
         try:
             grammar = GrammarType.types[self.grammar_type]
         except KeyError:
-            raise ParseException('Unknown grammar {self.grammar_type!r}'.format(self=self), buffer)
+            raise ParseException('Unknown grammar {self.grammar_type!r}'.format(self=self))
         return grammar(buffer)

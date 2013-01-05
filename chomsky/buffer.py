@@ -53,8 +53,8 @@ class Buffer(object):
     def __getitem__(self, key):
         if self.__position >= len(self.__buffer):
             raise ParseException(
-                'Unexpected end of buffer at {self.position}'.format(self=self),
-                buffer)
+                'Unexpected end of buffer at {self.position}'.format(self=self)
+                )
 
         if isinstance(key, int):
             return self.__buffer[self.position + key]
