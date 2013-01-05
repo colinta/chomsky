@@ -70,7 +70,9 @@ class Buffer(object):
                     start = self.position + key.start
 
                 if key.stop == None:
-                    stop = self.position
+                    stop = len(self.__buffer)
+                elif key.stop < 0:
+                    stop = key.stop
                 else:
                     stop = self.position + key.stop
             return Buffer(self.__buffer[slice(start, stop, key.step)])
