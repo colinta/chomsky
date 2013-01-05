@@ -7,6 +7,11 @@ def test_two_sequences_repr():
     assert repr(matcher) == "Sequence(Chars('aeiou'), Chars('abcde'))"
 
 
+def test_nested_sequences_repr():
+    matcher = Sequence(L('b') + 'c')
+    assert repr(matcher) == "Sequence(Literal('b'), Literal('c'))"
+
+
 def test_two_autosequences_repr():
     matcher = Chars('aeiou') + Chars('abcde')
     assert repr(matcher) == "(Chars('aeiou') + Chars('abcde'))"
