@@ -40,7 +40,9 @@ class Grammar(object):
         class - by defining a `consume` method.
         '''
         # short-circuit the usual parsing method
-        if isinstance(parseme, Grammar) or isinstance(parseme, Matcher) or isinstance(parseme, ResultList):
+        if isinstance(parseme, Grammar) or isinstance(parseme, Matcher) or isinstance(parseme, list):
+            if isinstance(parseme, list) and not isinstance(parseme, ResultList):
+                parseme = ResultList(parseme)
             self.parsed = parseme
         else:
             if isinstance(parseme, Buffer):
