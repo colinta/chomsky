@@ -148,11 +148,17 @@ class Operator(Grammar):
     operators = [
         '==', '!=', '<=', '>=', '<', '>',
         '&&', '||', '&', '|',
-        '**=', '//=', '+=', '-=', '/=', '*=', '%=', '=',
         '**',  '//',  '+',  '-',  '/',  '*',  '%',
         '.',  # function call
     ]
 Op = Operator
+
+
+class Assignment(Grammar):
+    __metaclass__ = OperatorGrammarType
+    operators = [
+        '**=', '//=', '+=', '-=', '/=', '*=', '%=', '=',
+    ]
 
 
 class UnaryOperator(Grammar):
