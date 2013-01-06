@@ -39,15 +39,19 @@ class Grammar(object):
         consuming in a Grammar class to be done the same way as a Matcher
         class - by defining a `consume` method.
         '''
-        if isinstance(parseme, Buffer):
-            self.buffer = parseme
+        # short-circuit the usual parsing method
+        if isinstance(parseme, Grammar) or isinstance(parseme, Matcher) or isinstance(parseme, ResultList):
+            self.parsed = parseme
         else:
-            self.buffer = Buffer(parseme)
+            if isinstance(parseme, Buffer):
+                self.buffer = parseme
+            else:
+                self.buffer = Buffer(parseme)
 
-        if not hasattr(self, 'parsed'):
-            self.parsed = None
+            if not hasattr(self, 'parsed'):
+                self.parsed = None
 
-        self.parsed = self.consume_grammar(self.buffer)
+            self.parsed = self.consume_grammar(self.buffer)
 
     def consume_grammar(self, buffer):
         cls = type(self)
