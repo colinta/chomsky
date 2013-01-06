@@ -18,27 +18,38 @@ class Buffer(object):
     def rest(self):
         return self.__buffer[self.__position:]
 
-    def mark(self):
+    def mark(self, mark_id=None):
         """
         Most Matchers store the position before matching.
-        """
-        self.__marks.append(self.__position)
 
-    def restore_mark(self):
+        The ``mark_id`` feature is useful during internal chomsky debugging.
+        Passing the matcher or grammar will ensure that the object that set the
+        mark is the same object that later restored or removed the mark.
+        """
+        self.__marks.append((self.__position, mark_id and id(mark_id)))
+
+    def restore_mark(self, mark_id=None):
         """
         Restores the position of the pushed mark.
         """
         if not self.__marks:
             raise IndexError('Cannot pop mark position')
-        self.__position = self.__marks.pop()
+        pos, prev_id = self.__marks.pop()
+        mark_id = mark_id and id(mark_id)
+        if (prev_id or mark_id) and prev_id != mark_id:
+            raise Exception('Mark ids do not match. old={prev_id!r}, new={mark_id!r}'.format(**locals()))
+        self.__position = pos
 
-    def forget_mark(self):
+    def forget_mark(self, mark_id=None):
         """
         Removes the last mark pushed without moving the position.
         """
         if not self.__marks:
             raise IndexError('Cannot pop mark position')
-        self.__marks.pop()
+        pos, prev_id = self.__marks.pop()
+        mark_id = mark_id and id(mark_id)
+        if (prev_id or mark_id) and prev_id != mark_id:
+            raise Exception('Mark ids do not match. old={prev_id!r}, new={mark_id!r}'.format(**locals()))
 
     @property
     def position(self):
