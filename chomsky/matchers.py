@@ -287,7 +287,7 @@ class Chars(Matcher):
         """
         self.consumable = consumable
         self.min = kwargs.pop('min', self.default_min)
-        if self.min == None:
+        if self.min is None:
             self.min = 0
         self.max = kwargs.pop('max', self.default_max)
         self.inverse = kwargs.pop('inverse', self.default_inverse)
@@ -322,10 +322,8 @@ class Chars(Matcher):
         buffer.mark()
         consumed = ''
         try:
-            while True:
+            while self.max is None or len(consumed) < self.max:
                 consumed += self.letter.consume(buffer)
-                if self.max != None and len(consumed) == self.max:
-                    break
         except ParseException:
             pass
         if self.min and len(consumed) < self.min:
@@ -593,13 +591,11 @@ class NMatches(Matcher):
         consumed = ResultList()
         try:
             matched_count = 0
-            while True:
+            while self.max is None or matched_count < self.max:
                 matched = self.matcher.consume(buffer)
                 if matched is not None:
                     consumed.append(matched)
                 matched_count += 1
-                if self.max is not None and matched_count == self.max:
-                    break
         except ParseException:
             pass
         if self.min is not None and len(consumed) < self.min:
@@ -713,7 +709,7 @@ class SeparatedBy(NMatches):
         super(SeparatedBy, self).__init__(matcher, **kwargs)
 
     def __eq__(self, other):
-        return isinstance(other, SeparatedBy) and self.matchers == other.matchers and \
+        return isinstance(other, SeparatedBy) and self.matcher == other.matcher and \
             self.separated_by == other.separated_by \
             and super(SeparatedBy, self).__eq__(other)
 
@@ -731,7 +727,7 @@ class SeparatedBy(NMatches):
         consumed = ResultList()
         try:
             matched_count = 0
-            while True:
+            while self.max is None or matched_count < self.max:
                 if consumed:
                     token_consumed = self.separated_by.consume(buffer)
                     if not self.separated_by.suppress and token_consumed is not None:
@@ -741,8 +737,6 @@ class SeparatedBy(NMatches):
                 if matched is not None:
                     consumed.append(matched)
                 matched_count += 1
-                if self.max is not None and matched_count == self.max:
-                    break
         except ParseException:
             pass
         if self.min is not None and len(consumed) < self.min:
@@ -767,7 +761,7 @@ class AutoAny(Matcher):
 
     def __eq__(self, other):
         return isinstance(other, AutoAny) and self.matchers == other.matchers \
-            and super(Any, self).__eq__(other)
+            and super(AutoAny, self).__eq__(other)
 
     def __or__(self, other):
         """
@@ -785,13 +779,15 @@ class AutoAny(Matcher):
                 break
             matcher = self.matchers[matcher_i]
 
+            buffer.mark()
             try:
-                token_consumed = matcher.consume(buffer)
-                return token_consumed
+                consumed = matcher.consume(buffer)
+                buffer.forget_mark()
+                return consumed
             except ParseException:
+                buffer.restore_mark()
                 matcher_i += 1
 
-        buffer.restore_mark()
         raise ParseException(
             'Expected {self!r} at {buffer!r}'.format(
                 self=self,
@@ -955,7 +951,11 @@ class NextIs(SuppressedMatcher):
 
     def consume(self, buffer):
         buffer.mark()
-        self.matcher.consume(buffer)
+        try:
+            self.matcher.consume(buffer)
+        except ParseException as e:
+            buffer.restore_mark()
+            raise e
         buffer.restore_mark()
         return None
 

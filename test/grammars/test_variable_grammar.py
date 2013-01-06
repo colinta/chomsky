@@ -31,6 +31,11 @@ def test_variable_type():
     assert isinstance(Variable('abcd'), Variable)
 
 
+def test_variable_fail():
+    with raises(ParseException):
+        isinstance(Variable('-abcd'), Variable)
+
+
 def test_pythonvariable_type():
     assert isinstance(PythonVariable('abcd'), PythonVariable)
 

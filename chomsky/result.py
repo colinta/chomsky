@@ -16,7 +16,7 @@ class ResultList(list):
         return 'ResultList(' + super(ResultList, self).__repr__() + ')'
 
     def __str__(self):
-        return ''.join(str(result) for result in self)
+        return Result(''.join(str(result) for result in self))
 
     def __getslice__(self, start, stop):
         return ResultList(super(ResultList, self).__getslice__(start, stop))

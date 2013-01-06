@@ -36,7 +36,7 @@ def test_whitespace_matcher_fail():
         print matcher('abc')
 
 
-def test_whitespace_nl_matcher_fail():
+def test_whitespace_min_matcher_fail():
     matcher = Whitespace(min=1)
     with raises(ParseException):
         print matcher('abc')

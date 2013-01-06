@@ -4,6 +4,7 @@ from chomsky import *
 
 any_matcher = Any(Literal('Joey'), Literal('Bob'), Literal('Billy'))
 autoany_matcher = Literal('Joey') | Literal('Bob') | Literal('Billy')
+any_number_matcher = Any(Number | String)
 
 
 def test_any_repr():
@@ -29,6 +30,19 @@ def test_any():
     for name in ['Joey', 'Bob', 'Billy']:
         parsed = any_matcher(name)
         assert parsed == name
+
+
+def test_any_number():
+    assert any_number_matcher('-123') == Number('-123')
+
+
+def test_any_string():
+    assert any_number_matcher('"123"') == String('"123"')
+
+
+def test_any_string_fail():
+    with raises(ParseException):
+        any_number_matcher('-"123"')
 
 
 def test_any_same_char():

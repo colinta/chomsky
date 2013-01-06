@@ -24,7 +24,13 @@ def test_hexadecimal_value_grammar():
 
 def test_variable_value_grammar():
     assert Value('abcd').parsed == Variable('abcd')
+    assert Value('abcd').parsed == Variable('abcd')
     assert Value('_123').parsed == Variable('_123')
+
+
+def test_variable_value_grammar_fail():
+    with raises(ParseException):
+        Value('-foo')
 
 
 def test_string_value_grammar():
