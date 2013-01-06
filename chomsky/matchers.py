@@ -114,7 +114,7 @@ class GrammarType(type):
     Matcher *instance*.  Python is kind of wonderful like that.
     """
 
-    'Stores Grammars so that Recur can find them later'
+    'Stores Grammars so that Later can find them later'
     types = {}
 
     def __new__(meta, name, bases, cls_dict):
@@ -1144,14 +1144,16 @@ class Flatten(Matcher):
         return self.matcher.maximum_length()
 
 
-class Recur(Matcher):
+class Later(Matcher):
     def __init__(self, grammar_type, *args, **kwargs):
         self.grammar_type = grammar_type
-        super(Recur, self).__init__(*args, **kwargs)
+        self.args = args
+        self.kwargs = kwargs
+        super(Later, self).__init__()
 
     def consume(self, buffer):
         try:
             grammar = GrammarType.types[self.grammar_type]
         except KeyError:
             raise ParseException('Unknown grammar {self.grammar_type!r}'.format(self=self))
-        return grammar(buffer)
+        return grammar(buffer, *self.args, **self.kwargs)
