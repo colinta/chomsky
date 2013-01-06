@@ -912,7 +912,10 @@ class LineStart(SuppressedMatcher):
 
 class LineEnd(SuppressedMatcher):
     def consume(self, buffer):
-        if buffer.position < len(buffer) and buffer[0] != "\n":
+        if buffer.position < len(buffer) and \
+           buffer[0] != "\n" and \
+           buffer[0] != "\r" and \
+           buffer[-1:0] != "\r\n":
             raise ParseException('Expected {self!r} at {0}, not {1!r}'.format(buffer.position, buffer[0], self=self))
         return None
 
