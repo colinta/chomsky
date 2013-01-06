@@ -104,34 +104,34 @@ def test_variable_starts_with_unicode():
 
 def test_variable_fail_digits():
     with raises(ParseException):
-        print Variable('123')
+        Variable('123')
 
 
 def test_variable_fail_starts_with():
     with raises(ParseException):
-        print TestPercentVariable('_abc')
+        TestPercentVariable('_abc')
 
 
 def test_variable_fail_starts_with_unicode():
     with raises(ParseException):
-        print TestUnicodeVariable(u'-abc')
+        TestUnicodeVariable(u'-abc')
 
 
 def test_pythonvariable_fail_reserved():
     with raises(ParseException):
-        print PythonVariable('def')
+        PythonVariable('def')
 
 
 def test_phpvariable_fail_reserved():
     with raises(ParseException):
-        print PhpVariable('function')
+        PhpVariable('function')
 
 
 def test_phpvariable_fail_nodollar():
     with raises(ParseException):
-        print PhpVariable('valid_name')
+        PhpVariable('valid_name')
 
 
 def test_rubyvariable_fail_reserved():
     with raises(ParseException):
-        print RubyVariable('def')
+        RubyVariable('def')

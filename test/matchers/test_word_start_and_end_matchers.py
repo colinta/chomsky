@@ -36,10 +36,10 @@ def test_multiple_start_and_end_of_word_matcher():
 def test_start_of_word_matcher_fail():
     matcher = L('test') + WordStart()
     with raises(ParseException):
-        print matcher('test')
+        matcher('test')
 
 
 def test_end_of_word_matcher_fail():
     matcher = Literal('hi!') + WordEnd()
     with raises(ParseException):
-        print matcher('hi!')
+        matcher('hi!')

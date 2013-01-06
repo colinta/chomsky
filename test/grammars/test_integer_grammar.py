@@ -48,9 +48,9 @@ def test_integer_grammar_neg_123():
 
 def test_integer_fail_neg_0():
     with raises(ParseException):
-        print Integer('-0')
+        Integer('-0')
 
 
 def test_integer_fail_a():
     with raises(ParseException):
-        print Integer('a')
+        Integer('a')

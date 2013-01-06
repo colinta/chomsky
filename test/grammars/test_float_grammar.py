@@ -66,9 +66,9 @@ def test_float_grammar_neg_123456():
 
 def test_float_fail_neg_0():
     with raises(ParseException):
-        print Float('-0')
+        Float('-0')
 
 
 def test_float_fail_a():
     with raises(ParseException):
-        print Float('a')
+        Float('a')

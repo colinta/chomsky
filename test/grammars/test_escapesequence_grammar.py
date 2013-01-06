@@ -8,7 +8,6 @@ def test_escapesequence_repr():
 
 def test_escapesequence_grammar():
     for c in 'nrtabfv\'\"\n\r\\':
-        print repr(c)
         m = EscapeSequence('\\' + c)
         assert m.parsed == '\\' + c
         assert str(m) == '\\' + c
@@ -22,4 +21,4 @@ def test_escapesequence_unicode_grammar():
 
 def test_escapesequence_fail():
     with raises(ParseException):
-        print EscapeSequence('\\G')
+        EscapeSequence('\\G')

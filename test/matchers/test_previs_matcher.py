@@ -39,4 +39,4 @@ def test_previs_11_22():
 
 def test_previs_fail():
     with raises(ParseException):
-        print previs_matcher('1122')
+        previs_matcher('1122')

@@ -64,4 +64,4 @@ def test_operator_grammar_binary_or():
 
 def test_operator_fail():
     with raises(ParseException):
-        print Operator('a')
+        Operator('a')

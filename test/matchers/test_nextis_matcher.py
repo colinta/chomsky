@@ -33,4 +33,4 @@ def test_nextis_11():
 
 def test_nextis_fail():
     with raises(ParseException):
-        print nextis_matcher('02')
+        nextis_matcher('02')

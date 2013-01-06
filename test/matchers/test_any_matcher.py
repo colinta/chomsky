@@ -59,4 +59,4 @@ def test_autoany():
 
 def test_any_fail():
     with raises(ParseException):
-        print any_matcher('bahhumbug')
+        any_matcher('bahhumbug')

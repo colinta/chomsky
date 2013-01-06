@@ -22,7 +22,7 @@ def test_one_oneormore():
 
 def test_zero_oneormore():
     with raises(ParseException):
-        print one_matcher('two')
+        one_matcher('two')
 
 
 def test_two_oneormore():

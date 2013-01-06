@@ -38,4 +38,4 @@ def test_previsnot_11():
 
 def test_previsnot_fail():
     with raises(ParseException):
-        print previsnot_matcher('7.7')
+        previsnot_matcher('7.7')

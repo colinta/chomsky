@@ -1,6 +1,5 @@
 from pytest import raises
 from chomsky import *
-from chomsky.matchers import AutoSequence
 import string
 
 
@@ -35,4 +34,4 @@ def test_three_sequence_products():
     matcher = (Chars(string.letters) + Literal(' ')) * 3
     assert matcher('why hello there ') == [['why', ' '], ['hello', ' '], ['there', ' ']]
     with raises(ParseException):
-        print matcher('not enough spaces')
+        matcher('not enough spaces')

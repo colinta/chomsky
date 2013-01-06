@@ -54,14 +54,14 @@ def test_hexadecimal_grammar_neg_0X00100():
 
 def test_hexadecimal_fail_neg_0x0():
     with raises(ParseException):
-        print HexadecimalInteger('-0x0')
+        HexadecimalInteger('-0x0')
 
 
 def test_hexadecimal_fail_neg_0x0000():
     with raises(ParseException):
-        print HexadecimalInteger('-0x0000')
+        HexadecimalInteger('-0x0000')
 
 
 def test_hexadecimal_fail_a():
     with raises(ParseException):
-        print HexadecimalInteger('a')
+        HexadecimalInteger('a')

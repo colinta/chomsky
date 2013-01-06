@@ -33,4 +33,4 @@ def test_nextisnot_11():
 
 def test_nextisnot_fail():
     with raises(ParseException):
-        print nextisnot_matcher('-0')
+        nextisnot_matcher('-0')

@@ -25,4 +25,4 @@ def test_operator_grammar_plus_assign():
 
 def test_operator_fail():
     with raises(ParseException):
-        print Assignment('+')
+        Assignment('+')

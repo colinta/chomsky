@@ -52,4 +52,4 @@ def test_rubyreservedword_grammar():
 
 def test_reservedword_fail():
     with raises(ParseException):
-        print TestReservedWord('function')
+        TestReservedWord('function')

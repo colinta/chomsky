@@ -48,9 +48,9 @@ def test_binary_grammar_neg_0B0010():
 
 def test_binary_fail_neg_0():
     with raises(ParseException):
-        print BinaryInteger('-0b000')
+        BinaryInteger('-0b000')
 
 
 def test_binary_fail_01():
     with raises(ParseException):
-        print BinaryInteger('a')
+        BinaryInteger('a')

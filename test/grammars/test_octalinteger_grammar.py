@@ -72,14 +72,14 @@ def test_octal_grammar_neg_0O00100():
 
 def test_octal_fail_neg_00():
     with raises(ParseException):
-        print OctalInteger('-00')
+        OctalInteger('-00')
 
 
 def test_octal_fail_neg_00000():
     with raises(ParseException):
-        print OctalInteger('-00000')
+        OctalInteger('-00000')
 
 
 def test_octal_fail_a():
     with raises(ParseException):
-        print OctalInteger('a')
+        OctalInteger('a')
