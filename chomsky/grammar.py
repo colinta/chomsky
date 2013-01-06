@@ -34,6 +34,9 @@ class Grammar(object):
         else:
             self.buffer = Buffer(parseme)
 
+        if not hasattr(self, 'parsed'):
+            self.parsed = None
+
         # In custom Grammar classes, it is "safe" to define a `consume` method.
         # It will be renamed to 'consume_grammar', though, so calling
         # `super(CustomGrammar, self).consume(buffer)` will fail.
