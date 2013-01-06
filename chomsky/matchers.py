@@ -86,7 +86,9 @@ class Matcher(object):
         return to_matcher(other) | self
 
     def __call__(self, string):
-        return self.consume(Buffer(string))
+        if not isinstance(string, Buffer):
+            string = Buffer(string)
+        return self.consume(string)
 
     def rollback(self, result, buffer):
         # Moves the buffer position, and then claims that it can't rollback.
