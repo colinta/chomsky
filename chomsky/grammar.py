@@ -82,17 +82,6 @@ class Grammar(object):
             return self.parsed[key]
         return super(Grammar, self).__getitem__(key)
 
-    def __repr__(self):
-        try:
-            insides = self.parsed
-        except AttributeError:
-            insides = self.buffer
-
-        return '{type.__name__}({insides!r})'.format(self=self, insides=str_or_unicode(insides), type=type(self))
-
-    def __str__(self):
-        return str_or_unicode(self.parsed)
-
     def __len__(self):
         return len(self.parsed)
 
@@ -111,6 +100,17 @@ class Grammar(object):
             type_check = isinstance(other, type(self)) or isinstance(self, type(other))
             return type_check and self.parsed == other.parsed
         return self.parsed == other
+
+    def __repr__(self):
+        try:
+            insides = self.parsed
+        except AttributeError:
+            insides = self.buffer
+
+        return '{type.__name__}({insides!r})'.format(self=self, insides=str_or_unicode(insides), type=type(self))
+
+    def __str__(self):
+        return str_or_unicode(self.parsed)
 
 
 class Integer(Grammar):
