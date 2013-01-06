@@ -29,6 +29,16 @@ class Grammar(object):
     grammar = None
 
     def __init__(self, parseme=None):
+        '''
+        In custom Grammar classes, it is "safe" to define a `consume` method.
+        It will be renamed to 'consume_grammar', though, so calling
+        `super(CustomGrammar, self).consume(buffer)` will fail.
+
+        The reason is that the `GrammarType.consume` method is the method
+        that must be called during parsing, but *I* *preferred* custom
+        consuming in a Grammar class to be done the same way as a Matcher
+        class - by defining a `consume` method.
+        '''
         if isinstance(parseme, Buffer):
             self.buffer = parseme
         else:
@@ -37,14 +47,6 @@ class Grammar(object):
         if not hasattr(self, 'parsed'):
             self.parsed = None
 
-        # In custom Grammar classes, it is "safe" to define a `consume` method.
-        # It will be renamed to 'consume_grammar', though, so calling
-        # `super(CustomGrammar, self).consume(buffer)` will fail.
-        #
-        # The reason is that the `GrammarType.consume` method is the method
-        # that must be called during parsing, but *I* *preferred* custom
-        # consuming in a Grammar class to be done the same way as a Matcher
-        # class - by defining a `consume` method.
         self.parsed = self.consume_grammar(self.buffer)
 
     def consume_grammar(self, buffer):
