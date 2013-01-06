@@ -52,6 +52,16 @@ def test_three_sequences():
     assert matcher('aeioupqrst12345') == ['aeiou', 'pqrst', '12345']
 
 
+def test_slice_sequences():
+    matcher = (Literal('[') + Chars('aeiou') + Chars('pqrst') + Chars('12345') + Literal(']'))[1:-1]
+    assert matcher('[aeioupqrst12345]') == ['aeiou', 'pqrst', '12345']
+
+
+def test_slice_tuple_sequences():
+    matcher = (Literal('[') + Chars('aeiou') + Chars('pqrst') + Chars('12345') + Literal(']'))[1, 3]
+    assert matcher('[aeioupqrst12345]') == ['aeiou', '12345']
+
+
 def test_three_sequences_whitespace_sep():
     matcher = Sequence(Chars('aeiou'), Chars('pqrst'), Chars('12345'), sep=Whitespace)
     assert matcher('auieoaieo ttrrssppqq 543212345') == ['auieoaieo', 'ttrrssppqq', '543212345']

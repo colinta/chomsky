@@ -85,6 +85,9 @@ class Matcher(object):
     def __ror__(self, other):
         return to_matcher(other) | self
 
+    def __getitem__(self, key):
+        return Slice(self, key)
+
     def __call__(self, string):
         if not isinstance(string, Buffer):
             string = Buffer(string)
@@ -442,6 +445,7 @@ class AutoSequence(Matcher):
     When Matcher objects are added, they automatically create an AutoSequence,
     which will add in future Matcher objects as well.
     """
+
     def __init__(self, *matchers, **kwargs):
         """
         kwargs can include 'sep', which is a matcher to match in between every item.
@@ -673,6 +677,30 @@ class Exactly(NMatches):
         if args_only:
             return args
         return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
+
+
+class Slice(Exactly):
+    '''
+    This is super helpful if you want to include or exclude items from a
+    Sequence.  **Super helpful!**
+
+    Accepts any of the usual getitem() objects (int, slice), but also accepts a
+    tuple of indices::
+
+        Sequence(...)[0]  # return just one item
+        Sequence(...)[2, 4, 6]
+    '''
+    def __init__(self, matcher, slice, **kwargs):
+        self.slice = slice
+        super(Slice, self).__init__(1, matcher, **kwargs)
+
+    def consume(self, buffer):
+        retval = super(Slice, self).consume(buffer)[0]
+        try:
+            iterator = iter(self.slice)
+            return ResultList(retval[item] for item in iterator)
+        except TypeError:
+            return retval.__getitem__(self.slice)
 
 
 class OneLine(Exactly):
