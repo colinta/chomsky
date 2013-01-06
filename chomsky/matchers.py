@@ -1188,3 +1188,13 @@ class Later(Matcher):
         except KeyError:
             raise ParseException('Unknown grammar {self.grammar_type!r}'.format(self=self))
         return grammar(buffer, *self.args, **self.kwargs)
+
+    def __repr__(self, args_only=False):
+        args = [repr(self.grammar_type)]
+        args.extend(super(Later, self).__repr__(args_only=True))
+        args.extend(repr(item) for item in self.args)
+        for key, value in self.kwargs.iteritems():
+            args.append('{key}={value!r}'.format(key=key, value=value))
+        if args_only:
+            return args
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
