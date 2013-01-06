@@ -33,35 +33,38 @@ class Grammar(object):
             self.buffer = parseme
         else:
             self.buffer = Buffer(parseme)
-        # you won't find the `consume_grammar` method instantiated anywhere...
-        # instead, the 'consume' method below is *renamed* to consume_grammar
-        # by the GrammarType meta class.  The reason is that the
-        # `GrammarType.consume` method is the method that must be called
-        # during parsing, but *I* *preferred* custom consuming in a Grammar
-        # class to be done the same way as a Matcher class - by defining a
-        # `consume` method.
-        self.consume_grammar(self.buffer)
 
-    def consume(self, buffer):
+        # In custom Grammar classes, it is "safe" to define a `consume` method.
+        # It will be renamed to 'consume_grammar', though, so calling
+        # `super(CustomGrammar, self).consume(buffer)` will fail.
+        #
+        # The reason is that the `GrammarType.consume` method is the method
+        # that must be called during parsing, but *I* *preferred* custom
+        # consuming in a Grammar class to be done the same way as a Matcher
+        # class - by defining a `consume` method.
+        self.parsed = self.consume_grammar(self.buffer)
+
+    def consume_grammar(self, buffer):
         cls = type(self)
         try:
-            self.parsed = cls.grammar.consume(buffer)
+            parsed = cls.grammar.consume(buffer)
         except ParseException:
             if cls.ignore_whitespace:
                 cls.whitespace.consume(buffer)
-                self.parsed = cls.grammar.consume(buffer)
+                parsed = cls.grammar.consume(buffer)
             else:
                 raise
 
         if self.bad_grammar:
             try:
-                buffer = Buffer(str_or_unicode(self.parsed))
+                buffer = Buffer(str_or_unicode(parsed))
                 bad_matcher = StringStart() + self.bad_grammar + StringEnd()
                 bad_matcher.consume(buffer)
             except ParseException:
                 pass
             else:
                 raise ParseException("Invalid match {buffer!r} in {self!r}".format(buffer=buffer, self=self))
+        return parsed
 
     def __getitem__(self, key):
         if isinstance(key, int):
