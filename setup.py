@@ -9,7 +9,7 @@ def read(fname):
 
 setup(
         name="chomsky",
-        version="v0.0.19",
+        version="v0.0.20",
         author="Colin Thomas-Arnold",
         author_email="colinta@gmail",
         url="https://github.com/colinta/chomsky",
