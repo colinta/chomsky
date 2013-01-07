@@ -310,7 +310,7 @@ class Chars(Matcher):
     default_max = None
     default_inverse = False
 
-    def __init__(self, consumable, **kwargs):
+    def __init__(self, consumable=None, **kwargs):
         """
         kwargs can contain 'max', 'min', and 'inverse' options
         """

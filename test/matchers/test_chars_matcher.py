@@ -31,6 +31,14 @@ def test_chars_matcher():
             assert parsed == p
 
 
+def test_chars_any_matcher():
+    parse = 'a ae aei aeio aeiou aeiouz'.split(' ')
+    matcher = Chars()
+    for p in parse:
+        parsed = matcher(p)
+        assert parsed == p
+
+
 def test_chars_matcher_unicode():
     parse = u'あ あい あいう あいうえ あいうえお'.split(' ')
     for p in parse:
