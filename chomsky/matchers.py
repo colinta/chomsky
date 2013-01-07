@@ -44,11 +44,15 @@ class Matcher(object):
     default_suppressed = False
 
     def test(self, buffer):
+        if not isinstance(buffer, Buffer):
+            buffer = Buffer(buffer)
         try:
-            print("=============== matchers.py at line {0} ===============".format(__import__('sys')._getframe().f_lineno))
+            buffer.mark()
             self(buffer)
+            buffer.restore_mark()
             return True
         except ParseException:
+            buffer.restore_mark()
             return False
 
     def __init__(self, *args, **kwargs):
