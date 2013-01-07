@@ -220,7 +220,7 @@ class Char(Matcher):
     """
     default_inverse = False
 
-    def __init__(self, consumable, **kwargs):
+    def __init__(self, consumable=None, **kwargs):
         self.consumable = consumable
         self.inverse = bool(kwargs.pop('inverse', self.default_inverse))
         super(Char, self).__init__(**kwargs)
@@ -232,7 +232,9 @@ class Char(Matcher):
             and super(Char, self).__eq__(other)
 
     def __repr__(self, args_only=False):
-        args = ['{self.consumable!r}'.format(self=self)]
+        args = []
+        if self.consumable:
+            args.append('{consumable!r}'.format(consumable=self.consumable))
 
         if self.inverse != self.default_inverse:
             args.append('inverse={self.inverse!r}'.format(self=self))
@@ -244,7 +246,7 @@ class Char(Matcher):
 
     def consume(self, buffer):
         # inverse and NOT in consumable, or in consumable and NOT inverse
-        if (buffer[0] in self.consumable) == (not self.inverse):
+        if not self.consumable or (buffer[0] in self.consumable) == (not self.inverse):
             consumed = buffer[0]
             buffer.advance(1)
             return Result(consumed)

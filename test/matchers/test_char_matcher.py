@@ -38,6 +38,12 @@ def test_char_matcher_unicode():
         assert parsed == p
 
 
+def test_any_char_matcher():
+    parse = 'a e i o u'.split(' ')
+    for p in parse:
+        assert Char()(p) == p
+
+
 def test_inverse_char_matcher():
     parse = 'b c d f g h ! @ # $ % ^ & * ( )'.split(' ')
     matcher = Char('aeiou', inverse=True)
