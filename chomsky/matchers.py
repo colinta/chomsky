@@ -43,6 +43,14 @@ class Matcher(object):
     """
     default_suppressed = False
 
+    def test(self, buffer):
+        try:
+            print("=============== matchers.py at line {0} ===============".format(__import__('sys')._getframe().f_lineno))
+            self(buffer)
+            return True
+        except ParseException:
+            return False
+
     def __init__(self, *args, **kwargs):
         self.grammar = None
         self.suppress = kwargs.pop('suppress', self.default_suppressed)
