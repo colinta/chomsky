@@ -180,6 +180,13 @@ class GrammarType(type):
     def __repr__(cls):
         return cls.__name__
 
+    def test(cls, buffer):
+        try:
+            cls(buffer)
+            return True
+        except ParseException:
+            return False
+
 
 class SuppressedMatcher(Matcher):
     default_suppressed = True
