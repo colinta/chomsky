@@ -2,43 +2,43 @@ from chomsky import *
 
 
 def test_single_empty_quotedstring_repr():
-    assert repr(SingleQuotedString("''")) == 'SingleQuotedString("\'\'")'
-    assert repr(String("''")) == 'String("\'\'")'
+    assert repr(SingleQuotedString("''")) == "SingleQuotedString('')"
+    assert repr(String("''")) == "String('')"
 
 
 def test_single_quotedstring_repr():
-    assert repr(SingleQuotedString("'hi!'")) == 'SingleQuotedString("\'hi!\'")'
-    assert repr(String("'hi!'")) == 'String("\'hi!\'")'
+    assert repr(SingleQuotedString("'hi!'")) == "SingleQuotedString('hi!')"
+    assert repr(String("'hi!'")) == "String('hi!')"
 
 
 def test_triplesingle_empty_quotedstring_repr():
-    assert repr(TripleSingleQuotedString("''''''")) == "TripleSingleQuotedString(\"''''''\")"
-    assert repr(String("''''''")) == "String(\"''''''\")"
+    assert repr(TripleSingleQuotedString("''''''")) == "TripleSingleQuotedString('')"
+    assert repr(String("''''''")) == "String('')"
 
 
 def test_triplesingle_quotedstring_repr():
-    assert repr(TripleSingleQuotedString("'''hi!'''")) == "TripleSingleQuotedString(\"'''hi!'''\")"
-    assert repr(String("'''hi!'''")) == "String(\"'''hi!'''\")"
+    assert repr(TripleSingleQuotedString("'''hi!'''")) == "TripleSingleQuotedString('hi!')"
+    assert repr(String("'''hi!'''")) == "String('hi!')"
 
 
 def test_double_empty_quotedstring_repr():
-    assert repr(DoubleQuotedString('""')) == "DoubleQuotedString('\"\"')"
-    assert repr(String('""')) == "String('\"\"')"
+    assert repr(DoubleQuotedString('""')) == "DoubleQuotedString('')"
+    assert repr(String('""')) == "String('')"
 
 
 def test_double_quotedstring_repr():
-    assert repr(DoubleQuotedString('"hi!"')) == "DoubleQuotedString('\"hi!\"')"
-    assert repr(String('"hi!"')) == "String('\"hi!\"')"
+    assert repr(DoubleQuotedString('"hi!"')) == "DoubleQuotedString('hi!')"
+    assert repr(String('"hi!"')) == "String('hi!')"
 
 
 def test_doublesingle_empty_quotedstring_repr():
-    assert repr(TripleDoubleQuotedString('""""""')) == 'TripleDoubleQuotedString(\'""""""\')'
-    assert repr(String('""""""')) == 'String(\'""""""\')'
+    assert repr(TripleDoubleQuotedString('""""""')) == "TripleDoubleQuotedString('')"
+    assert repr(String('""""""')) == "String('')"
 
 
 def test_doublesingle_quotedstring_repr():
-    assert repr(TripleDoubleQuotedString('"""hi!"""')) == 'TripleDoubleQuotedString(\'"""hi!"""\')'
-    assert repr(String('"""hi!"""')) == 'String(\'"""hi!"""\')'
+    assert repr(TripleDoubleQuotedString('"""hi!"""')) == "TripleDoubleQuotedString('hi!')"
+    assert repr(String('"""hi!"""')) == "String('hi!')"
 
 
 def test_single_quotedstring_grammar():

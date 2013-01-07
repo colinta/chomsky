@@ -24,4 +24,4 @@ def test_grammar_in_matcher_grammar_0():
 def test_grammar_in_matcher_grammar_test():
     m = GrammarInMatcherTest('"test"')
     assert m.parsed == String('"test"')
-    assert str(m) == '"test"'
+    assert str(m) == 'test'
