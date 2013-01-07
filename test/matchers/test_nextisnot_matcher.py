@@ -31,6 +31,12 @@ def test_nextisnot_11():
     assert parsed == [['-'], '11']
 
 
+def test_nextisnot_eol():
+    eol_matcher = 'a' + NextIsNot('a')
+    parsed = eol_matcher('a')
+    assert parsed == ['a']
+
+
 def test_nextisnot_fail():
     with raises(ParseException):
         nextisnot_matcher('-0')
