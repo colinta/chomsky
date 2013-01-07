@@ -1180,16 +1180,19 @@ class Later(Matcher):
         self.grammar_type = grammar_type
         self.args = args
         self.kwargs = kwargs
+        self.grammar = None
         super(Later, self).__init__()
 
     def consume(self, buffer):
         try:
-            grammar = GrammarType.types[self.grammar_type]
+            self.grammar = GrammarType.types[self.grammar_type]
         except KeyError:
             raise ParseException('Unknown grammar {self.grammar_type!r}'.format(self=self))
-        return grammar(buffer, *self.args, **self.kwargs)
+        return self.grammar(buffer, *self.args, **self.kwargs)
 
     def __repr__(self, args_only=False):
+        if self.grammar:
+            return repr(self.grammar)
         args = [repr(self.grammar_type)]
         args.extend(super(Later, self).__repr__(args_only=True))
         args.extend(repr(item) for item in self.args)
