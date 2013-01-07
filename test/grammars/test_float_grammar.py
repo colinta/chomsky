@@ -22,6 +22,12 @@ def test_float_grammar_01():
     assert str(m) == '0.1'
 
 
+def test_float_grammar_neg_01():
+    m = Float('-0.1')
+    assert m.parsed == '-0.1'
+    assert str(m) == '-0.1'
+
+
 def test_float_grammar_10():
     m = Float('1.0')
     assert m.parsed == '1.0'

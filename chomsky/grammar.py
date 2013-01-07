@@ -119,7 +119,8 @@ Int = Integer
 
 
 class Float(Grammar):
-    grammar = Group(Integer + '.' + Chars('0123456789'))
+    grammar = Group(((Integer + '.') | '-0.') + Chars(string.digits))
+    bad_grammar = '-0' + Char('.') + Chars('0')
 
 
 class BinaryInteger(Grammar):

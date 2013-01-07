@@ -1,4 +1,3 @@
-from pytest import raises
 from chomsky import *
 
 
@@ -10,6 +9,8 @@ def test_integer_number_grammar():
 def test_float_number_grammar():
     assert Number('1.321').parsed == Float('1.321')
     assert Number('11323.321').parsed == Float('11323.321')
+    assert Number('-1.321').parsed == Float('-1.321')
+    assert Number('-0.321').parsed == Float('-0.321')
 
 
 def test_binary_number_grammar():
