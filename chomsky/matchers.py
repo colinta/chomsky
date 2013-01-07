@@ -181,10 +181,15 @@ class GrammarType(type):
         return cls.__name__
 
     def test(cls, buffer):
+        if not isinstance(buffer, Buffer):
+            buffer = Buffer(buffer)
         try:
+            buffer.mark()
             cls(buffer)
+            buffer.restore_mark()
             return True
         except ParseException:
+            buffer.restore_mark()
             return False
 
 
