@@ -276,7 +276,7 @@ class QuotedGrammarType(GrammarType):
                         insides += c
                 consumer = Chars(insides, inverse=True)
 
-            cls.grammar = Group(cls_dict['delimiter'] + ZeroOrMore(EscapeSequence | consumer) + cls_dict['delimiter'])
+            cls.grammar = Group((cls_dict['delimiter'] + ZeroOrMore(EscapeSequence | consumer) + cls_dict['delimiter'])[1:-1])
 
 
 class QuotedString(Grammar):

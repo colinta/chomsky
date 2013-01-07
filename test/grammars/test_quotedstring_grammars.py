@@ -43,71 +43,71 @@ def test_doublesingle_quotedstring_repr():
 
 def test_single_quotedstring_grammar():
     matcher = SingleQuotedString("'foo'")
-    assert matcher.parsed == "'foo'"
-    assert str(matcher) == "'foo'"
+    assert matcher.parsed == "foo"
+    assert str(matcher) == "foo"
     matcher = String("'foo'")
-    assert matcher.parsed == "'foo'"
-    assert str(matcher) == "'foo'"
+    assert matcher.parsed == "foo"
+    assert str(matcher) == "foo"
 
 
 def test_double_quotedstring_grammar():
     matcher = DoubleQuotedString('"foo"')
-    assert matcher.parsed == '"foo"'
-    assert str(matcher) == '"foo"'
+    assert matcher.parsed == 'foo'
+    assert str(matcher) == 'foo'
     matcher = String('"foo"')
-    assert matcher.parsed == '"foo"'
-    assert str(matcher) == '"foo"'
+    assert matcher.parsed == 'foo'
+    assert str(matcher) == 'foo'
 
 
 def test_single_quotedstring_with_escape_grammar():
     matcher = SingleQuotedString(r"'foo\t\a\b\\'")
-    assert matcher.parsed == r"'foo\t\a\b\\'"
-    assert str(matcher) == r"'foo\t\a\b\\'"
+    assert matcher.parsed == r"foo\t\a\b\\"
+    assert str(matcher) == r"foo\t\a\b\\"
     matcher = String(r"'foo\t\a\b\\'")
-    assert matcher.parsed == r"'foo\t\a\b\\'"
-    assert str(matcher) == r"'foo\t\a\b\\'"
+    assert matcher.parsed == r"foo\t\a\b\\"
+    assert str(matcher) == r"foo\t\a\b\\"
 
 
 def test_double_quotedstring_with_escape_grammar():
     matcher = DoubleQuotedString(r'"foo\t\a\b\\"')
-    assert matcher.parsed == r'"foo\t\a\b\\"'
-    assert str(matcher) == r'"foo\t\a\b\\"'
+    assert matcher.parsed == r'foo\t\a\b\\'
+    assert str(matcher) == r'foo\t\a\b\\'
     matcher = String(r'"foo\t\a\b\\"')
-    assert matcher.parsed == r'"foo\t\a\b\\"'
-    assert str(matcher) == r'"foo\t\a\b\\"'
+    assert matcher.parsed == r'foo\t\a\b\\'
+    assert str(matcher) == r'foo\t\a\b\\'
 
 
 def test_single_quotedstring_with_newline_grammar():
     matcher = SingleQuotedString("""'foo\\
 '""")
-    assert matcher.parsed == """'foo\\
-'"""
-    assert str(matcher) == """'foo\\
-'"""
+    assert matcher.parsed == """foo\\
+"""
+    assert str(matcher) == """foo\\
+"""
 
 
 def test_triplesingle_quotedstring_with_newline_grammar():
     matcher = TripleSingleQuotedString("""'''foo\\
 '''""")
-    assert matcher.parsed == """'''foo\\
-'''"""
-    assert str(matcher) == """'''foo\\
-'''"""
+    assert matcher.parsed == """foo\\
+"""
+    assert str(matcher) == """foo\\
+"""
 
 
 def test_double_quotedstring_with_newline_grammar():
     matcher = DoubleQuotedString('''"foo\\
 "''')
-    assert matcher.parsed == '''"foo\\
-"'''
-    assert str(matcher) == '''"foo\\
-"'''
+    assert matcher.parsed == '''foo\\
+'''
+    assert str(matcher) == '''foo\\
+'''
 
 
 def test_tripledouble_quotedstring_with_newline_grammar():
     matcher = TripleDoubleQuotedString('''"""foo\\
 """''')
-    assert matcher.parsed == '''"""foo\\
-"""'''
-    assert str(matcher) == '''"""foo\\
-"""'''
+    assert matcher.parsed == '''foo\\
+'''
+    assert str(matcher) == '''foo\\
+'''
