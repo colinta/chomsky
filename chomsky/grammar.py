@@ -114,29 +114,29 @@ class Grammar(object):
 
 
 class Integer(Grammar):
-    grammar = Group('0' | (Optional('-') + NextIsNot('0') + Chars(string.digits)))
+    grammar = Group(('0' | (Optional('-') + NextIsNot('0') + Chars(string.digits))) + NextIsNot(Char(string.digits + string.ascii_letters)))
 Int = Integer
 
 
 class Float(Grammar):
-    grammar = Group(((Integer + '.') | '-0.') + Chars(string.digits))
+    grammar = Group((((Integer + '.') | '-0.') + Chars(string.digits)) + NextIsNot(Char(string.digits + string.ascii_letters)))
     bad_grammar = '-0' + Char('.') + Chars('0')
 
 
 class BinaryInteger(Grammar):
-    grammar = Group(Optional('-') + '0' + Char('bB') + Chars('01'))
+    grammar = Group((Optional('-') + '0' + Char('bB') + Chars('01')) + NextIsNot(Char(string.digits + string.ascii_letters)))
     bad_grammar = '-0' + Char('bB') + Chars('0')
 Binary = BinaryInteger
 
 
 class OctalInteger(Grammar):
-    grammar = Group(Optional('-') + '0' + Optional(Char('oO')) + Chars('01234567'))
+    grammar = Group((Optional('-') + '0' + Optional(Char('oO')) + Chars('01234567')) + NextIsNot(Char(string.digits + string.ascii_letters)))
     bad_grammar = '-0' + Optional(Char('oO')) + Chars('0')
 Octal = OctalInteger
 
 
 class HexadecimalInteger(Grammar):
-    grammar = Group(Optional('-') + '0' + Char('xX') + Chars('01234567890abcdefABCDEF'))
+    grammar = Group((Optional('-') + '0' + Char('xX') + Chars('01234567890abcdefABCDEF')) + NextIsNot(Char(string.digits + string.ascii_letters)))
     bad_grammar = '-0' + Char('xX') + Chars('0')
 Hex = HexadecimalInteger
 

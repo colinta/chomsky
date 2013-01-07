@@ -54,3 +54,8 @@ def test_integer_fail_neg_0():
 def test_integer_fail_a():
     with raises(ParseException):
         Integer('a')
+
+
+def test_integer_fail_0a():
+    with raises(ParseException):
+        Integer('0a')
