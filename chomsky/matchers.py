@@ -728,6 +728,15 @@ class Slice(Exactly):
         except TypeError:
             return retval.__getitem__(self.slice)
 
+    def __repr__(self, args_only=False):
+        args = ['{self.matcher!r}, {self.slice!r}'.format(self=self)]
+
+        # skip NMatches!
+        args.extend(Matcher.__repr__(self, args_only=True))
+        if args_only:
+            return args
+        return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
+
 
 class OneLine(Exactly):
     def __init__(self, matcher, **kwargs):
