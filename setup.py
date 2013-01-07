@@ -9,7 +9,7 @@ def read(fname):
 
 setup(
         name="chomsky",
-        version="v0.0.20",
+        version="v0.0.21",
         author="Colin Thomas-Arnold",
         author_email="colinta@gmail",
         url="https://github.com/colinta/chomsky",
@@ -19,7 +19,7 @@ setup(
         long_description=read("README.rst"),
 
         packages=find_packages(),
-        keywords="chomsky template language",
+        keywords="chomsky language grammar parser",
         platforms="any",
         license="BSD",
         classifiers=[
