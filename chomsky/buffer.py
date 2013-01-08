@@ -50,6 +50,7 @@ class Buffer(object):
         mark_id = mark_id and id(mark_id)
         if (prev_id or mark_id) and prev_id != mark_id:
             raise Exception('Mark ids do not match. old={prev_id!r}, new={mark_id!r}'.format(**locals()))
+        return pos, self.__position
 
     @property
     def position(self):
