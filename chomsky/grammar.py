@@ -156,7 +156,7 @@ class Operator(Grammar):
     __metaclass__ = OperatorGrammarType
     operators = [
         '==', '!=', '<=', '>=', '<', '>',
-        '&&', '||', '&', '|',
+        '&&', '||', '&', '|', '<<', '>>', '~',
         '**',  '//',  '+',  '-',  '/',  '*',  '%',
         '.',  # function call
     ]
