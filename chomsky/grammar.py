@@ -112,6 +112,9 @@ class Grammar(object):
     def __str__(self):
         return str_or_unicode(self.parsed)
 
+    def __unicode__(self):
+        return str_or_unicode(self.parsed)
+
 
 class Integer(Grammar):
     grammar = Group(('0' | (Optional('-') + NextIsNot('0') + Chars(string.digits))) + NextIsNot(Char(string.digits + string.ascii_letters)))

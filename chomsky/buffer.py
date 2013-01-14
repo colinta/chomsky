@@ -96,3 +96,6 @@ class Buffer(object):
 
     def __str__(self):
         return str_or_unicode(self.__buffer)
+
+    def __unicode__(self):
+        return str_or_unicode(self.__buffer)

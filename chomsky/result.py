@@ -18,11 +18,11 @@ class ResultList(list):
     def __repr__(self):
         return 'ResultList(' + super(ResultList, self).__repr__() + ')'
 
-    def __unicode__(self):
-        return Result(''.join(unicode(result) for result in self))
-
     def __str__(self):
         return Result(''.join(str(result) for result in self))
+
+    def __unicode__(self):
+        return Result(''.join(unicode(result) for result in self))
 
     def __getitem__(self, key):
         if isinstance(key, slice):
