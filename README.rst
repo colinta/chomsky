@@ -2,8 +2,9 @@
 chomsky
 =======
 
-.. image:: https://travis-ci.org/colinta/chomsky.png
+.. |buildstatus| image:: https://travis-ci.org/colinta/chomsky.png
    :alt: Build Status
+.. _buildstatus: https://travis-ci.org/colinta/chomsky
 
 I needed a language grammar parser for the plywood_ project, and modgrammar_
 looked like it would be perfect, except I couldn't get the simplest of grammars
