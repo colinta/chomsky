@@ -327,11 +327,11 @@ TEST
 LICENSE
 -------
 
-Copyright (c) 2012, Colin Thomas-Arnold
+Copyright (c) 2012, Colin T.A. Gray
 All rights reserved.
 
-:author:    Colin Thomas-Arnold
-:copyright: 2012 Colin Thomas-Arnold <http://colinta.com/>
+:author:    Colin T.A. Gray
+:copyright: 2012 Colin T.A. Gray <http://colinta.com/>
 :license:   simplified BSD, see LICENSE_ for more details.
 
 .. _LICENSE:      https://github.com/colinta/chomsky/blob/master/LICENSE
