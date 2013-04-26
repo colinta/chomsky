@@ -15,6 +15,12 @@ def test_start_of_word_and_literal_matcher():
     assert parsed == ['hi!', 'bye!']
 
 
+def test_word_and_end_of_word_matcher():
+    matcher = W(string.letters + '_') + WordEnd()
+    parsed = matcher('is_ok!')
+    assert parsed == ['is_ok']
+
+
 def test_end_of_word_and_literal_matcher():
     matcher = L('hi') + WordEnd() + L('!bye!')
     parsed = matcher('hi!bye!')
