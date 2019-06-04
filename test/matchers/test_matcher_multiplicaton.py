@@ -31,7 +31,7 @@ def test_three_products():
 
 
 def test_three_sequence_products():
-    matcher = (Chars(string.letters) + Literal(' ')) * 3
+    matcher = (Chars(string.ascii_letters) + Literal(' ')) * 3
     assert matcher('why hello there ') == [['why', ' '], ['hello', ' '], ['there', ' ']]
     with raises(ParseException):
         matcher('not enough spaces')

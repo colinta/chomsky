@@ -1,13 +1,12 @@
 import string
 import re
 
-from .util import str_or_unicode
 from .buffer import Buffer
 from .exceptions import ParseException
 from .matchers import *
 
 
-class Grammar(object):
+class Grammar(object, metaclass=GrammarType):
     """
     Note: There is a common need to have invalid versions of an otherwise simple
     grammar.  Take HexadecimalInteger:
@@ -23,7 +22,6 @@ class Grammar(object):
         grammar = Group(Optional('-') + ('0x' | '0X') + Chars('01234567890abcdefABCDEF'))
         bad_grammar = '-0' + Char('xX')' + Char('0')  # won't match -0x0000
     """
-    __metaclass__ = GrammarType
 
     bad_grammar = None
     grammar = None
@@ -68,7 +66,7 @@ class Grammar(object):
 
         if self.bad_grammar:
             try:
-                buffer = Buffer(str_or_unicode(parsed))
+                buffer = Buffer(parsed)
                 bad_matcher = StringStart() + self.bad_grammar + StringEnd()
                 bad_matcher.consume(buffer)
             except ParseException:
@@ -107,13 +105,10 @@ class Grammar(object):
         except AttributeError:
             insides = self.buffer
 
-        return '{type.__name__}({insides!r})'.format(self=self, insides=str_or_unicode(insides), type=type(self))
+        return '{type.__name__}({insides!r})'.format(self=self, insides=str(insides), type=type(self))
 
     def __str__(self):
-        return str_or_unicode(self.parsed)
-
-    def __unicode__(self):
-        return str_or_unicode(self.parsed)
+        return str(self.parsed)
 
 
 class Integer(Grammar):
@@ -155,8 +150,7 @@ class OperatorGrammarType(GrammarType):
             cls.grammar = Any(*cls_dict['operators'])
 
 
-class Operator(Grammar):
-    __metaclass__ = OperatorGrammarType
+class Operator(Grammar, metaclass=OperatorGrammarType):
     operators = [
         '==', '!=', '<=', '>=', '<', '>',
         '&&', '||', '&', '|', '<<', '>>', '~',
@@ -166,15 +160,13 @@ class Operator(Grammar):
 Op = Operator
 
 
-class Assignment(Grammar):
-    __metaclass__ = OperatorGrammarType
+class Assignment(Grammar, metaclass=OperatorGrammarType):
     operators = [
         '**=', '//=', '+=', '-=', '/=', '*=', '%=', '=',
     ]
 
 
-class UnaryOperator(Grammar):
-    __metaclass__ = OperatorGrammarType
+class UnaryOperator(Grammar, metaclass=OperatorGrammarType):
     operators = ['~', '+', '-', '!']
 
 
@@ -185,14 +177,12 @@ class ReservedWordGrammarType(GrammarType):
             cls.grammar = Any(*cls_dict.pop('words'))
 
 
-class ReservedWord(Grammar):
-    __metaclass__ = ReservedWordGrammarType
-
+class ReservedWord(Grammar, metaclass=ReservedWordGrammarType):
     def __repr__(self):
         args = ""
         if self.words != type(self).words:
             args = ", words={self.words!r}".format(self=self)
-        return '{type.__name__}({buffer!r}{args})'.format(self=self, buffer=str_or_unicode(self.buffer), type=type(self), args=args)
+        return '{type.__name__}({buffer!r}{args})'.format(self=self, buffer=str(self.buffer), type=type(self), args=args)
 
 
 class PythonReservedWord(ReservedWord):
@@ -243,8 +233,7 @@ class VariableGrammarType(GrammarType):
         cls.grammar = Group(starts_with + ends_with)
 
 
-class Variable(Grammar):
-    __metaclass__ = VariableGrammarType
+class Variable(Grammar, metaclass=VariableGrammarType):
     starts_with = Char(string.ascii_letters + '_')
     ends_with = Chars(string.ascii_letters + '_' + string.digits, min=0)
 Var = Variable
@@ -282,8 +271,8 @@ class QuotedGrammarType(GrammarType):
             cls.grammar = Group((cls_dict['delimiter'] + ZeroOrMore(EscapeSequence | consumer) + cls_dict['delimiter'])[1:-1])
 
 
-class QuotedString(Grammar):
-    __metaclass__ = QuotedGrammarType
+class QuotedString(Grammar, metaclass=QuotedGrammarType):
+    pass
 
 
 class SingleQuotedString(QuotedString):

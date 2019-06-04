@@ -19,9 +19,9 @@ def test_two_group():
 
 
 def test_two_group_unicode():
-    matcher = Group(Chars(u'あいうえお'), Chars(u'べしでふじ'))
-    parsed = matcher(u'いあえおうふじべしで')
-    assert parsed == u'いあえおうふじべしで'
+    matcher = Group(Chars('あいうえお'), Chars('べしでふじ'))
+    parsed = matcher('いあえおうふじべしで')
+    assert parsed == 'いあえおうふじべしで'
 
 
 def test_two_sequence_shorthand():

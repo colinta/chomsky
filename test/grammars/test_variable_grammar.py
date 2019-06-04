@@ -3,12 +3,12 @@ from pytest import raises
 from chomsky import *
 
 
-class TestPercentVariable(Variable):
+class MockPercentVariable(Variable):
     starts_with = Char('%')
 
 
-class TestUnicodeVariable(Variable):
-    starts_with = Char(u'–')
+class MockUnicodeVariable(Variable):
+    starts_with = Char('–')
 
 
 def test_variable_repr():
@@ -91,15 +91,15 @@ def test_variable_grammar_all():
 
 
 def test_variable_starts_with():
-    m = TestPercentVariable('%abcd_123_')
+    m = MockPercentVariable('%abcd_123_')
     assert m.parsed == '%abcd_123_'
     assert str(m) == '%abcd_123_'
 
 
 def test_variable_starts_with_unicode():
-    m = TestUnicodeVariable(u'–abcd_123_')
-    assert m.parsed == u'–abcd_123_'
-    assert unicode(m) == u'–abcd_123_'
+    m = MockUnicodeVariable('–abcd_123_')
+    assert m.parsed == '–abcd_123_'
+    assert m == '–abcd_123_'
 
 
 def test_variable_fail_digits():
@@ -109,12 +109,12 @@ def test_variable_fail_digits():
 
 def test_variable_fail_starts_with():
     with raises(ParseException):
-        TestPercentVariable('_abc')
+        MockPercentVariable('_abc')
 
 
 def test_variable_fail_starts_with_unicode():
     with raises(ParseException):
-        TestUnicodeVariable(u'-abc')
+        MockUnicodeVariable('-abc')
 
 
 def test_pythonvariable_fail_reserved():

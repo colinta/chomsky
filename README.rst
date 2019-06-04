@@ -59,7 +59,7 @@ built-in strings in the `string module`_.
     matcher = A('abcde')
 
     import string
-    matcher = A(string.letters + string.digits + '_')
+    matcher = A(string.ascii_letters + string.digits + '_')
 
 Chars
 ~~~~~
@@ -170,7 +170,7 @@ multiplication to repeat a series of ``Matcher``-s.
 
     test/matcher/test_matcher_multiplication.py
     import string
-    matcher = (Chars(string.letters) + Literal(' ')) * 3
+    matcher = (Chars(string.ascii_letters) + Literal(' ')) * 3
     matcher('why hello there ') => [['why', ' '], ['hello', ' '], ['there', ' ']]
     matcher('not enough spaces') => ParseException
 

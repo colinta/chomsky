@@ -1,4 +1,3 @@
-from .util import str_or_unicode
 from .exceptions import ParseException
 
 
@@ -56,7 +55,7 @@ class Buffer(object):
     def position(self):
         return self.__position
 
-    def __nonzero__(self):
+    def __bool__(self):
         return len(self.__buffer) and self.__position < len(self.__buffer)
 
     def __len__(self):
@@ -95,7 +94,4 @@ class Buffer(object):
         return 'Buffer({0!r} + {1!r})'.format(self.__buffer[:self.__position], self.__buffer[self.__position:])
 
     def __str__(self):
-        return str_or_unicode(self.__buffer)
-
-    def __unicode__(self):
-        return str_or_unicode(self.__buffer)
+        return self.__buffer

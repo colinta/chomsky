@@ -19,6 +19,6 @@ class CustomGrammar(Grammar):
 
 
 def test_custom_grammar():
-    m = CustomGrammar('12345!!!!!b')
+    m = CustomGrammar('12345!!!!!')
     assert m.parsed == [Integer('12345'), ExclamationGrammar('!!!!!')]
     assert str(m) == '12345!!!!!'

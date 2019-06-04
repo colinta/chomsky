@@ -30,8 +30,8 @@ def test_literal_matcher():
 
 
 def test_literal_matcher_unicode():
-    parse = u'あえうえお'
-    parsed = Literal(u'あえうえお')(parse)
+    parse = 'あえうえお'
+    parsed = Literal('あえうえお')(parse)
     assert parsed == parse
 
 

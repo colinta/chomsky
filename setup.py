@@ -9,11 +9,12 @@ def read(fname):
 
 setup(
         name="chomsky",
-        version="1.0.2",
+        version="2.0.0",
         author="Colin T.A. Gray",
         author_email="colinta@gmail",
         url="https://github.com/colinta/chomsky",
         install_requires=[],
+        python_requires='>3.0.0',
 
         description="Another language grammar parser.  Inspired by modgrammar and pyparsing",
         long_description=read("README.rst"),
@@ -23,8 +24,9 @@ setup(
         platforms="any",
         license="BSD",
         classifiers=[
+            "Programming Language :: Python",
             "Programming Language :: Python :: 3",
-            "Development Status :: 1 - Planning",
+            "Development Status :: 4 - Beta",
             'Environment :: Console',
             "License :: OSI Approved :: BSD License",
             "Operating System :: OS Independent",

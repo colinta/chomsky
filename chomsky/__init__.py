@@ -5,7 +5,7 @@ from .buffer import *
 from .exceptions import *
 from .matchers import *
 from .grammar import *
-from .result import *
+from .result_list import *
 
 
 # aliases

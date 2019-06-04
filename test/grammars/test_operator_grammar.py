@@ -3,9 +3,8 @@ from pytest import raises
 from chomsky import *
 
 
-class UnicodeOperator(Grammar):
-    __metaclass__ = OperatorGrammarType
-    operators = list(u'÷')
+class UnicodeOperator(Grammar, metaclass=OperatorGrammarType):
+    operators = list('÷')
 
 
 def test_operator_repr():
@@ -13,7 +12,7 @@ def test_operator_repr():
 
 
 def test_unicodeoperator_repr():
-    assert repr(UnicodeOperator(u'÷')) == u"UnicodeOperator(u'\\xf7')"
+    assert repr(UnicodeOperator('÷')) == "UnicodeOperator('÷')"
 
 
 def test_operator_type():
@@ -27,9 +26,9 @@ def test_operator_grammar_minus():
 
 
 def test_operator_grammar_unicode():
-    m = UnicodeOperator(u'÷')
-    assert m.parsed == u'÷'
-    assert unicode(m) == u'÷'
+    m = UnicodeOperator('÷')
+    assert m.parsed == '÷'
+    assert m == '÷'
 
 
 def test_operator_grammar_plus():

@@ -1,9 +1,8 @@
 import re
 import string
 
-from .util import str_or_unicode
 from .exceptions import ParseException, RollbackException
-from .result import Result, ResultList
+from .result_list import ResultList
 from .buffer import Buffer
 
 
@@ -26,7 +25,7 @@ def to_matcher(obj):
     if isinstance(obj, Matcher):
         return obj
 
-    if isinstance(obj, basestring):
+    if isinstance(obj, str):
         return Literal(obj)
 
     if isinstance(obj, list) or isinstance(obj, tuple):
@@ -249,7 +248,7 @@ class Char(Matcher):
         if not self.consumable or (buffer[0] in self.consumable) == (not self.inverse):
             consumed = buffer[0]
             buffer.advance(1)
-            return Result(consumed)
+            return consumed
         raise ParseException(
             'Expected {self!r} at {buffer!r}'.format(
                 self=self,
@@ -282,9 +281,9 @@ class Literal(Matcher):
         return '{type.__name__}({args})'.format(type=type(self), args=', '.join(args))
 
     def consume(self, buffer):
-        if unicode(buffer[0:len(self.literal)]) == self.literal:
+        if str(buffer[0:len(self.literal)]) == self.literal:
             buffer.advance(len(self.literal))
-            return Result(self.literal)
+            return self.literal
         raise ParseException(
             'Expected {self!r} at {buffer!r}'.format(
                 self=self,
@@ -363,7 +362,7 @@ class Chars(Matcher):
                     buffer=buffer)
                 )
         buffer.forget_mark()
-        return Result(consumed)
+        return consumed
 
     def rollback(self, result, buffer):
         if len(result) > self.min:
@@ -432,7 +431,7 @@ class Regex(Matcher):
                 're.UNICODE': re.UNICODE,
                 're.VERBOSE': re.VERBOSE,
                 }
-            for const, flag in flag_dict.iteritems():
+            for const, flag in flag_dict.items():
                 if flags & flag:
                     flags -= flag
                     flag_args.append(const)
@@ -462,8 +461,8 @@ class Regex(Matcher):
         buffer.advance(match.end(self.advance))
         buffer.forget_mark()
         if isinstance(self.group, tuple) or isinstance(self.group, list):
-            return ResultList([Result(match.group(g)) for g in self.group])
-        return Result(match.group(self.group))
+            return ResultList([match.group(g) for g in self.group])
+        return match.group(self.group)
 
 
 class AutoSequence(Matcher):
@@ -530,7 +529,7 @@ class AutoSequence(Matcher):
                 if not matcher.suppress and token_consumed is not None:
                     consumed.append(token_consumed)
                 rollbacks.append((matcher, token_consumed))
-            except ParseException, error:
+            except ParseException as error:
                 if rollbacks:
                     # rollback until successful
                     while matcher_i > 0:
@@ -962,7 +961,7 @@ class LineEnd(SuppressedMatcher):
 
 
 class WordStart(SuppressedMatcher):
-    default_word = string.letters
+    default_word = string.ascii_letters
 
     def __init__(self, consumable=None, **kwargs):
         self.consumable = consumable if consumable else self.default_word
@@ -983,7 +982,7 @@ class WordStart(SuppressedMatcher):
 
 
 class WordEnd(SuppressedMatcher):
-    default_word = string.letters
+    default_word = string.ascii_letters
 
     def __init__(self, consumable=None, **kwargs):
         self.consumable = consumable if consumable else self.default_word
@@ -1152,9 +1151,9 @@ class Group(Matcher):
 
     def consume(self, buffer):
         r = self.matcher.consume(buffer)
-        if isinstance(r, Result):
+        if isinstance(r, str):
             return r
-        return Result(''.join(str_or_unicode(s) for s in r))
+        return ''.join(str(r))
 
     def minimum_length(self):
         return self.matcher.minimum_length()
@@ -1190,14 +1189,14 @@ class Flatten(Matcher):
 
     def consume(self, buffer):
         results = self.matcher.consume(buffer)
-        if isinstance(results, Result):
+        if isinstance(results, str):
             return results
         return self.consume_list(results)
 
     def consume_list(self, results):
         ret = ResultList()
         for r in results:
-            if isinstance(r, Result):
+            if isinstance(r, str):
                 ret.append(r)
             else:
                 ret.extend(self.consume_list(r))
@@ -1231,7 +1230,7 @@ class Later(Matcher):
         args = [repr(self.grammar_type)]
         args.extend(super(Later, self).__repr__(args_only=True))
         args.extend(repr(item) for item in self.args)
-        for key, value in self.kwargs.iteritems():
+        for key, value in self.kwargs.items():
             args.append('{key}={value!r}'.format(key=key, value=value))
         if args_only:
             return args

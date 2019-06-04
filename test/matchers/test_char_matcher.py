@@ -15,7 +15,6 @@ def test_char_matcher_repr():
     assert repr(Char('aeiou', suppress=False)) == "Char('aeiou')"
     assert repr(Char('aeiou', suppress=True)) == "Char('aeiou', suppress=True)"
     assert repr(Char('aeiou', inverse=True)) == "Char('aeiou', inverse=True)"
-    assert repr(Char(u'aeiou', inverse=True)) == "Char(u'aeiou', inverse=True)"
 
 
 def test_char_matcher_lengths():
@@ -32,9 +31,9 @@ def test_char_matcher():
 
 
 def test_char_matcher_unicode():
-    parse = u'あ い う え お'.split(' ')
+    parse = 'あ い う え お'.split(' ')
     for p in parse:
-        parsed = Char(u'あいうえお')(p)
+        parsed = Char('あいうえお')(p)
         assert parsed == p
 
 

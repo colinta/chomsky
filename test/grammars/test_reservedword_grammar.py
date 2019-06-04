@@ -2,12 +2,12 @@ from pytest import raises
 from chomsky import *
 
 
-class TestReservedWord(ReservedWord):
+class MockReservedWord(ReservedWord):
     words = ['def']
 
 
 def test_reservedword_repr():
-    assert repr(TestReservedWord('def')) == "TestReservedWord('def')"
+    assert repr(MockReservedWord('def')) == "MockReservedWord('def')"
 
 
 def test_pythonreservedword_repr():
@@ -23,11 +23,11 @@ def test_rubyreservedword_repr():
 
 
 def test_reservedword_type():
-    assert isinstance(TestReservedWord('def'), TestReservedWord)
+    assert isinstance(MockReservedWord('def'), MockReservedWord)
 
 
 def test_reservedword_grammar_def():
-    m = TestReservedWord('def')
+    m = MockReservedWord('def')
     assert m.parsed == 'def'
     assert str(m) == 'def'
 
@@ -52,4 +52,4 @@ def test_rubyreservedword_grammar():
 
 def test_reservedword_fail():
     with raises(ParseException):
-        TestReservedWord('function')
+        MockReservedWord('function')

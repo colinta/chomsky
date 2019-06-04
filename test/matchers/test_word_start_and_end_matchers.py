@@ -16,7 +16,7 @@ def test_start_of_word_and_literal_matcher():
 
 
 def test_word_and_end_of_word_matcher():
-    matcher = W(string.letters + '_') + WordEnd()
+    matcher = W(string.ascii_letters + '_') + WordEnd()
     parsed = matcher('is_ok!')
     assert parsed == ['is_ok']
 
