@@ -11,7 +11,7 @@ setup(
         name="chomsky",
         version="2.0.0",
         author="Colin T.A. Gray",
-        author_email="colinta@gmail",
+        author_email="colinta@gmail.com",
         url="https://github.com/colinta/chomsky",
         install_requires=[],
         python_requires='>3.0.0',

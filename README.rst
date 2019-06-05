@@ -22,6 +22,8 @@ INSTALLATION
 ::
 
     $ pip install chomsky
+    # local development
+    $ pip install -e .
 
 -----
 USAGE
@@ -339,3 +341,12 @@ All rights reserved.
 .. _pyparsing:    http://pyparsing.wikispaces.com/
 .. _plywood:      http://github.com/colinta/plywood
 .. _string module:       http://docs.python.org/library/string.html#string-constants
+
+-------
+RELEASE
+-------
+
+::
+
+    python setup.py sdist
+    twine upload dist/*
