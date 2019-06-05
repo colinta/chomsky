@@ -2,5 +2,5 @@ dist: xenial
 language: python
 python:
   - '3.7.3'
-install: 'pip install chomsky'
+install: 'pip install -e .'
 script: 'py.test'
